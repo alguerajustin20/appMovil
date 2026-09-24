@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
+import 'screens/user_management_screen.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
+      title: 'App Móvil',
       theme: ThemeData(
         useMaterial3: true,
-
-        //colorSchemeSeed: Colors.pink
       ),
-
-      //home: const SecureScreen(),
-      home: const MaterialApp(),
+      home: const UserManagementScreen(),
     );
   }
 }
