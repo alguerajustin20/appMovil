@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/user_management_screen.dart';
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,9 +14,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'App Móvil',
       theme: ThemeData(
-        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
       ),
-      home: const UserManagementScreen(),
+      home: const HomeScreen(),
     );
   }
 }
