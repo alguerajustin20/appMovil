@@ -27,4 +27,5 @@ flutter:
     - assets/icons/backup/sincronizar_blanco.png
     - assets/icons/docs/informacion_blanco.png
     - assets/icons/error/signo_de_admiracion_blanco.png
-    - assets/icons/log/cerrar_sesion_blanca.png
+    - assets/icons/log/cerrar_sesion_blanca.png 
+    - assets/images/
