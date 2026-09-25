@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_cards_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -59,7 +60,55 @@ class _DashboardScreen extends State<DashboardScreen> {
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
                   childAspectRatio: 1.4,
-                )
+                  children: [
+                    const DashboardCards(
+                      title: 'Total en Inventario',
+                      value: '12,450',
+                      valueColor: Color.fromARGB(255, 3, 115, 140),
+                      icon: Icons.inventory_2_outlined,
+                      iconColor: Colors.grey,
+                    ),
+                    DashboardCards(
+                      title: 'Tareas Pendientes',
+                      value: '8',
+                      valueColor: const Color.fromARGB(255, 115, 70, 16),
+                      icon: Icons.note_alt_outlined,
+                      iconColor: const Color.fromARGB(255, 115, 70, 16),
+                      badge: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'URGENTES',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const DashboardCards(
+                      title: 'Usuarios Activos',
+                      value: '145',
+                      valueColor: Color.fromARGB(255, 3, 115, 140),
+                      icon: Icons.group_outlined,
+                      iconColor: Colors.grey,
+                    ),
+                    const DashboardCards(
+                      title: 'Bajo Stock',
+                      value: '24',
+                      valueColor: Color.fromARGB(255, 255, 145, 15),
+                      icon: Icons.warning_amber_outlined,
+                      iconColor: Color.fromARGB(255, 255, 145, 15),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
