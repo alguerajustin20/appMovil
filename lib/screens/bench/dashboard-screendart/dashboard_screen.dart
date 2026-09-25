@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_bench_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_cards_screen.dart';
+import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_tasks_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -115,6 +116,12 @@ class _DashboardScreen extends State<DashboardScreen> {
 
                 // 📊 COMPONENTE GRÁFICO INTERACTIVO NATIVO
                 const DashboardBench(),
+
+                const SizedBox(
+                  height: 25,
+                ), // Este se mantiene igual para conservar la simetría inferior
+                // 📋 LISTA DE TAREAS RECIENTES
+                const DashboardTasks(),
               ],
             ),
           ),
