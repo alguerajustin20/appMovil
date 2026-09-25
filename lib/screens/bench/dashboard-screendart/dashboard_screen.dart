@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_bench_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_cards_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -109,6 +110,11 @@ class _DashboardScreen extends State<DashboardScreen> {
                     ),
                   ],
                 ),
+
+                const SizedBox(height: 25),
+
+                // 📊 COMPONENTE GRÁFICO INTERACTIVO NATIVO
+                const DashboardBench(),
               ],
             ),
           ),
