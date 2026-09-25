@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+
+import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MainApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'App Móvil',
+
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+        useMaterial3: true,
+
+        //colorSchemeSeed: Colors.purple
       ),
-      home: const HomeScreen(),
+
+      home: const DashboardScreen(),
     );
   }
 }

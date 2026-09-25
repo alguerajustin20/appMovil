@@ -15,13 +15,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
-
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/icons/
-    - assets/icons/inventory/
-    - assets/icons/performance/
-    - assets/icons/admin/
-    - assets/icons/config/
+  assets: 
+    - assets/images/
