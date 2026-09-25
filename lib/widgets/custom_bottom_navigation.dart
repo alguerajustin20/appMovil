@@ -37,8 +37,9 @@ class CustomBottomNavigation extends StatelessWidget {
 
     // 🛡️ ENVOLVEMOS EN SAFEAREA PARA QUE NUNCA SEA TAPADO POR LOS BOTONES DE FÁBRICA
     return SafeArea(
-      top: false,    // Ignora la parte de arriba (barra de notificaciones)
-      bottom: true,  // 👈 LA CLAVE: Empuja el menú hacia arriba dinámicamente si los botones del sistema están visibles
+      top: false, // Ignora la parte de arriba (barra de notificaciones)
+      bottom:
+          true, // 👈 LA CLAVE: Empuja el menú hacia arriba dinámicamente si los botones del sistema están visibles
       child: Container(
         height: 65,
         decoration: const BoxDecoration(
