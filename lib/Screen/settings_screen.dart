@@ -25,9 +25,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotifications = true;
   bool _darkMode = false;
 
-  // TODO: reemplazar con datos reales del usuario autenticado
-  final String _userName = 'Yamil';
-  final String _userEmail = 'yamil@campestre.co';
+  //  reemplazar con datos reales del usuario autenticado maquetado
+  final String _userName = 'Yamil72';
+  final String _userEmail = 'yamil';
   final String _userRole = 'Administrador';
   final String _lastSync = 'hace 2m';
 
@@ -39,22 +39,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppColors.brown),
-          onPressed: () {
-            // TODO: abrir drawer / navegación lateral
-          },
-        ),
+
         title: const Text(
           'Ajustes',
           style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.bold),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: AppColors.brown),
-            onPressed: () {},
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Image.asset(
+              'assets/images/logo_B.png',
+              width: 69,
+              height: 69,
+            ),
           ),
-        ],
+        ], //aquui puedo meter el  logo de la app , pero por ahora lo dejo vacío, ya no
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -65,19 +64,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _settingsCard(
             children: [
               _navTile(
-                icon: Icons.person_outline,
-                label: 'Información Personal',
+                icon: 'assets/icons/admin/usuario_claro.png',
+                label: 'Perfil',
+                trailingText: _userName,
+                trailingColor: AppColors.teal,
                 onTap: () {},
               ),
               _divider(),
               _navTile(
-                icon: Icons.lock_outline,
+                icon: 'assets/icons/security/candado_claro.png',
                 label: 'Seguridad y Contraseña',
                 onTap: () {},
               ),
               _divider(),
               _switchTile(
-                icon: Icons.notifications_active_outlined,
+                icon: 'assets/icons/messages/notificacion_blanca.png',
                 label: 'Notificaciones Push',
                 subtitle: 'Alertas críticas de inventario',
                 value: _pushNotifications,
@@ -90,21 +91,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _settingsCard(
             children: [
               _navTile(
-                icon: Icons.language,
+                icon: 'assets/icons/languages/idioma.png',
                 label: 'Idioma',
                 trailingText: 'Español',
                 onTap: () {},
               ),
               _divider(),
               _switchTile(
-                icon: Icons.dark_mode_outlined,
+                icon: 'assets/icons/mod/modo_nocturno_apagado.png',
                 label: 'Modo Oscuro',
                 value: _darkMode,
                 onChanged: (v) => setState(() => _darkMode = v),
               ),
               _divider(),
               _navTile(
-                icon: Icons.sync,
+                icon: 'assets/icons/backup/sincronizar_blanco.png',
                 label: 'Sincronización de Datos',
                 trailingText: 'Sincronizado: $_lastSync',
                 trailingColor: AppColors.teal,
@@ -119,14 +120,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _settingsCard(
             children: [
               _navTile(
-                icon: Icons.help_outline,
+                icon: 'assets/icons/docs/informacion_blanco.png',
                 label: 'Centro de Ayuda',
                 trailingIcon: Icons.open_in_new,
                 onTap: () {},
               ),
               _divider(),
               _navTile(
-                icon: Icons.info_outline,
+                icon: 'assets/icons/error/signo_de_admiracion_blanco.png',
                 label: 'Acerca de la App',
                 trailingText: 'v2.4.1',
                 onTap: () {},
@@ -185,7 +186,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.teal.withOpacity(0.12),
+                    color: AppColors.teal.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -245,16 +246,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
       const Divider(height: 1, indent: 52, color: AppColors.cardBorder);
 
   Widget _navTile({
-    required IconData icon,
+    required dynamic icon,
     required String label,
     String? trailingText,
     Color? trailingColor,
     IconData? trailingIcon,
     required VoidCallback onTap,
   }) {
+    Widget leading;
+
+    if (icon is String) {
+      leading = SizedBox(
+        width: 22,
+        height: 22,
+        child: Image.asset(
+          icon,
+          fit: BoxFit.contain,
+          color: AppColors.brown,
+          // Si la imagen ya trae colores, el color puede desaturarla.
+          // Se mantiene como icono de estilo consistente.
+        ),
+      );
+    } else {
+      leading = Icon(icon as IconData, color: AppColors.brown, size: 22);
+    }
+
     return ListTile(
       onTap: onTap,
-      leading: Icon(icon, color: AppColors.brown, size: 22),
+      leading: leading,
       title: Text(label, style: const TextStyle(fontSize: 14.5)),
       trailing: trailingIcon != null
           ? Icon(trailingIcon, size: 18, color: AppColors.textMuted)
@@ -271,14 +290,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _switchTile({
-    required IconData icon,
+    required dynamic icon,
     required String label,
     String? subtitle,
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
+    Widget leading;
+
+    if (icon is String) {
+      leading = SizedBox(
+        width: 22,
+        height: 22,
+        child: Image.asset(icon, fit: BoxFit.contain, color: AppColors.brown),
+      );
+    } else {
+      leading = Icon(icon as IconData, color: AppColors.brown, size: 22);
+    }
+
     return ListTile(
-      leading: Icon(icon, color: AppColors.brown, size: 22),
+      leading: leading,
       title: Text(label, style: const TextStyle(fontSize: 14.5)),
       subtitle: subtitle != null
           ? Text(
@@ -288,7 +319,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           : null,
       trailing: Switch(
         value: value,
-        activeColor: AppColors.teal,
+        activeThumbColor: AppColors.teal,
         onChanged: onChanged,
       ),
     );
@@ -301,7 +332,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onPressed: () {
           // TODO: cerrar sesión (limpiar token/estado y navegar a Login)
         },
-        icon: const Icon(Icons.logout, color: AppColors.danger),
+        icon: SizedBox(
+          width: 22,
+          height: 22,
+          child: Image.asset(
+            'assets/icons/log/cerrar_sesion_blanca.png',
+            fit: BoxFit.contain,
+            color: AppColors.danger,
+          ),
+        ),
         label: const Text(
           'CERRAR SESIÓN',
           style: TextStyle(
@@ -310,7 +349,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         style: OutlinedButton.styleFrom(
-          backgroundColor: AppColors.danger.withOpacity(0.08),
+          backgroundColor: AppColors.danger.withValues(alpha: 0.08),
           side: BorderSide.none,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(

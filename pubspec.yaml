@@ -17,3 +17,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/logo_B.png
+    - assets/icons/admin/usuario_claro.png
+    - assets/icons/security/candado_claro.png
+    - assets/icons/messages/notificacion_blanca.png
+    - assets/icons/languages/idioma.png
+    - assets/icons/mod/modo_nocturno_apagado.png
+    - assets/icons/backup/sincronizar_blanco.png
+    - assets/icons/docs/informacion_blanco.png
+    - assets/icons/error/signo_de_admiracion_blanco.png
+    - assets/icons/log/cerrar_sesion_blanca.png
