@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -18,6 +20,7 @@ class MainApp extends StatelessWidget {
         //colorSchemeSeed: Colors.purple
       ),
 
+      home: const DashboardScreen(),
     );
   }
 }
