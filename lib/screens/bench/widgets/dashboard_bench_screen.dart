@@ -21,7 +21,7 @@ class _DashboardBench extends State<DashboardBench> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min, 
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Título interno del gráfico compacto
             const Text(
@@ -32,7 +32,7 @@ class _DashboardBench extends State<DashboardBench> {
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 16), 
+            const SizedBox(height: 16),
 
             // Área del Gráfico Coordinada en Altura
             SizedBox(
@@ -49,13 +49,41 @@ class _DashboardBench extends State<DashboardBench> {
 
                   // Mapeo exacto de tus datos y colores
                   final List<Map<String, dynamic>> barData = [
-                    {'day': 'Lun', 'value': 600.0, 'color': const Color(0xFF036573)},
-                    {'day': 'Mar', 'value': 820.0, 'color': const Color(0xFF036573)},
-                    {'day': 'Mie', 'value': 400.0, 'color': const Color(0xFF036573)},
-                    {'day': 'Jue', 'value': 700.0, 'color': const Color(0xFF90B9C6)},
-                    {'day': 'Vie', 'value': 1000.0, 'color': const Color(0xFF036573)},
-                    {'day': 'Sab', 'value': 300.0, 'color': const Color(0xFF734610)},
-                    {'day': 'Dom', 'value': 500.0, 'color': const Color(0xFF036573)},
+                    {
+                      'day': 'Lun',
+                      'value': 600.0,
+                      'color': const Color(0xFF036573),
+                    },
+                    {
+                      'day': 'Mar',
+                      'value': 820.0,
+                      'color': const Color(0xFF036573),
+                    },
+                    {
+                      'day': 'Mie',
+                      'value': 400.0,
+                      'color': const Color(0xFF036573),
+                    },
+                    {
+                      'day': 'Jue',
+                      'value': 700.0,
+                      'color': const Color(0xFF90B9C6),
+                    },
+                    {
+                      'day': 'Vie',
+                      'value': 1000.0,
+                      'color': const Color(0xFF036573),
+                    },
+                    {
+                      'day': 'Sab',
+                      'value': 300.0,
+                      'color': const Color(0xFF734610),
+                    },
+                    {
+                      'day': 'Dom',
+                      'value': 500.0,
+                      'color': const Color(0xFF036573),
+                    },
                   ];
 
                   return Row(
@@ -63,7 +91,7 @@ class _DashboardBench extends State<DashboardBench> {
                     children: [
                       // 1. EJE Y COHERENTE: Usa exactamente las mismas alturas calculadas matemáticamente
                       SizedBox(
-                        width: 32, 
+                        width: 32,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -77,24 +105,44 @@ class _DashboardBench extends State<DashboardBench> {
                                   Positioned(
                                     bottom: calculateHeight(1000) - 6,
                                     right: 0,
-                                    child: const Text('1000', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                                    child: const Text(
+                                      '1000',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 11,
+                                      ),
+                                    ),
                                   ),
                                   // Etiqueta 500: Alineada a la altura exacta del valor 500
                                   Positioned(
                                     bottom: calculateHeight(500) - 6,
                                     right: 0,
-                                    child: const Text('500', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                                    child: const Text(
+                                      '500',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 11,
+                                      ),
+                                    ),
                                   ),
                                   // Etiqueta 0: Alineada a la base exacta del gráfico
                                   Positioned(
                                     bottom: calculateHeight(0) - 6,
                                     right: 0,
-                                    child: const Text('0', style: TextStyle(color: Colors.grey, fontSize: 11)),
+                                    child: const Text(
+                                      '0',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 11,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 25), // 👈 Compensación exacta de la altura de la etiqueta de los días
+                            const SizedBox(
+                              height: 25,
+                            ), // 👈 Compensación exacta de la altura de la etiqueta de los días
                           ],
                         ),
                       ),
@@ -186,7 +234,7 @@ class _DashboardBench extends State<DashboardBench> {
               ),
             ),
           ),
-          
+
           // La Barra del Gráfico
           AnimatedContainer(
             duration: const Duration(milliseconds: 180),
@@ -209,7 +257,7 @@ class _DashboardBench extends State<DashboardBench> {
                   : [],
             ),
           ),
-          
+
           // Etiqueta de días (Ocupa exactamente 25px de alto total)
           const SizedBox(height: 8),
           SizedBox(
