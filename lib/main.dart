@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/screens/home_screen.dart';
-
 import 'screens/security/login_screen.dart';
 
 void main() {
