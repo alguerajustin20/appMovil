@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
 
+import 'screens/security/login_screen.dart';
+
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -20,7 +22,7 @@ class MainApp extends StatelessWidget {
         //colorSchemeSeed: Colors.purple
       ),
 
-      home: const DashboardScreen(),
+      home: LoginScreen(),
     );
   }
 }
