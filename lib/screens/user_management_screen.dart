@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
+import 'package:integrador_vi_mobile/screens/prueba1/prueba1-screendart/prueba1.dart';
+import 'package:integrador_vi_mobile/screens/prueba2/prueba2-screendart/prueba2.dart';
 import '../widgets/custom_bottom_navigation.dart';
 
 class UserManagementScreen extends StatefulWidget {
@@ -10,7 +13,14 @@ class UserManagementScreen extends StatefulWidget {
 
 class _UserManagementScreenState extends State<UserManagementScreen> {
   int selectedFilter = 0;
-  final List<String> filters = ['Todos', 'Admin', 'Meseros', 'Cocineros', 'Cajero'];
+  final List<String> filters = [
+    'Todos',
+    'Admin',
+    'Meseros',
+    'Cocineros',
+    'Cajero',
+  ];
+  int _currentIndex = 2;
 
   void _showAddUserDialog() {
     final nameController = TextEditingController();
@@ -24,15 +34,28 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Nombre')),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nombre'),
+            ),
             const SizedBox(height: 10),
-            TextField(controller: roleController, decoration: const InputDecoration(labelText: 'Rol (Admin, Mesero, etc.)')),
+            TextField(
+              controller: roleController,
+              decoration: const InputDecoration(
+                labelText: 'Rol (Admin, Mesero, etc.)',
+              ),
+            ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF007A8C)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF007A8C),
+            ),
             onPressed: () => Navigator.pop(context),
             child: const Text('Guardar', style: TextStyle(color: Colors.white)),
           ),
@@ -43,6 +66,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _currentIndex = 2;
+    });
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
@@ -51,9 +77,19 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Usuarios', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black87)),
+              const Text(
+                'Usuarios',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
               const SizedBox(height: 4),
-              const Text('Gestiona el acceso y los roles del personal', style: TextStyle(fontSize: 14, color: Colors.grey)),
+              const Text(
+                'Gestiona el acceso y los roles del personal',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
               const SizedBox(height: 20),
               TextField(
                 decoration: InputDecoration(
@@ -62,7 +98,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   filled: true,
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -80,13 +119,20 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         backgroundColor: Colors.white,
                         labelStyle: TextStyle(
                           color: isSelected ? Colors.black : Colors.black87,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: isSelected ? Colors.transparent : Colors.grey.shade300),
+                          side: BorderSide(
+                            color: isSelected
+                                ? Colors.transparent
+                                : Colors.grey.shade300,
+                          ),
                         ),
-                        onSelected: (bool selected) => setState(() => selectedFilter = index),
+                        onSelected: (bool selected) =>
+                            setState(() => selectedFilter = index),
                       ),
                     );
                   }),
@@ -94,7 +140,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               ),
               const Expanded(
                 child: Center(
-                  child: Text('No hay usuarios registrados', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                  child: Text(
+                    'No hay usuarios registrados',
+                    style: TextStyle(color: Colors.grey, fontSize: 15),
+                  ),
                 ),
               ),
             ],
@@ -107,7 +156,36 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
-      bottomNavigationBar: CustomBottomNavigation(currentIndex: 2, onTap: (index) {}),
+
+      bottomNavigationBar: CustomBottomNavigation(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DashboardScreen()),
+            );
+          }
+
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Prueba1()),
+            );
+          }
+
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Prueba2()),
+            );
+          }
+        },
+      ),
     );
   }
 }

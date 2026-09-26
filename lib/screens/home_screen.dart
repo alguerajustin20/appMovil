@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
+import 'package:integrador_vi_mobile/screens/prueba1/prueba1-screendart/prueba1.dart';
+import 'package:integrador_vi_mobile/screens/prueba2/prueba2-screendart/prueba2.dart';
 import '../widgets/custom_bottom_navigation.dart';
 import 'user_management_screen.dart';
 
@@ -10,10 +13,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
+  int _currentIndex = 4;
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _currentIndex = 4;
+    });
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
@@ -30,21 +36,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 44,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFF007A8C), width: 1.5),
+                      border: Border.all(
+                        color: const Color(0xFF007A8C),
+                        width: 1.5,
+                      ),
                     ),
                     child: ClipOval(
                       child: Image.asset(
                         'assets/icons/user/usuario_claro.png',
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.person,
-                          color: Color(0xFF007A8C),
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.person, color: Color(0xFF007A8C)),
                       ),
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.notifications_none_outlined, size: 28),
+                    icon: const Icon(
+                      Icons.notifications_none_outlined,
+                      size: 28,
+                    ),
                     color: const Color(0xFF2D3142),
                     onPressed: () {},
                   ),
@@ -64,14 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 4),
               const Text(
                 'Buenas tardes • Martes, 12 de Octubre',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF64748B),
-                ),
+                style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
               ),
               const SizedBox(height: 24),
 
-            
               _buildMenuCard(
                 iconPath: 'assets/icons/performance/miniaturas_claro.png',
                 fallbackIcon: Icons.grid_view_rounded,
@@ -79,7 +85,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconColor: const Color(0xFF007A8C),
                 title: 'Dashboard',
                 subtitle: 'Ver KPIs y resumen del negocio',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardScreen(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 14),
 
@@ -90,11 +103,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconColor: const Color(0xFFD97706),
                 title: 'Inventario',
                 subtitle: 'Gestionar stock y productos',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Prueba1()),
+                  );
+                },
               ),
               const SizedBox(height: 14),
 
-              
               _buildMenuCard(
                 iconPath: 'assets/icons/user/usuario_claro.png',
                 fallbackIcon: Icons.group_outlined,
@@ -120,11 +137,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconColor: const Color(0xFF64748B),
                 title: 'Ajustes',
                 subtitle: 'Configuración y seguridad',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Prueba2()),
+                  );
+                },
               ),
               const SizedBox(height: 28),
 
-        
               const Text(
                 'RESUMEN RÁPIDO',
                 style: TextStyle(
@@ -156,13 +177,27 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-     
       bottomNavigationBar: CustomBottomNavigation(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
+
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DashboardScreen()),
+            );
+          }
+
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Prueba1()),
+            );
+          }
+
           if (index == 2) {
             Navigator.push(
               context,
@@ -171,12 +206,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }
+
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Prueba2()),
+            );
+          }
         },
       ),
     );
   }
 
-  
   Widget _buildMenuCard({
     required String iconPath,
     required IconData fallbackIcon,
@@ -222,11 +263,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 24,
                       fit: BoxFit.contain,
                       color: iconColor,
-                      errorBuilder: (context, error, stackTrace) => Icon(
-                        fallbackIcon,
-                        color: iconColor,
-                        size: 24,
-                      ),
+                      errorBuilder: (context, error, stackTrace) =>
+                          Icon(fallbackIcon, color: iconColor, size: 24),
                     ),
                   ),
                 ),
