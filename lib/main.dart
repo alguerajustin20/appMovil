@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/home_screen.dart';
 
+import 'screens/security/login_screen.dart';
+
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -19,7 +21,7 @@ class MainApp extends StatelessWidget {
         //colorSchemeSeed: Colors.purple
       ),
 
-      home: HomeScreen(),
+      home: LoginScreen(),
     );
   }
 }
