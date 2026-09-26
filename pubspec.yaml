@@ -23,6 +23,11 @@ flutter:
     - assets/icons/mail/email_oscuro.png
     - assets/icons/security/candado_oscuro.png
     - assets/icons/view/ojo_negro.png
+    - assets/images/
+    - assets/icons/inventory/
+    - assets/icons/performance/
+    - assets/icons/admin/
+    - assets/icons/config/
 
 flutter_launcher_icons:
   android: true

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_bench_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_cards_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_tasks_screen.dart';
-import 'package:integrador_vi_mobile/screens/home_screen.dart';
+//import 'package:integrador_vi_mobile/screens/home_screen.dart';
 import 'package:integrador_vi_mobile/screens/prueba1/prueba1-screendart/prueba1.dart';
 import 'package:integrador_vi_mobile/screens/prueba2/prueba2-screendart/prueba2.dart';
 import 'package:integrador_vi_mobile/screens/user_management_screen.dart';
@@ -25,6 +25,9 @@ class _DashboardScreen extends State<DashboardScreen> {
     });
     return Scaffold(
       appBar: AppBar(
+        // 👈 LA CLAVE DE LA SOLUCIÓN: Elimina el botón automático y libera todo el espacio de la izquierda
+        automaticallyImplyLeading: false,
+        /*
         leading: IconButton(
           onPressed: () {
             Navigator.push(
@@ -32,8 +35,9 @@ class _DashboardScreen extends State<DashboardScreen> {
               MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           },
-          icon: Icon(Icons.menu),
+          icon: Icon(Icons.home),
         ),
+        */
 
         toolbarHeight:
             65.0, // 👈 Incrementa el alto de la barra para que el logo pueda crecer
