@@ -1,18 +1,8 @@
 import 'package:flutter/material.dart';
-
-/// Paleta "Campestre" (Adobe Color) usada en todo el proyecto.
-class AppColors {
-  static const teal = Color(0xFF03738C);
-  static const tealDark = Color(0xFF037F8C);
-  static const brown = Color(0xFF734610);
-  static const brownLight = Color(0xFFA6671B);
-  static const mustard = Color(0xFFFF910F);
-  static const mustardLight = Color(0xFFFDB653);
-  static const background = Color(0xFFF7F7F5);
-  static const cardBorder = Color(0xFFE9E5DE);
-  static const textMuted = Color(0xFF8A8A8A);
-  static const danger = Color(0xFFD9534F);
-}
+import '../widgets/custom_bottom_navigation.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_theme.dart';
+import '../main_dev_mauro.dart'; // ajusta la ruta según dónde esté settings_screen.dart
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -23,9 +13,8 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotifications = true;
-  bool _darkMode = false;
 
-  //  reemplazar con datos reales del usuario autenticado maquetado
+  // reemplazar con datos reales del usuario autenticado
   final String _userName = 'Yamil72';
   final String _userEmail = 'yamil';
   final String _userRole = 'Administrador';
@@ -33,16 +22,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // sin backgroundColor — lo toma de AppTheme.light/dark (scaffoldBackgroundColor)
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-
-        title: const Text(
+        title: Text(
           'Ajustes',
-          style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: isDark ? Colors.white : AppColors.teal,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           Padding(
@@ -53,18 +45,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               height: 69,
             ),
           ),
-        ], //aquui puedo meter el  logo de la app , pero por ahora lo dejo vacío, ya no
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildProfileCard(),
+          _buildProfileCard(context, isDark),
           const SizedBox(height: 20),
-          _sectionLabel('CUENTA'),
+          _sectionLabel('CUENTA', isDark),
           _settingsCard(
+            isDark: isDark,
             children: [
               _navTile(
-                icon: 'assets/icons/admin/usuario_claro.png',
+                isDark: isDark,
+                icon: isDark
+                    ? 'assets/icons/admin/usuario_negro.png'
+                    : 'assets/icons/admin/usuario_claro.png',
                 label: 'Perfil',
                 trailingText: _userName,
                 trailingColor: AppColors.teal,
@@ -72,13 +68,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               _divider(),
               _navTile(
-                icon: 'assets/icons/security/candado_claro.png',
+                isDark: isDark,
+                icon: isDark
+                    ? 'assets/icons/security/candado_oscuro.png'
+                    : 'assets/icons/security/candado_claro.png',
                 label: 'Seguridad y Contraseña',
                 onTap: () {},
               ),
               _divider(),
               _switchTile(
-                icon: 'assets/icons/messages/notificacion_blanca.png',
+                isDark: isDark,
+                icon: isDark
+                    ? 'assets/icons/messages/notificacion_negra.png'
+                    : 'assets/icons/messages/notificacion_blanca.png',
                 label: 'Notificaciones Push',
                 subtitle: 'Alertas críticas de inventario',
                 value: _pushNotifications,
@@ -87,10 +89,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          _sectionLabel('PREFERENCIAS'),
+          _sectionLabel('PREFERENCIAS', isDark),
           _settingsCard(
+            isDark: isDark,
             children: [
               _navTile(
+                isDark: isDark,
                 icon: 'assets/icons/languages/idioma.png',
                 label: 'Idioma',
                 trailingText: 'Español',
@@ -98,14 +102,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               _divider(),
               _switchTile(
-                icon: 'assets/icons/mod/modo_nocturno_apagado.png',
+                isDark: isDark,
+                icon: isDark
+                    ? 'assets/icons/mod/modo_nocturno.png'
+                    : 'assets/icons/mod/modo_nocturno_apagado.png',
                 label: 'Modo Oscuro',
-                value: _darkMode,
-                onChanged: (v) => setState(() => _darkMode = v),
+                value: themeNotifier.value == ThemeMode.dark,
+                onChanged: (v) {
+                  themeNotifier.value = v ? ThemeMode.dark : ThemeMode.light;
+                  setState(() {});
+                },
               ),
               _divider(),
               _navTile(
-                icon: 'assets/icons/backup/sincronizar_blanco.png',
+                isDark: isDark,
+                icon: isDark
+                    ? 'assets/icons/backup/sincronizar_negro.png'
+                    : 'assets/icons/backup/sincronizar_blanco.png',
                 label: 'Sincronización de Datos',
                 trailingText: 'Sincronizado: $_lastSync',
                 trailingColor: AppColors.teal,
@@ -116,18 +129,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          _sectionLabel('SOPORTE'),
+          _sectionLabel('SOPORTE', isDark),
           _settingsCard(
+            isDark: isDark,
             children: [
               _navTile(
-                icon: 'assets/icons/docs/informacion_blanco.png',
+                isDark: isDark,
+                icon: isDark
+                    ? 'assets/icons/docs/informacion_negro.png'
+                    : 'assets/icons/docs/informacion_blanco.png',
                 label: 'Centro de Ayuda',
                 trailingIcon: Icons.open_in_new,
                 onTap: () {},
               ),
               _divider(),
               _navTile(
-                icon: 'assets/icons/error/signo_de_admiracion_blanco.png',
+                isDark: isDark,
+                icon: isDark
+                    ? 'assets/icons/error/signo_de_admiracion_negro.png'
+                    : 'assets/icons/error/signo_de_admiracion_blanco.png',
+
                 label: 'Acerca de la App',
                 trailingText: 'v2.4.1',
                 onTap: () {},
@@ -139,19 +160,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 8),
         ],
       ),
-      bottomNavigationBar: _bottomNavBar(),
+      bottomNavigationBar: SafeArea(
+        child: CustomBottomNavigation(currentIndex: 3, onTap: (index) {}),
+      ),
     );
   }
 
   // ---------- Piezas reutilizables ----------
 
-  Widget _buildProfileCard() {
+  Widget _buildProfileCard(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkCardBorder : AppColors.cardBorder,
+        ),
       ),
       child: Row(
         children: [
@@ -167,15 +192,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Text(
                   _userName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 Text(
                   _userEmail,
-                  style: const TextStyle(
-                    color: AppColors.textMuted,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextMuted
+                        : AppColors.textMuted,
                     fontSize: 13,
                   ),
                 ),
@@ -216,13 +244,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _sectionLabel(String text) {
+  Widget _sectionLabel(String text, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, left: 4),
       child: Text(
         text,
-        style: const TextStyle(
-          color: AppColors.brownLight,
+        style: TextStyle(
+          color: isDark ? AppColors.mustardLight : AppColors.brownLight,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.5,
@@ -231,12 +259,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _settingsCard({required List<Widget> children}) {
+  Widget _settingsCard({required bool isDark, required List<Widget> children}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkCardBorder : AppColors.cardBorder,
+        ),
       ),
       child: Column(children: children),
     );
@@ -246,6 +276,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       const Divider(height: 1, indent: 52, color: AppColors.cardBorder);
 
   Widget _navTile({
+    required bool isDark,
     required dynamic icon,
     required String label,
     String? trailingText,
@@ -262,34 +293,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Image.asset(
           icon,
           fit: BoxFit.contain,
-          color: AppColors.brown,
-          // Si la imagen ya trae colores, el color puede desaturarla.
-          // Se mantiene como icono de estilo consistente.
+          // Sin "color:" — estos PNG ya vienen diseñados en su tono
+          // correcto (claro/blanco); forzar un tinte los aplastaba.
+          errorBuilder: (context, error, stackTrace) => Icon(
+            Icons.image_not_supported,
+            size: 22,
+            color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+          ),
         ),
       );
     } else {
-      leading = Icon(icon as IconData, color: AppColors.brown, size: 22);
+      leading = Icon(
+        icon as IconData,
+        color: isDark ? Colors.white : AppColors.brown,
+        size: 22,
+      );
     }
 
     return ListTile(
       onTap: onTap,
       leading: leading,
-      title: Text(label, style: const TextStyle(fontSize: 14.5)),
+      title: Text(
+        label,
+        style: TextStyle(
+          fontSize: 14.5,
+          color: isDark ? Colors.white : Colors.black87,
+        ),
+      ),
       trailing: trailingIcon != null
-          ? Icon(trailingIcon, size: 18, color: AppColors.textMuted)
+          ? Icon(
+              trailingIcon,
+              size: 18,
+              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+            )
           : trailingText != null
           ? Text(
               trailingText,
               style: TextStyle(
-                color: trailingColor ?? AppColors.textMuted,
+                color:
+                    trailingColor ??
+                    (isDark ? AppColors.darkTextMuted : AppColors.textMuted),
                 fontSize: 13,
               ),
             )
-          : const Icon(Icons.chevron_right, color: AppColors.textMuted),
+          : Icon(
+              Icons.chevron_right,
+              color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+            ),
     );
   }
 
   Widget _switchTile({
+    required bool isDark,
     required dynamic icon,
     required String label,
     String? subtitle,
@@ -302,19 +357,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
       leading = SizedBox(
         width: 22,
         height: 22,
-        child: Image.asset(icon, fit: BoxFit.contain, color: AppColors.brown),
+        child: Image.asset(
+          icon,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) => Icon(
+            Icons.image_not_supported,
+            size: 22,
+            color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+          ),
+        ),
       );
     } else {
-      leading = Icon(icon as IconData, color: AppColors.brown, size: 22);
+      leading = Icon(
+        icon as IconData,
+        color: isDark ? Colors.white : AppColors.brown,
+        size: 22,
+      );
     }
 
     return ListTile(
       leading: leading,
-      title: Text(label, style: const TextStyle(fontSize: 14.5)),
+      title: Text(
+        label,
+        style: TextStyle(
+          fontSize: 14.5,
+          color: isDark ? Colors.white : Colors.black87,
+        ),
+      ),
       subtitle: subtitle != null
           ? Text(
               subtitle,
-              style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+              style: TextStyle(
+                color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                fontSize: 12,
+              ),
             )
           : null,
       trailing: Switch(
@@ -357,34 +433,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _bottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: 3, // Ajustes activo
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: AppColors.teal,
-      unselectedItemColor: AppColors.textMuted,
-      showUnselectedLabels: true,
-      onTap: (index) {
-        // TODO: navegar entre Panel / Inventario / Usuarios / Ajustes
-      },
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.grid_view_rounded),
-          label: 'Panel',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.inventory_2_outlined),
-          label: 'Inventario',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.people_outline),
-          label: 'Usuarios',
-        ),
-        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Ajustes'),
-      ],
     );
   }
 }
