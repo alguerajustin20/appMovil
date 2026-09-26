@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'screens/security/login_screen.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -15,12 +14,12 @@ class MainApp extends StatelessWidget {
 
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF6EDF7),
 
-        //colorSchemeSeed: Colors.purple
+        //colorSchemeSeed: Colors.pink
       ),
 
-      home: LoginScreen(),
+      //home: const SecureScreen(),
+      home: const MaterialApp(),
     );
   }
 }
