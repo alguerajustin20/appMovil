@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
-import 'package:integrador_vi_mobile/screens/prueba1/prueba1-screendart/prueba1.dart';
-import 'package:integrador_vi_mobile/screens/prueba2/prueba2-screendart/prueba2.dart';
-import '../widgets/custom_bottom_navigation.dart';
+//import '../widgets/custom_bottom_navigation.dart';
 import 'user_management_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,12 +11,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 4;
+  // int _currentIndex = 4;
 
   @override
   Widget build(BuildContext context) {
     setState(() {
-      _currentIndex = 4;
+      //  _currentIndex = 4;
     });
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -95,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               const SizedBox(height: 14),
-
+              /* 
               _buildMenuCard(
                 iconPath: 'assets/icons/inventory/archivo_caja_negra.png',
                 fallbackIcon: Icons.inventory_2_outlined,
@@ -104,12 +102,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'Inventario',
                 subtitle: 'Gestionar stock y productos',
                 onTap: () {
-                  Navigator.push(
+                Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const Prueba1()),
                   );
                 },
-              ),
+              ),*/
               const SizedBox(height: 14),
 
               _buildMenuCard(
@@ -129,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               const SizedBox(height: 14),
-
+              /*
               _buildMenuCard(
                 iconPath: 'assets/icons/config/ajuste_negro.png',
                 fallbackIcon: Icons.settings_outlined,
@@ -143,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(builder: (context) => const Prueba2()),
                   );
                 },
-              ),
+              ),*/
               const SizedBox(height: 28),
 
               const Text(
@@ -176,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-
+      /* no norrar solo comentarie esto para que la barra de navegacion no se vea en el home screen
       bottomNavigationBar: CustomBottomNavigation(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -214,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
         },
-      ),
+      ),hasta aqui llega el codigo para que la barra de navegacion no se vea en el home screen*/
     );
   }
 

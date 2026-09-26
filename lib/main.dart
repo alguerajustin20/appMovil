@@ -15,6 +15,7 @@ class MainApp extends StatelessWidget {
 
       theme: ThemeData(
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF6EDF7),
 
         //colorSchemeSeed: Colors.purple
       ),
