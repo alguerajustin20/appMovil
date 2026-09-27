@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme/app_theme.dart';
-import 'screens/settings_screen.dart'; // ajusta la ruta real
+import 'screens/settings/settings_screen.dart'; // ajusta la ruta real
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 

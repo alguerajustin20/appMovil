@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
+import 'package:integrador_vi_mobile/screens/security/login_screen.dart';
 import 'theme/app_theme.dart';
 
 /// Interruptor global de tema — cualquier pantalla puede leerlo o cambiarlo.
@@ -23,7 +23,7 @@ class MainApp extends StatelessWidget {
           themeMode: currentMode,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
-          home: const DashboardScreen(),
+          home: const LoginScreen(),
         );
       },
     );

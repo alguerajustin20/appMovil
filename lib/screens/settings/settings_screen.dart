@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_bottom_navigation.dart';
-import '../theme/app_colors.dart';
-import '../main_dev_mauro.dart'; // ajusta la ruta según dónde esté settings_screen.dart
+import '../../widgets/custom_bottom_navigation.dart';
+import '../../theme/app_colors.dart';
+import '../../main_dev_mauro.dart'; // ajusta la ruta según dónde esté settings_screen.dart
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -159,8 +159,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 8),
         ],
       ),
+
       bottomNavigationBar: SafeArea(
-        child: CustomBottomNavigation(currentIndex: 3, onTap: (index) {}),
+        child: CustomBottomNavigation(currentIndex: 3),
       ),
     );
   }

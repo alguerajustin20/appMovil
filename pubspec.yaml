@@ -14,6 +14,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -29,6 +30,7 @@ flutter:
     - assets/icons/languages/idioma.png
     - assets/icons/mod/modo_nocturno_apagado.png
     - assets/icons/mod/modo_nocturno.png
+    - assets/icons/mod/modo_nocturno_encendido.png
     - assets/icons/backup/sincronizar_blanco.png
     - assets/icons/backup/sincronizar_negro.png
     - assets/icons/docs/informacion_blanco.png
@@ -36,11 +38,23 @@ flutter:
     - assets/icons/error/signo_de_admiracion_blanco.png
     - assets/icons/error/signo_de_admiracion_negro.png
     - assets/icons/log/cerrar_sesion_blanca.png 
-    - assets/icons/log/cerrar_sesion _negro.png
+    - assets/icons/log/cerrar_sesion_negro.png
     - assets/icons/performance/miniaturas_claro.png
     - assets/icons/performance/miniaturas_oscuro.png
-    - assets/icons/inventory/archivo_caja_.png
+    - assets/icons/inventory/archivo_caja_blanca.png
     - assets/icons/inventory/archivo_caja_negra.png
     - assets/icons/config/ajuste_blanco.png
     - assets/icons/config/ajuste_negro.png
+    - assets/icons/mail/email_oscuro.png
+    - assets/icons/security/candado_oscuro.png
+    - assets/icons/view/ojo_negro.png
     - assets/images/
+    - assets/icons/inventory/
+    - assets/icons/performance/
+    - assets/icons/admin/
+    - assets/icons/config/
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/logo_B.png"

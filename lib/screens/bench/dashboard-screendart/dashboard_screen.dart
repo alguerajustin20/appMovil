@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_bench_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_cards_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_tasks_screen.dart';
+import 'package:integrador_vi_mobile/screens/manager/user_management_screen.dart';
+import 'package:integrador_vi_mobile/widgets/custom_bottom_navigation.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -11,10 +13,29 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreen extends State<DashboardScreen> {
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _currentIndex = 0;
+    });
     return Scaffold(
       appBar: AppBar(
+        // 👈 LA CLAVE DE LA SOLUCIÓN: Elimina el botón automático y libera todo el espacio de la izquierda
+        automaticallyImplyLeading: false,
+        /*
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
+          icon: Icon(Icons.home),
+        ),
+        */
+
         toolbarHeight:
             65.0, // 👈 Incrementa el alto de la barra para que el logo pueda crecer
         iconTheme: const IconThemeData(color: Colors.blueGrey),
@@ -40,11 +61,10 @@ class _DashboardScreen extends State<DashboardScreen> {
           ),
         ],
       ),
-      // 2. 🛡️ Envolvemos todo el contenido en un SafeArea configurado para proteger la parte inferior (bottom: true)
+      // 🛡️ Modificado: Cambiamos bottom a false para que la navegación se acople perfectamente abajo
       body: SafeArea(
-        top: false, // El AppBar ya protege la parte superior automáticamente
-        bottom:
-            true, // 👈 Evita milimétricamente que los botones del celular tapen los widgets
+        top: false,
+        bottom: false, // El espacio del sistema lo maneja el menú inferior
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -122,11 +142,53 @@ class _DashboardScreen extends State<DashboardScreen> {
                 ), // Este se mantiene igual para conservar la simetría inferior
                 // 📋 LISTA DE TAREAS RECIENTES
                 const DashboardTasks(),
+
+                const SizedBox(height: 15),
               ],
             ),
           ),
         ),
       ),
+
+bottomNavigationBar: const CustomBottomNavigation(
+        currentIndex: 0,
+      ),
     );
   }
 }
+     
+     /* 
+     comentarie esta parte porque el widget custombottomnavigation ya se encarga de la navegacion internamente.
+     bottomNavigationBar: CustomBottomNavigation(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+           if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const prueba1()),
+            );
+          }
+
+          if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserManagementScreen(),
+              ),
+            );
+          }
+
+           if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const prueba2()),
+            );
+          }
+        },
+      ),
+    );
+  }
+}*/
