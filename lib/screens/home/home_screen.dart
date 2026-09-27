@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
 import '../manager/user_management_screen.dart';
 import '../inventory/add_product_screen.dart';
+import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   // int _currentIndex = 4;
-//  validacion para que cuando el usuario le de atras no pueda salir de la aplicacion
+  //  validacion para que cuando el usuario le de atras no pueda salir de la aplicacion
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -24,7 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: const Color(0xFFF8F9FA),
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -46,7 +50,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           'assets/icons/user/usuario_claro.png',
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.person, color: Color(0xFF007A8C)),
+                              const Icon(
+                                Icons.person,
+                                color: Color(0xFF007A8C),
+                              ),
                         ),
                       ),
                     ),
@@ -106,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AddProductScreen()),
+                        builder: (context) => const AddProductScreen(),
+                      ),
                     );
                   },
                 ),
@@ -137,7 +145,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   iconColor: const Color(0xFF64748B),
                   title: 'Ajustes',
                   subtitle: 'Configuración y seguridad',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsScreen(),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 28),
 

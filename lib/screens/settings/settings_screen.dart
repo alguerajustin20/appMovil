@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../widgets/custom_bottom_navigation.dart';
 import '../../theme/app_colors.dart';
-import '../../main_dev_mauro.dart'; // ajusta la ruta según dónde esté settings_screen.dart
+import '../../main.dart'; // ajusta la ruta según dónde esté settings_screen.dart
+import '../security/login_screen.dart'; // ajusta la ruta según dónde esté home_screen.dart
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -69,8 +70,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _navTile(
                 isDark: isDark,
                 icon: isDark
-                    ? 'assets/icons/security/candado_oscuro.png'
-                    : 'assets/icons/security/candado_claro.png',
+                    ? 'assets/icons/security/candado_claro.png'
+                    : 'assets/icons/security/candado_oscuro.png',
                 label: 'Seguridad y Contraseña',
                 onTap: () {},
               ),
@@ -135,8 +136,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _navTile(
                 isDark: isDark,
                 icon: isDark
-                    ? 'assets/icons/docs/informacion_negro.png'
-                    : 'assets/icons/docs/informacion_blanco.png',
+                    ? 'assets/icons/docs/informacion_blanco.png'
+                    : 'assets/icons/docs/informacion_negro.png',
                 label: 'Centro de Ayuda',
                 trailingIcon: Icons.open_in_new,
                 onTap: () {},
@@ -145,8 +146,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _navTile(
                 isDark: isDark,
                 icon: isDark
-                    ? 'assets/icons/error/signo_de_admiracion_negro.png'
-                    : 'assets/icons/error/signo_de_admiracion_blanco.png',
+                    ? 'assets/icons/error/signo_de_admiracion_blanco.png'
+                    : 'assets/icons/error/signo_de_admiracion_negro.png',
 
                 label: 'Acerca de la App',
                 trailingText: 'v2.4.1',
@@ -406,7 +407,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: () {
-          // TODO: cerrar sesión (limpiar token/estado y navegar a Login)
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            (route) => false,
+          ); // TODO: cerrar sesión (limpiar token/estado y navegar a Login)
         },
         icon: SizedBox(
           width: 22,
