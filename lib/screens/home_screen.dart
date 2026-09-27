@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_bottom_navigation.dart';
 import 'user_management_screen.dart';
+import 'add_product_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,8 +10,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 24),
 
-              // --- SALUDO ---
               const Text(
                 'Hola, ',
                 style: TextStyle(
@@ -71,7 +68,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 24),
 
-            
               _buildMenuCard(
                 iconPath: 'assets/icons/performance/miniaturas_claro.png',
                 fallbackIcon: Icons.grid_view_rounded,
@@ -90,11 +86,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 iconColor: const Color(0xFFD97706),
                 title: 'Inventario',
                 subtitle: 'Gestionar stock y productos',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddProductScreen(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 14),
 
-              
               _buildMenuCard(
                 iconPath: 'assets/icons/user/usuario_claro.png',
                 fallbackIcon: Icons.group_outlined,
@@ -124,7 +126,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 28),
 
-        
               const Text(
                 'RESUMEN RÁPIDO',
                 style: TextStyle(
@@ -155,28 +156,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-
-     
-      bottomNavigationBar: CustomBottomNavigation(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserManagementScreen(),
-              ),
-            );
-          }
-        },
-      ),
     );
   }
 
-  
   Widget _buildMenuCard({
     required String iconPath,
     required IconData fallbackIcon,
@@ -262,7 +244,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- WIDGET AUXILIAR PARA RESUMEN RÁPIDO ---
   Widget _buildQuickSummaryCard({
     required IconData icon,
     required Color iconBgColor,

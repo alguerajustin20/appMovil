@@ -9,92 +9,127 @@ class UserManagementScreen extends StatefulWidget {
 }
 
 class _UserManagementScreenState extends State<UserManagementScreen> {
-  int selectedFilter = 0;
-  final List<String> filters = ['Todos', 'Admin', 'Meseros', 'Cocineros', 'Cajero'];
+  String _selectedFilter = 'Todos';
+  final TextEditingController _searchController = TextEditingController();
 
-  void _showAddUserDialog() {
-    final nameController = TextEditingController();
-    final roleController = TextEditingController();
+  final List<String> _filters = [
+    'Todos',
+    'Admins',
+    'Cajeros',
+    'Cocineros',
+    'Meseros ',
+  ];
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Agregar Usuario'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Nombre')),
-            const SizedBox(height: 10),
-            TextField(controller: roleController, decoration: const InputDecoration(labelText: 'Rol (Admin, Mesero, etc.)')),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF007A8C)),
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Guardar', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF8F9FA),
+        elevation: 0,
+        titleSpacing: 20,
+        title: const Text(
+          'Gestión de Usuarios',
+          style: TextStyle(
+            color: Color(0xFF1E293B),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Usuarios', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black87)),
-              const SizedBox(height: 4),
-              const Text('Gestiona el acceso y los roles del personal', style: TextStyle(fontSize: 14, color: Colors.grey)),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
               TextField(
+                controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Buscar usuario...',
-                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  hintText: 'Buscar usuario por nombre o correo...',
+                  hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
+                  prefixIcon: const Icon(Icons.search, color: Color(0xFF64748B)),
                   filled: true,
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xFF007A8C), width: 1.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(filters.length, (index) {
-                    final isSelected = selectedFilter == index;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ChoiceChip(
-                        label: Text(filters[index]),
-                        selected: isSelected,
-                        selectedColor: const Color(0xFF4DD0E1),
-                        backgroundColor: Colors.white,
-                        labelStyle: TextStyle(
-                          color: isSelected ? Colors.black : Colors.black87,
+              SizedBox(
+                height: 36,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _filters.length,
+                  separatorBuilder: (context, index) => const SizedBox(width: 8),
+                  itemBuilder: (context, index) {
+                    final filter = _filters[index];
+                    final isSelected = _selectedFilter == filter;
+
+                    return ChoiceChip(
+                      label: Text(
+                        filter,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : const Color(0xFF64748B),
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontSize: 13,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: isSelected ? Colors.transparent : Colors.grey.shade300),
-                        ),
-                        onSelected: (bool selected) => setState(() => selectedFilter = index),
                       ),
+                      selected: isSelected,
+                      selectedColor: const Color(0xFF007A8C),
+                      backgroundColor: Colors.white,
+                      side: BorderSide(
+                        color: isSelected ? const Color(0xFF007A8C) : const Color(0xFFE2E8F0),
+                      ),
+                      onSelected: (selected) {
+                        setState(() {
+                          _selectedFilter = filter;
+                        });
+                      },
                     );
-                  }),
+                  },
                 ),
               ),
-              const Expanded(
+              const SizedBox(height: 20),
+              Expanded(
                 child: Center(
-                  child: Text('No hay usuarios registrados', style: TextStyle(color: Colors.grey, fontSize: 15)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.group_outlined,
+                        size: 64,
+                        color: Colors.grey.shade400,
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'No hay usuarios registrados',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Color(0xFF64748B),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -102,12 +137,13 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddUserDialog,
+        onPressed: () {},
         backgroundColor: const Color(0xFF007A8C),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
-      bottomNavigationBar: CustomBottomNavigation(currentIndex: 2, onTap: (index) {}),
+      bottomNavigationBar: const CustomBottomNavigation(
+        currentIndex: 2,
+      ),
     );
   }
 }
