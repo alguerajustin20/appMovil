@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'package:integrador_vi_mobile/screens/security/login_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MainApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'App Móvil',
+
       theme: ThemeData(
+        useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFFF8F9FA),
       ),
-      home: const HomeScreen(),
+
+      home: const LoginScreen(),
     );
   }
 }

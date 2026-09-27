@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../screens/add_product_screen.dart';
-import '../screens/user_management_screen.dart';
+import '../screens/bench/dashboard-screendart/dashboard_screen.dart'; 
+import '../screens/inventory/add_product_screen.dart';
+import '../screens/manager/user_management_screen.dart';
 
 class CustomBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -15,6 +16,9 @@ class CustomBottomNavigation extends StatelessWidget {
 
     Widget targetScreen;
     switch (index) {
+      case 0: // 
+        targetScreen = const DashboardScreen();
+        break;
       case 1:
         targetScreen = const AddProductScreen();
         break;
@@ -22,7 +26,6 @@ class CustomBottomNavigation extends StatelessWidget {
         targetScreen = const UserManagementScreen();
         break;
       default:
-      
         return;
     }
 

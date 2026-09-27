@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_bottom_navigation.dart';
+import '../../widgets/custom_bottom_navigation.dart';
 
 class UserManagementScreen extends StatefulWidget {
   const UserManagementScreen({super.key});

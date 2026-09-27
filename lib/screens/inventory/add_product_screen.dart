@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_bottom_navigation.dart';
+import '../../widgets/custom_bottom_navigation.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
