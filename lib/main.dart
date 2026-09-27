@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'screens/security/login_screen.dart';
+import 'package:integrador_vi_mobile/screens/security/login_screen.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -15,11 +15,10 @@ class MainApp extends StatelessWidget {
 
       theme: ThemeData(
         useMaterial3: true,
-
-        //colorSchemeSeed: Colors.purple
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
       ),
 
-      home: LoginScreen(),
+      home: const LoginScreen(),
     );
   }
 }

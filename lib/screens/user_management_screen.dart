@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
-import 'package:integrador_vi_mobile/screens/prueba1/prueba1-screendart/prueba1.dart';
-import 'package:integrador_vi_mobile/screens/prueba2/prueba2-screendart/prueba2.dart';
 import '../widgets/custom_bottom_navigation.dart';
 
 class UserManagementScreen extends StatefulWidget {
@@ -170,20 +168,20 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               MaterialPageRoute(builder: (context) => const DashboardScreen()),
             );
           }
-
+          /*
           if (index == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Prueba1()),
+              MaterialPageRoute(builder: (context) => const prueba1()),
             );
-          }
-
+          }*/
+          /*
           if (index == 3) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Prueba2()),
+              MaterialPageRoute(builder: (context) => const prueba2()),
             );
-          }
+          }*/
         },
       ),
     );
