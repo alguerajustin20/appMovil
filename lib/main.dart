@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/screens/security/login_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,12 +15,10 @@ class MainApp extends StatelessWidget {
 
       theme: ThemeData(
         useMaterial3: true,
-
-        //colorSchemeSeed: Colors.pink
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
       ),
 
-      //home: const SecureScreen(),
-      home: const MaterialApp(),
+      home: const LoginScreen(),
     );
   }
 }
