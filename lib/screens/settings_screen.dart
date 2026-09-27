@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_bottom_navigation.dart';
 import '../theme/app_colors.dart';
-import '../theme/app_theme.dart';
 import '../main_dev_mauro.dart'; // ajusta la ruta según dónde esté settings_screen.dart
 
 class SettingsScreen extends StatefulWidget {
