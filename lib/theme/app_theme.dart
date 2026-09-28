@@ -124,7 +124,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
   }
 }
 
-/// Atajo: en cualquier pantalla usas `context.palette.card`
+/// Atajo: en cualquier pantalla `context.palette.card`
 extension AppPaletteContext on BuildContext {
   AppPalette get palette =>
       Theme.of(this).extension<AppPalette>() ?? AppPalette.light;
