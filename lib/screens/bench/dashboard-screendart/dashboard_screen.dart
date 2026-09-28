@@ -2,69 +2,66 @@ import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_bench_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_cards_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_tasks_screen.dart';
-import 'package:integrador_vi_mobile/screens/manager/user_management_screen.dart';
 import 'package:integrador_vi_mobile/widgets/custom_bottom_navigation.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreen();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreen extends State<DashboardScreen> {
-  int _currentIndex = 0;
-
+class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      _currentIndex = 0;
-    });
-    return Scaffold(
-      appBar: AppBar(
-        // 👈 LA CLAVE DE LA SOLUCIÓN: Elimina el botón automático y libera todo el espacio de la izquierda
-        automaticallyImplyLeading: false,
-        /*
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
-          icon: Icon(Icons.home),
-        ),
-        */
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
-        toolbarHeight:
-            65.0, // 👈 Incrementa el alto de la barra para que el logo pueda crecer
-        iconTheme: const IconThemeData(color: Colors.blueGrey),
-        title: const Text(
+    // Paleta de colores consistente con la HomeScreen
+    const darkBackgroundColor = Color(0xFF121212);
+    const lightBackgroundColor = Color(0xFFF8F9FA);
+
+    final backgroundColor = isDarkMode
+        ? darkBackgroundColor
+        : lightBackgroundColor;
+    final primaryTitleColor = isDarkMode
+        ? const Color(0xFF00B4D8)
+        : const Color(0xFF03738C);
+    final defaultIconColor = isDarkMode ? const Color(0xFF94A3B8) : Colors.grey;
+
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: backgroundColor,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        toolbarHeight: 65.0,
+        title: Text(
           'Dashboard',
           style: TextStyle(
-            color: Color.fromARGB(255, 3, 115, 140),
+            color: primaryTitleColor,
             fontWeight: FontWeight.bold,
+            fontSize: 22,
           ),
         ),
-
         actions: [
           GestureDetector(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Image.asset(
                 'assets/images/logo_B.png',
-                width: 65, // 👈 El logo responderá a este tamaño más grande
-                height: 65, // 👈 Alto proporcional equivalente
+                width: 65,
+                height: 65,
                 fit: BoxFit.contain,
               ),
             ),
           ),
         ],
       ),
-      // 🛡️ Modificado: Cambiamos bottom a false para que la navegación se acople perfectamente abajo
       body: SafeArea(
         top: false,
-        bottom: false, // El espacio del sistema lo maneja el menú inferior
+        bottom: false,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -74,60 +71,66 @@ class _DashboardScreen extends State<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // PRIMER GRUPO DE 4 TARJETAS MÓDULO CARD
+                // PRIMER GRUPO DE 4 TARJETAS
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 1.4,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.35,
                   children: [
-                    const DashboardCards(
+                    DashboardCards(
                       title: 'Total en Inventario',
                       value: '12,450',
-                      valueColor: Color.fromARGB(255, 3, 115, 140),
+                      valueColor: primaryTitleColor,
                       icon: Icons.inventory_2_outlined,
-                      iconColor: Colors.grey,
+                      iconColor: defaultIconColor,
                     ),
                     DashboardCards(
                       title: 'Tareas Pendientes',
                       value: '8',
-                      valueColor: const Color.fromARGB(255, 115, 70, 16),
+                      valueColor: isDarkMode
+                          ? const Color(0xFFFDB653)
+                          : const Color(0xFF734610),
                       icon: Icons.note_alt_outlined,
-                      iconColor: const Color.fromARGB(255, 115, 70, 16),
+                      iconColor: isDarkMode
+                          ? const Color(0xFFFDB653)
+                          : const Color(0xFF734610),
                       badge: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 6,
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.redAccent.withValues(alpha: 0.3),
+                          color: Colors.redAccent.withOpacity(
+                            isDarkMode ? 0.2 : 0.15,
+                          ),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
                           'URGENTES',
                           style: TextStyle(
                             color: Colors.red,
-                            fontSize: 11,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    const DashboardCards(
+                    DashboardCards(
                       title: 'Usuarios Activos',
                       value: '145',
-                      valueColor: Color.fromARGB(255, 3, 115, 140),
+                      valueColor: primaryTitleColor,
                       icon: Icons.group_outlined,
-                      iconColor: Colors.grey,
+                      iconColor: defaultIconColor,
                     ),
-                    const DashboardCards(
+                    DashboardCards(
                       title: 'Bajo Stock',
                       value: '24',
-                      valueColor: Color.fromARGB(255, 255, 145, 15),
+                      valueColor: const Color(0xFFF59E0B),
                       icon: Icons.warning_amber_outlined,
-                      iconColor: Color.fromARGB(255, 255, 145, 15),
+                      iconColor: const Color(0xFFF59E0B),
                     ),
                   ],
                 ),
@@ -137,9 +140,8 @@ class _DashboardScreen extends State<DashboardScreen> {
                 // 📊 COMPONENTE GRÁFICO INTERACTIVO NATIVO
                 const DashboardBench(),
 
-                const SizedBox(
-                  height: 25,
-                ), // Este se mantiene igual para conservar la simetría inferior
+                const SizedBox(height: 25),
+
                 // 📋 LISTA DE TAREAS RECIENTES
                 const DashboardTasks(),
 
@@ -149,46 +151,7 @@ class _DashboardScreen extends State<DashboardScreen> {
           ),
         ),
       ),
-
-bottomNavigationBar: const CustomBottomNavigation(
-        currentIndex: 0,
-      ),
+      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 0),
     );
   }
 }
-     
-     /* 
-     comentarie esta parte porque el widget custombottomnavigation ya se encarga de la navegacion internamente.
-     bottomNavigationBar: CustomBottomNavigation(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-           if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const prueba1()),
-            );
-          }
-
-          if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const UserManagementScreen(),
-              ),
-            );
-          }
-
-           if (index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const prueba2()),
-            );
-          }
-        },
-      ),
-    );
-  }
-}*/

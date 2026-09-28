@@ -12,17 +12,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // int _currentIndex = 4;
-  //  validacion para que cuando el usuario le de atras no pueda salir de la aplicacion
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    // Paleta de colores para modo oscuro (Estilo Ajustes / Dark AMOLED)
+    const darkBackgroundColor = Color(0xFF121212);
+    const darkCardColor = Color(0xFF1E1E1E);
+    const darkBorderColor = Color(0xFF2C2C2C);
+    const darkTextPrimary = Colors.white;
+    const darkTextSecondary = Color(0xFF9E9E9E);
+    const darkSectionLabel = Color(0xFFFDB653);
+
+    // Colores dinámicos según el tema activo
+    final backgroundColor = isDarkMode
+        ? darkBackgroundColor
+        : const Color(0xFFF8F9FA);
+    final cardColor = isDarkMode ? darkCardColor : Colors.white;
+    final textPrimaryColor = isDarkMode
+        ? darkTextPrimary
+        : const Color(0xFF1E293B);
+    final textSecondaryColor = isDarkMode
+        ? darkTextSecondary
+        : const Color(0xFF64748B);
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8F9FA),
+        backgroundColor: backgroundColor,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
@@ -32,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // --- ENCABEZADO ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -58,39 +80,50 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.notifications_none_outlined,
                         size: 28,
+                        color: isDarkMode
+                            ? Colors.white
+                            : const Color(0xFF2D3142),
                       ),
-                      color: const Color(0xFF2D3142),
                       onPressed: () {},
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
 
-                const Text(
+                // --- SALUDO Y FECHA ---
+                Text(
                   'Hola, ',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E293B),
+                    color: textPrimaryColor,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'Buenas tardes • Martes, 12 de Octubre',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                  style: TextStyle(fontSize: 13, color: textSecondaryColor),
                 ),
                 const SizedBox(height: 24),
 
+                // --- DASHBOARD ---
                 _buildMenuCard(
                   iconPath: 'assets/icons/performance/miniaturas_claro.png',
                   fallbackIcon: Icons.grid_view_rounded,
-                  iconBgColor: const Color(0xFFE6F4F6),
-                  iconColor: const Color(0xFF007A8C),
+                  iconColor: const Color(0xFF00B4D8),
+                  iconBgColor: isDarkMode
+                      ? const Color(0xFF00B4D8).withOpacity(0.15)
+                      : const Color(0xFFE6F4F6),
                   title: 'Dashboard',
                   subtitle: 'Ver KPIs y resumen del negocio',
+                  isDarkMode: isDarkMode,
+                  cardColor: cardColor,
+                  borderColor: darkBorderColor,
+                  textPrimary: textPrimaryColor,
+                  textSecondary: textSecondaryColor,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -102,13 +135,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 14),
 
+                // --- INVENTARIO ---
                 _buildMenuCard(
                   iconPath: 'assets/icons/inventory/archivo_caja_negra.png',
                   fallbackIcon: Icons.inventory_2_outlined,
-                  iconBgColor: const Color(0xFFFDF6EA),
-                  iconColor: const Color(0xFFD97706),
+                  iconColor: const Color(0xFFF59E0B),
+                  iconBgColor: isDarkMode
+                      ? const Color(0xFFF59E0B).withOpacity(0.15)
+                      : const Color(0xFFFDF6EA),
                   title: 'Inventario',
                   subtitle: 'Gestionar stock y productos',
+                  isDarkMode: isDarkMode,
+                  cardColor: cardColor,
+                  borderColor: darkBorderColor,
+                  textPrimary: textPrimaryColor,
+                  textSecondary: textSecondaryColor,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -120,13 +161,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 14),
 
+                // --- USUARIOS ---
                 _buildMenuCard(
                   iconPath: 'assets/icons/user/usuario_claro.png',
                   fallbackIcon: Icons.group_outlined,
-                  iconBgColor: const Color(0xFFFDF3EC),
-                  iconColor: const Color(0xFFC2410C),
+                  iconColor: const Color(0xFFF97316),
+                  iconBgColor: isDarkMode
+                      ? const Color(0xFFF97316).withOpacity(0.15)
+                      : const Color(0xFFFDF3EC),
                   title: 'Usuarios',
                   subtitle: 'Control de acceso y personal',
+                  isDarkMode: isDarkMode,
+                  cardColor: cardColor,
+                  borderColor: darkBorderColor,
+                  textPrimary: textPrimaryColor,
+                  textSecondary: textSecondaryColor,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -138,13 +187,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 14),
 
+                // --- AJUSTES ---
                 _buildMenuCard(
                   iconPath: 'assets/icons/config/ajuste_negro.png',
                   fallbackIcon: Icons.settings_outlined,
-                  iconBgColor: const Color(0xFFF1F5F9),
-                  iconColor: const Color(0xFF64748B),
+                  iconColor: isDarkMode
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
+                  iconBgColor: isDarkMode
+                      ? const Color(0xFF94A3B8).withOpacity(0.15)
+                      : const Color(0xFFF1F5F9),
                   title: 'Ajustes',
                   subtitle: 'Configuración y seguridad',
+                  isDarkMode: isDarkMode,
+                  cardColor: cardColor,
+                  borderColor: darkBorderColor,
+                  textPrimary: textPrimaryColor,
+                  textSecondary: textSecondaryColor,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -156,75 +215,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 28),
 
-                const Text(
+                // --- SECCIÓN RESUMEN RÁPIDO ---
+                Text(
                   'RESUMEN RÁPIDO',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
-                    color: Color(0xFF94A3B8),
+                    color: isDarkMode
+                        ? darkSectionLabel
+                        : const Color(0xFF94A3B8),
                   ),
                 ),
                 const SizedBox(height: 12),
 
                 _buildQuickSummaryCard(
                   icon: Icons.tune,
-                  iconBgColor: const Color(0xFFE6F4F6),
-                  iconColor: const Color(0xFF007A8C),
+                  iconColor: const Color(0xFF00B4D8),
+                  iconBgColor: isDarkMode
+                      ? const Color(0xFF00B4D8).withOpacity(0.15)
+                      : const Color(0xFFE6F4F6),
                   text: '3 tareas pendientes',
+                  isDarkMode: isDarkMode,
+                  cardColor: cardColor,
+                  borderColor: darkBorderColor,
+                  textPrimary: textPrimaryColor,
                 ),
                 const SizedBox(height: 10),
 
                 _buildQuickSummaryCard(
                   icon: Icons.warning_amber_rounded,
-                  iconBgColor: const Color(0xFFFEF3C7),
-                  iconColor: const Color(0xFFD97706),
+                  iconColor: const Color(0xFFF59E0B),
+                  iconBgColor: isDarkMode
+                      ? const Color(0xFFF59E0B).withOpacity(0.15)
+                      : const Color(0xFFFEF3C7),
                   text: 'Stock bajo en 2 productos',
+                  isDarkMode: isDarkMode,
+                  cardColor: cardColor,
+                  borderColor: darkBorderColor,
+                  textPrimary: textPrimaryColor,
                 ),
                 const SizedBox(height: 16),
               ],
             ),
           ),
         ),
-        /* no norrar solo comentarie esto para que la barra de navegacion no se vea en el home screen
-        bottomNavigationBar: CustomBottomNavigation(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-
-            if (index == 0) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const DashboardScreen()),
-              );
-            }
-
-            if (index == 1) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Prueba1()),
-              );
-            }
-
-            if (index == 2) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const UserManagementScreen(),
-                ),
-              );
-            }
-
-            if (index == 3) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Prueba2()),
-              );
-            }
-          },
-        ),hasta aqui llega el codigo para que la barra de navegacion no se vea en el home screen*/
       ),
     );
   }
@@ -237,18 +272,26 @@ class _HomeScreenState extends State<HomeScreen> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    required bool isDarkMode,
+    required Color cardColor,
+    required Color borderColor,
+    required Color textPrimary,
+    required Color textSecondary,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: isDarkMode ? Border.all(color: borderColor) : null,
+        boxShadow: isDarkMode
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -286,19 +329,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E293B),
+                          color: textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF64748B),
-                        ),
+                        style: TextStyle(fontSize: 13, color: textSecondary),
                       ),
                     ],
                   ),
@@ -316,19 +356,26 @@ class _HomeScreenState extends State<HomeScreen> {
     required Color iconBgColor,
     required Color iconColor,
     required String text,
+    required bool isDarkMode,
+    required Color cardColor,
+    required Color borderColor,
+    required Color textPrimary,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: isDarkMode ? Border.all(color: borderColor) : null,
+        boxShadow: isDarkMode
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Row(
         children: [
@@ -343,10 +390,10 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 12),
           Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF334155),
+              color: textPrimary,
             ),
           ),
         ],
