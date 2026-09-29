@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../widgets/custom_bottom_navigation.dart';
+import '../../theme/app_theme.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -10,18 +12,15 @@ class AddProductScreen extends StatefulWidget {
 
 class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _customCategoryController = TextEditingController();
-  
+  final TextEditingController _customCategoryController =
+      TextEditingController();
+
   bool _isInventoryable = true;
   int _quantity = 1;
   String? _selectedCategory;
   String? _selectedUnit;
 
-  final List<String> _categories = [
-    'Bebidas',
-    'Carnes',
-    'Verduras',
-  ];
+  final List<String> _categories = ['Bebidas', 'Carnes', 'Verduras'];
   final List<String> _units = ['Unidades', 'Kg', 'caja', 'Botella', 'Paquetes'];
 
   @override
@@ -33,16 +32,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.palette;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      // sin backgroundColor — lo toma de AppTheme.light/dark
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8F9FA),
         elevation: 0,
         titleSpacing: 20,
-        title: const Text(
+        title: Text(
           'Agregar Producto',
           style: TextStyle(
-            color: Color(0xFF007A8C),
+            color: AppColors.teal,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -54,70 +54,85 @@ class _AddProductScreenState extends State<AddProductScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Nuevo Producto',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E293B),
+                  color: c.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Ingresa los detalles del nuevo producto al inventario.',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF64748B),
-                ),
+                style: TextStyle(fontSize: 13, color: c.textMuted),
               ),
               const SizedBox(height: 20),
 
               Container(
                 padding: const EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: c.card,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  boxShadow: c.isDark
+                      ? []
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLabel('NOMBRE DEL PRODUCTO'),
+                    _buildLabel('NOMBRE DEL PRODUCTO', c),
                     const SizedBox(height: 6),
                     TextField(
                       controller: _nameController,
-                      decoration: _buildInputDecoration(hintText: 'INGRESA EL NOMBRE DEL PRODUCTO...'),
+                      style: TextStyle(color: c.textPrimary),
+                      decoration: _buildInputDecoration(
+                        c,
+                        hintText: 'INGRESA EL NOMBRE DEL PRODUCTO...',
+                      ),
                     ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('CREAR UNA CATEGORIA'),
+                    _buildLabel('CREAR UNA CATEGORIA', c),
                     const SizedBox(height: 6),
                     TextField(
                       controller: _customCategoryController,
-                      decoration: _buildInputDecoration(hintText: 'INGRESA LA CATEGORIA...'),
+                      style: TextStyle(color: c.textPrimary),
+                      decoration: _buildInputDecoration(
+                        c,
+                        hintText: 'INGRESA LA CATEGORIA...',
+                      ),
                     ),
                     const SizedBox(height: 16),
 
-                    _buildLabel('CATEGORÍA'),
+                    _buildLabel('CATEGORÍA', c),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       value: _selectedCategory,
-                      hint: const Text(
+                      hint: Text(
                         'Selecciona una categoría',
-                        style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                        style: TextStyle(color: c.textMuted, fontSize: 14),
                       ),
-                      icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF64748B)),
-                      decoration: _buildInputDecoration(),
+                      icon: Icon(Icons.keyboard_arrow_down, color: c.textMuted),
+                      dropdownColor: c.card,
+                      style: TextStyle(color: c.textPrimary, fontSize: 14),
+                      decoration: _buildInputDecoration(c),
                       items: _categories.map((String category) {
                         return DropdownMenuItem<String>(
                           value: category,
-                          child: Text(category, style: const TextStyle(fontSize: 14)),
+                          child: Text(
+                            category,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: c.textPrimary,
+                            ),
+                          ),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -130,29 +145,28 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF8F9FA),
+                        color: c.inputFill,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                        border: Border.all(color: c.cardBorder),
                       ),
                       child: CheckboxListTile(
-                        title: const Text(
+                        title: Text(
                           'Producto Inventariable',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF1E293B),
+                            color: c.textPrimary,
                           ),
                         ),
-                        subtitle: const Text(
+                        subtitle: Text(
                           'Actívalo si el producto es inventariable',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFF64748B),
-                          ),
+                          style: TextStyle(fontSize: 11, color: c.textMuted),
                         ),
                         value: _isInventoryable,
-                        activeColor: const Color(0xFF007A8C),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                        activeColor: AppColors.teal,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
                         onChanged: (bool? value) {
                           setState(() {
                             _isInventoryable = value ?? true;
@@ -171,18 +185,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildLabel('CANTIDAD'),
+                                _buildLabel('CANTIDAD', c),
                                 const SizedBox(height: 6),
                                 Container(
                                   height: 48,
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: const Color(0xFFCBD5E1)),
+                                    border: Border.all(color: c.cardBorder),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
                                     children: [
                                       IconButton(
-                                        icon: const Icon(Icons.remove, size: 18),
+                                        icon: Icon(
+                                          Icons.remove,
+                                          size: 18,
+                                          color: c.textPrimary,
+                                        ),
                                         onPressed: () {
                                           if (_quantity > 1) {
                                             setState(() => _quantity--);
@@ -193,15 +211,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                         child: Center(
                                           child: Text(
                                             '$_quantity',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
+                                              color: c.textPrimary,
                                             ),
                                           ),
                                         ),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.add, size: 18),
+                                        icon: Icon(
+                                          Icons.add,
+                                          size: 18,
+                                          color: c.textPrimary,
+                                        ),
                                         onPressed: () {
                                           setState(() => _quantity++);
                                         },
@@ -219,20 +242,34 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildLabel('UNIDAD'),
+                                _buildLabel('UNIDAD', c),
                                 const SizedBox(height: 6),
                                 DropdownButtonFormField<String>(
                                   value: _selectedUnit,
-                                  hint: const Text(
+                                  hint: Text(
                                     '',
-                                    style: TextStyle(color: Color(0xFF64748B)),
+                                    style: TextStyle(color: c.textMuted),
                                   ),
-                                  icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF64748B)),
-                                  decoration: _buildInputDecoration(),
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: c.textMuted,
+                                  ),
+                                  dropdownColor: c.card,
+                                  style: TextStyle(
+                                    color: c.textPrimary,
+                                    fontSize: 13,
+                                  ),
+                                  decoration: _buildInputDecoration(c),
                                   items: _units.map((String unit) {
                                     return DropdownMenuItem<String>(
                                       value: unit,
-                                      child: Text(unit, style: const TextStyle(fontSize: 13)),
+                                      child: Text(
+                                        unit,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: c.textPrimary,
+                                        ),
+                                      ),
                                     );
                                   }).toList(),
                                   onChanged: (value) {
@@ -257,7 +294,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 height: 50,
                 child: ElevatedButton.icon(
                   onPressed: () {},
-                  icon: const Icon(Icons.save_outlined, color: Colors.white, size: 20),
+                  icon: const Icon(
+                    Icons.save_outlined,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   label: const Text(
                     'GUARDAR EN INVENTARIO',
                     style: TextStyle(
@@ -268,7 +309,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF007A8C),
+                    backgroundColor: AppColors.teal,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -281,40 +322,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavigation(
-        currentIndex: 1,
-      ),
+      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 1),
     );
   }
 
-  Widget _buildLabel(String text) {
+  Widget _buildLabel(String text, AppPalette c) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 10,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF94A3B8),
+        color: c.textMuted,
         letterSpacing: 0.8,
       ),
     );
   }
 
-  InputDecoration _buildInputDecoration({String? hintText}) {
+  InputDecoration _buildInputDecoration(AppPalette c, {String? hintText}) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
+      hintStyle: TextStyle(color: c.textMuted, fontSize: 14),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+        borderSide: BorderSide(color: c.cardBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+        borderSide: BorderSide(color: c.cardBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFF007A8C), width: 1.5),
+        borderSide: const BorderSide(color: AppColors.teal, width: 1.5),
       ),
     );
   }

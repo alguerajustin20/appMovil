@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../theme/app_theme.dart';
 
 class DashboardCards extends StatelessWidget {
   final String title;
@@ -6,8 +7,7 @@ class DashboardCards extends StatelessWidget {
   final Color valueColor;
   final IconData icon;
   final Color iconColor;
-  final Widget?
-  badge; // Widget opcional por si se quiere meter un contenedor por ejemplo en éste caso el de "URGENTES"
+  final Widget? badge;
 
   const DashboardCards({
     super.key,
@@ -21,8 +21,10 @@ class DashboardCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.palette;
+
     return Card(
-      color: Colors.white,
+      color: c.card,
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
@@ -30,16 +32,13 @@ class DashboardCards extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Primera línea: Título
             Text(
               title,
-              style: const TextStyle(fontSize: 13, color: Colors.blueGrey),
+              style: TextStyle(fontSize: 13, color: c.textMuted),
               maxLines: 1,
-              overflow: TextOverflow
-                  .ellipsis, // Si el texto es muy largo, se añade "..."
+              overflow: TextOverflow.ellipsis,
             ),
-            const Spacer(), // Distribuye dinámicamente el espacio vertical
-            // Segunda línea: Valor, Badge (si existe) e Icono
+            const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -51,10 +50,7 @@ class DashboardCards extends StatelessWidget {
                     fontSize: 20,
                   ),
                 ),
-
-                // Si se pasa un badge (como el de URGENTES), se dibuja aquí en medio
                 if (badge != null) badge!,
-
                 Icon(icon, color: iconColor.withValues(alpha: 0.4), size: 28),
               ],
             ),
