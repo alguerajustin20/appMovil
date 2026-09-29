@@ -95,17 +95,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // --- SALUDO Y FECHA ---
                 Text(
-                  'Hola, ',
+                  'Hola, yamil72',
                   style: TextStyle(
-                    fontSize: 26,
+                    fontSize: 35,
                     fontWeight: FontWeight.bold,
-                    color: textPrimaryColor,
+                    color: isDarkMode
+                        ? const Color(0xFF00B4D8)
+                        : const Color(0xFF03738C),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Buenas tardes • Martes, 12 de Octubre',
-                  style: TextStyle(fontSize: 13, color: textSecondaryColor),
+                  style: TextStyle(fontSize: 17, color: textSecondaryColor),
                 ),
                 const SizedBox(height: 24),
 
