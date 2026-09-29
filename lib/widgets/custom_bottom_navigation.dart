@@ -14,16 +14,22 @@ class CustomBottomNavigation extends StatelessWidget {
 
     Widget targetScreen;
     switch (index) {
-      case 0: //
+      case 0:
         targetScreen = const DashboardScreen();
         break;
       case 1:
         targetScreen = const AddProductScreen();
         break;
       case 2:
-        targetScreen = const UserManagementScreen();
+        // TODO: Reemplazar por tu pantalla de Facturas cuando esté lista (ej: const ReceiptScreen())
+        targetScreen = const Scaffold(
+          body: Center(child: Text('Pantalla de Facturas')),
+        );
         break;
       case 3:
+        targetScreen = const UserManagementScreen();
+        break;
+      case 4:
         targetScreen = const SettingsScreen();
         break;
       default:
@@ -56,6 +62,11 @@ class CustomBottomNavigation extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.inventory_2_outlined),
           label: 'Inventario',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.receipt_long_outlined),
+          activeIcon: Icon(Icons.receipt_long),
+          label: 'Factura',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.group_outlined),
