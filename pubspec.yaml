@@ -53,6 +53,14 @@ flutter:
     - assets/icons/performance/
     - assets/icons/admin/
     - assets/icons/config/
+    - assets/icons/admin/account_claro.png
+    - assets/icons/admin/account_oscuro.png
+    - assets/icons/languages/language_claro2.png
+    - assets/icons/languages/language_oscuro2.png
+    - assets/icons/messages/biometric_claro.png
+    - assets/icons/messages/biometric_oscuro.png
+    - assets/icons/mod/moon_stars_claro.png
+    - assets/icons/mod/moon_stars_oscuro.png
 
 flutter_launcher_icons:
   android: true

@@ -59,8 +59,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _navTile(
                 isDark: isDark,
                 icon: isDark
-                    ? 'assets/icons/admin/usuario_negro.png'
-                    : 'assets/icons/admin/usuario_claro.png',
+                    ? 'assets/icons/admin/account_oscuro.png'
+                    : 'assets/icons/admin/account_claro.png',
                 label: 'Perfil',
                 trailingText: _userName,
                 trailingColor: AppColors.teal,
@@ -79,10 +79,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _switchTile(
                 isDark: isDark,
                 icon: isDark
-                    ? 'assets/icons/messages/notificacion_negra.png'
-                    : 'assets/icons/messages/notificacion_blanca.png',
-                label: 'Notificaciones Push',
-                subtitle: 'Alertas críticas de inventario',
+                    ? 'assets/icons/messages/biometric_oscuro.png'
+                    : 'assets/icons/messages/biometric_claro.png',
+                label: 'Permisos Biometricos',
+                subtitle: 'Uso de Face ID',
                 value: _pushNotifications,
                 onChanged: (v) => setState(() => _pushNotifications = v),
               ),
@@ -95,7 +95,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               _navTile(
                 isDark: isDark,
-                icon: 'assets/icons/languages/idioma.png',
+                icon: isDark
+                    ? 'assets/icons/languages/language_oscuro2.png'
+                    : 'assets/icons/languages/language_claro2.png',
                 label: 'Idioma',
                 trailingText: 'Español',
                 onTap: () {},
@@ -104,26 +106,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _switchTile(
                 isDark: isDark,
                 icon: isDark
-                    ? 'assets/icons/mod/modo_nocturno.png'
-                    : 'assets/icons/mod/modo_nocturno_apagado.png',
+                    ? 'assets/icons/mod/moon_stars_oscuro.png'
+                    : 'assets/icons/mod/moon_stars_claro.png',
                 label: 'Modo Oscuro',
                 value: themeNotifier.value == ThemeMode.dark,
                 onChanged: (v) {
                   themeNotifier.value = v ? ThemeMode.dark : ThemeMode.light;
                   setState(() {});
-                },
-              ),
-              _divider(),
-              _navTile(
-                isDark: isDark,
-                icon: isDark
-                    ? 'assets/icons/backup/sincronizar_negro.png'
-                    : 'assets/icons/backup/sincronizar_blanco.png',
-                label: 'Sincronización de Datos',
-                trailingText: 'Sincronizado: $_lastSync',
-                trailingColor: AppColors.teal,
-                onTap: () {
-                  // TODO: disparar sincronización manual
                 },
               ),
             ],

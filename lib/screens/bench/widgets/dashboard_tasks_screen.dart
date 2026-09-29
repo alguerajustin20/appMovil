@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/theme/app_colors.dart';
+import '../../../theme/app_theme.dart';
 
 class DashboardTasks extends StatefulWidget {
   const DashboardTasks({super.key});
@@ -8,14 +10,14 @@ class DashboardTasks extends StatefulWidget {
 }
 
 class _DashboardTasks extends State<DashboardTasks> {
-  // Lista de estados para simular cuáles tareas están completadas
-  //final List<bool> _taskStatuses = [false, true, false];
   final List<bool> _taskStatuses = [false, false, false];
 
   @override
   Widget build(BuildContext context) {
+    final c = context.palette;
+
     return Card(
-      color: Colors.white,
+      color: c.card,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -23,19 +25,18 @@ class _DashboardTasks extends State<DashboardTasks> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Título de la tarjeta
-            const Text(
+            Text(
               'Tareas Recientes',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: c.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
 
-            // Tarea 1
             _buildTaskItem(
+              context: context,
               index: 0,
               title: 'Revisar Lote B de Coca Cola',
               tagLabel: 'Urgente',
@@ -43,25 +44,29 @@ class _DashboardTasks extends State<DashboardTasks> {
               tagTextColor: Colors.red,
               dateLabel: 'Hoy',
             ),
-            const Divider(color: Color(0xFFF5F5F5), height: 1),
+            Divider(color: c.cardBorder, height: 1),
 
-            // Tarea 2
             _buildTaskItem(
+              context: context,
               index: 1,
               title: 'Actualizar Registros Proveedores',
               tagLabel: 'Normal',
-              tagBgColor: const Color(0xFFF5F5F5),
+              tagBgColor: c.isDark
+                  ? const Color(0xFF2A2A2A)
+                  : const Color(0xFFF5F5F5),
               tagTextColor: Colors.blueGrey,
               dateLabel: 'Mañana',
             ),
-            const Divider(color: Color(0xFFF5F5F5), height: 1),
+            Divider(color: c.cardBorder, height: 1),
 
-            // Tarea 3
             _buildTaskItem(
+              context: context,
               index: 2,
               title: 'Reporte de Auditoría Mensual',
               tagLabel: 'Normal',
-              tagBgColor: const Color(0xFFF5F5F5),
+              tagBgColor: c.isDark
+                  ? const Color(0xFF2A2A2A)
+                  : const Color(0xFFF5F5F5),
               tagTextColor: Colors.blueGrey,
               dateLabel: 'En 3 días',
             ),
@@ -71,8 +76,8 @@ class _DashboardTasks extends State<DashboardTasks> {
     );
   }
 
-  // Helper para construir cada fila de tarea interactiva
   Widget _buildTaskItem({
+    required BuildContext context,
     required int index,
     required String title,
     required String tagLabel,
@@ -80,17 +85,16 @@ class _DashboardTasks extends State<DashboardTasks> {
     required Color tagTextColor,
     required String dateLabel,
   }) {
+    final c = context.palette;
     final isCompleted = _taskStatuses[index];
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      // Cambia el estado del check al presionar cualquier parte de la fila
       onTap: () {
         setState(() {
           _taskStatuses[index] = !_taskStatuses[index];
         });
       },
-      // Ícono de Check dinámico según wireframe
       leading: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: 24,
@@ -98,31 +102,31 @@ class _DashboardTasks extends State<DashboardTasks> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: isCompleted ? const Color(0xFF036573) : Colors.grey.shade300,
+            color: isCompleted
+                ? AppColors.teal
+                : c.textMuted.withValues(alpha: 0.4),
             width: 2,
           ),
-          color: isCompleted ? Colors.transparent : Colors.transparent,
+          color: Colors.transparent,
         ),
         child: isCompleted
-            ? const Icon(Icons.check, size: 16, color: Color(0xFF036573))
+            ? Icon(Icons.check, size: 16, color: AppColors.teal)
             : null,
       ),
-      // Título y fila inferior de detalles
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14.5,
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              color: c.textPrimary,
             ),
           ),
           const SizedBox(height: 6),
           Row(
             children: [
-              // Badge de prioridad redondeado
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -139,10 +143,9 @@ class _DashboardTasks extends State<DashboardTasks> {
                 ),
               ),
               const SizedBox(width: 8),
-              // Texto del tiempo/fecha
               Text(
                 dateLabel,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(color: c.textMuted, fontSize: 12),
               ),
             ],
           ),
