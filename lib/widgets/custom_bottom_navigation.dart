@@ -21,7 +21,7 @@ class CustomBottomNavigation extends StatelessWidget {
         targetScreen = const AddProductScreen();
         break;
       case 2:
-        // TODO: Reemplazar por tu pantalla de Facturas cuando esté lista (ej: const ReceiptScreen())
+        // poner la pantalla de facturas aquí
         targetScreen = const Scaffold(
           body: Center(child: Text('Pantalla de Facturas')),
         );
