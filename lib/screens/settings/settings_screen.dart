@@ -13,9 +13,10 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   // reemplazar con datos reales del usuario autenticado
-  final String _userName = 'Yamil72';
+  String _userName = 'Yamil72';
   final String _userEmail = 'yamil';
   final String _userRole = 'Administrador';
+  String _selectedLanguage = 'Español';
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +71,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ? 'assets/icons/security/candado_claro.png'
                     : 'assets/icons/security/candado_oscuro.png',
                 label: 'Seguridad y Contraseña',
-                onTap: () {},
+                onTap: () => _showChangePasswordDialog(context, isDark),
               ),
-              _divider(),
             ],
           ),
           const SizedBox(height: 20),
@@ -80,15 +80,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _settingsCard(
             isDark: isDark,
             children: [
-              _navTile(
-                isDark: isDark,
-                icon: isDark
-                    ? 'assets/icons/languages/language_oscuro2.png'
-                    : 'assets/icons/languages/language_claro2.png',
-                label: 'Idioma',
-                trailingText: 'Español',
-                onTap: () {},
-              ),
               _divider(),
               _switchTile(
                 isDark: isDark,
@@ -116,7 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     : 'assets/icons/docs/informacion_negro.png',
                 label: 'Centro de Ayuda',
                 trailingIcon: Icons.open_in_new,
-                onTap: () {},
+                onTap: () => _showHelpDialog(context, isDark),
               ),
               _divider(),
               _navTile(
@@ -124,7 +115,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: isDark
                     ? 'assets/icons/error/signo_de_admiracion_blanco.png'
                     : 'assets/icons/error/signo_de_admiracion_negro.png',
-
                 label: 'Acerca de la App',
                 trailingText: 'v2.4.1',
                 onTap: () {},
@@ -140,6 +130,288 @@ class _SettingsScreenState extends State<SettingsScreen> {
       bottomNavigationBar: SafeArea(
         child: CustomBottomNavigation(currentIndex: 4),
       ),
+    );
+  }
+
+  // ---------- Ventanas emergentes (Dialogs) ----------
+
+  void _showEditUsernameDialog(BuildContext context, bool isDark) {
+    final controller = TextEditingController(text: _userName);
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkCard : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            'Editar nombre de usuario',
+            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+          ),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+            decoration: InputDecoration(
+              hintText: 'Nombre de usuario',
+              hintStyle: TextStyle(
+                color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                  color: isDark
+                      ? AppColors.darkCardBorder
+                      : AppColors.cardBorder,
+                ),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                borderSide: BorderSide(color: AppColors.teal, width: 1.5),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal),
+              onPressed: () {
+                final newName = controller.text.trim();
+                if (newName.isNotEmpty) {
+                  setState(() => _userName = newName);
+                }
+                Navigator.pop(dialogContext);
+              },
+              child: const Text(
+                'Guardar',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context, bool isDark) {
+    final currentPassController = TextEditingController();
+    final newPassController = TextEditingController();
+    bool obscureCurrent = true;
+    bool obscureNew = true;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: isDark ? AppColors.darkCard : Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                'Seguridad y Contraseña',
+                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: currentPassController,
+                    obscureText: obscureCurrent,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Nueva Contraseña',
+                      labelStyle: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextMuted
+                            : AppColors.textMuted,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureCurrent
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: isDark
+                              ? AppColors.darkTextMuted
+                              : AppColors.textMuted,
+                        ),
+                        onPressed: () {
+                          setDialogState(
+                            () => obscureCurrent = !obscureCurrent,
+                          );
+                        },
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: isDark
+                              ? AppColors.darkCardBorder
+                              : AppColors.cardBorder,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderSide: BorderSide(
+                          color: AppColors.teal,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  TextField(
+                    controller: newPassController,
+                    obscureText: obscureNew,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Verificar contraseña',
+                      labelStyle: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextMuted
+                            : AppColors.textMuted,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureNew ? Icons.visibility_off : Icons.visibility,
+                          color: isDark
+                              ? AppColors.darkTextMuted
+                              : AppColors.textMuted,
+                        ),
+                        onPressed: () {
+                          setDialogState(() => obscureNew = !obscureNew);
+                        },
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: isDark
+                              ? AppColors.darkCardBorder
+                              : AppColors.cardBorder,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        borderSide: BorderSide(
+                          color: AppColors.teal,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextMuted
+                          : AppColors.textMuted,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.teal,
+                  ),
+                  onPressed: () {
+                    // TODO: validar contraseña actual y actualizar en backend cuando exista
+                    Navigator.pop(dialogContext);
+                  },
+                  child: const Text(
+                    'Guardar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showHelpDialog(BuildContext context, bool isDark) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkCard : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.help_outline, color: AppColors.teal),
+              const SizedBox(width: 8),
+              Text(
+                'Centro de Ayuda',
+                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '¿Necesitas ayuda con Campestre Admin?',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Consulta las guías rápidas sobre inventario, órdenes y gestión de usuarios, '
+                'o escríbenos directamente si tienes un problema con tu cuenta.',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Icon(Icons.email_outlined, size: 16, color: AppColors.teal),
+                  const SizedBox(width: 6),
+                  Text(
+                    'soporte@mediaSystem.com',
+                    style: TextStyle(fontSize: 13, color: AppColors.teal),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal),
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text(
+                'Entendido',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -212,9 +484,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: AppColors.brownLight,
               size: 20,
             ),
-            onPressed: () {
-              // TODO: editar perfil
-            },
+            onPressed: () => _showEditUsernameDialog(context, isDark),
           ),
         ],
       ),
@@ -270,8 +540,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Image.asset(
           icon,
           fit: BoxFit.contain,
-          // Sin "color:" — estos PNG ya vienen diseñados en su tono
-          // correcto (claro/blanco); forzar un tinte los aplastaba.
           errorBuilder: (context, error, stackTrace) => Icon(
             Icons.image_not_supported,
             size: 22,
@@ -387,7 +655,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             context,
             MaterialPageRoute(builder: (context) => const LoginScreen()),
             (route) => false,
-          ); // TODO: cerrar sesión (limpiar token/estado y navegar a Login)
+          );
         },
         icon: SizedBox(
           width: 22,

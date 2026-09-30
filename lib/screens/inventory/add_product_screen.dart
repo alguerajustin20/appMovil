@@ -27,19 +27,24 @@ class AddProductScreen extends StatefulWidget {
 class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _customCategoryController = TextEditingController();
+  final TextEditingController _customUnitController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   bool _isInventoryable = true;
   bool _showNewCategoryInput = false;
+  bool _showNewUnitInput = false;
   int _quantity = 1;
   int? _editingIndex;
   String? _selectedCategory;
-  String? _selectedUnit = 'Unidades';
+  String? _selectedUnit = 'Paquete';
+  String _selectedStatusFilter = 'Todos';
 
   final List<String> _categories = ['Bebidas', 'Carnes', 'Verduras', 'Abarrotes'];
-  final List<String> _units = ['Unidades', 'Kg', 'Caja', 'Botella', 'Paquetes'];
+  final List<String> _units = ['Paquete', 'Kg', 'Caja', 'Botella', 'onza'];
+  final List<String> _statusFilters = ['Todos', 'Activo', 'Inactivo'];
 
   final List<ProductItem> _productList = [
-    ProductItem(name: 'Coca Cola 2L', category: 'Bebidas', stock: 15, isActive: true),
+    ProductItem(name: 'Coca Cola ', category: 'Bebidas', stock: 15, isActive: true),
     ProductItem(name: 'Carne de Res', category: 'Carnes', stock: 8, isActive: true),
     ProductItem(name: 'Tomates', category: 'Verduras', stock: 0, isActive: false),
     ProductItem(name: 'Jugo de Naranja', category: 'Bebidas', stock: 5, isActive: true),
@@ -49,22 +54,44 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void dispose() {
     _nameController.dispose();
     _customCategoryController.dispose();
+    _customUnitController.dispose();
+    _searchController.dispose();
     super.dispose();
+  }
+
+  List<ProductItem> get _filteredProducts {
+    return _productList.where((item) {
+      final query = _searchController.text.toLowerCase().trim();
+      final matchesSearch = item.name.toLowerCase().contains(query) ||
+          item.category.toLowerCase().contains(query);
+
+      bool matchesStatus = true;
+      if (_selectedStatusFilter == 'Activo') {
+        matchesStatus = item.isActive;
+      } else if (_selectedStatusFilter == 'Inactivo') {
+        matchesStatus = !item.isActive;
+      }
+
+      return matchesSearch && matchesStatus;
+    }).toList();
   }
 
   void _clearForm() {
     _nameController.clear();
     _customCategoryController.clear();
+    _customUnitController.clear();
     setState(() {
       _editingIndex = null;
       _selectedCategory = null;
+      _selectedUnit = 'Paquete';
       _showNewCategoryInput = false;
+      _showNewUnitInput = false;
       _quantity = 1;
     });
   }
 
-  void _startEditing(int index) {
-    final item = _productList[index];
+  void _startEditing(ProductItem item) {
+    final index = _productList.indexOf(item);
     setState(() {
       _editingIndex = index;
       _nameController.text = item.name;
@@ -81,34 +108,155 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
   }
 
-  void _confirmDeleteProduct(int index, AppPalette c) {
-    final item = _productList[index];
+  void _showManageListDialog({
+    required String title,
+    required List<String> items,
+    required Function(String item, String newValue) onEdit,
+    required Function(String item) onDelete,
+    required AppPalette c,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: c.card,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Text('Gestionar $title', style: TextStyle(fontWeight: FontWeight.bold, color: c.textPrimary, fontSize: 18)),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: items.isEmpty
+                    ? Text('No hay elementos guardados.', style: TextStyle(color: c.textMuted))
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          return ListTile(
+                            title: Text(item, style: TextStyle(color: c.textPrimary, fontSize: 14)),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.teal),
+                                  onPressed: () {
+                                    final editController = TextEditingController(text: item);
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        backgroundColor: c.card,
+                                        title: Text('Editar $item', style: TextStyle(color: c.textPrimary, fontSize: 16)),
+                                        content: TextField(
+                                          controller: editController,
+                                          style: TextStyle(color: c.textPrimary),
+                                          decoration: _buildInputDecoration(c, hintText: 'Nuevo nombre'),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(ctx),
+                                            child: Text('Cancelar', style: TextStyle(color: c.textMuted)),
+                                          ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal),
+                                            onPressed: () {
+                                              if (editController.text.trim().isNotEmpty) {
+                                                setState(() {
+                                                  onEdit(item, editController.text.trim());
+                                                });
+                                                setDialogState(() {});
+                                                Navigator.pop(ctx);
+                                              }
+                                            },
+                                            child: const Text('Guardar', style: TextStyle(color: Colors.white)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red[600]),
+                                  onPressed: () {
+                                    setState(() {
+                                      onDelete(item);
+                                    });
+                                    setDialogState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cerrar', style: TextStyle(color: c.textMuted, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _toggleProductStatus(ProductItem item, AppPalette c) {
+    final isActivating = !item.isActive;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: c.card,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text('Eliminar producto', style: TextStyle(fontWeight: FontWeight.bold, color: c.textPrimary, fontSize: 18)),
-          content: Text('¿Quieres eliminar este producto (${item.name}) del inventario?', style: TextStyle(color: c.textMuted, fontSize: 14)),
+          title: Text(
+            isActivating ? 'Activar producto' : 'Desactivar producto',
+            style: TextStyle(fontWeight: FontWeight.bold, color: c.textPrimary, fontSize: 18),
+          ),
+          content: Text(
+            isActivating
+                ? '¿Quieres activar el producto "${item.name}" nuevamente?'
+                : '¿Quieres desactivar el producto "${item.name}"?',
+            style: TextStyle(color: c.textMuted, fontSize: 14),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text('Cancelar', style: TextStyle(color: c.textMuted, fontWeight: FontWeight.w600)),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red[600], shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), elevation: 0),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isActivating ? AppColors.teal : Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                elevation: 0,
+              ),
               onPressed: () {
                 setState(() {
-                  _productList.removeAt(index);
-                  if (_editingIndex == index) _clearForm();
+                  item.isActive = isActivating;
+                  final realIndex = _productList.indexOf(item);
+                  if (_editingIndex == realIndex) _clearForm();
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Producto "${item.name}" eliminado.'), backgroundColor: Colors.red[600], behavior: SnackBarBehavior.floating, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                  SnackBar(
+                    content: Text(
+                      isActivating
+                          ? 'Producto "${item.name}" activado correctamente.'
+                          : 'Producto "${item.name}" marcado como inactivo.',
+                    ),
+                    backgroundColor: isActivating ? AppColors.teal : Colors.redAccent,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
                 );
               },
-              child: const Text('Eliminar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(
+                isActivating ? 'Activar' : 'Desactivar',
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         );
@@ -119,6 +267,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.palette;
+    final filteredList = _filteredProducts;
 
     return Scaffold(
       appBar: AppBar(
@@ -146,58 +295,171 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Productos Existentes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: c.textPrimary)),
-                      Text('Toca para editar o eliminar', style: TextStyle(fontSize: 12, color: c.textMuted)),
+                      Text('Toca para editar, activar o desactivar', style: TextStyle(fontSize: 12, color: c.textMuted)),
                     ],
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(color: AppColors.teal.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-                    child: Text('${_productList.length} ítems', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.teal)),
+                    child: Text('${filteredList.length} ítems', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.teal)),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _productList.length,
-                itemBuilder: (context, index) {
-                  final item = _productList[index];
-                  final isEditing = _editingIndex == index;
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: isEditing ? AppColors.teal.withOpacity(0.08) : c.card,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: isEditing ? AppColors.teal : (item.isActive ? AppColors.teal.withOpacity(0.3) : c.cardBorder), width: 1.2),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(item.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: c.textPrimary)),
-                              Text('${item.category} • Stock: ${item.stock}', style: TextStyle(fontSize: 12, color: c.textMuted)),
-                            ],
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => setState(() => item.isActive = !item.isActive),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(color: item.isActive ? Colors.green.withOpacity(0.12) : Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
-                            child: Text(item.isActive ? 'Activo' : 'Inactivo', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: item.isActive ? Colors.green[700] : Colors.grey[700])),
-                          ),
-                        ),
-                        IconButton(icon: Icon(Icons.edit_outlined, size: 18, color: AppColors.teal), onPressed: () => _startEditing(index)),
-                        IconButton(icon: Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red[600]), onPressed: () => _confirmDeleteProduct(index, c)),
-                      ],
-                    ),
-                  );
-                },
+
+              TextField(
+                controller: _searchController,
+                onChanged: (_) => setState(() {}),
+                style: TextStyle(color: c.textPrimary, fontSize: 14),
+                decoration: _buildInputDecoration(
+                  c,
+                  hintText: 'Buscar producto por nombre o categoría...',
+                  prefixIcon: Icons.search_rounded,
+                ),
               ),
+              const SizedBox(height: 10),
+
+              SizedBox(
+                height: 36,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _statusFilters.length,
+                  separatorBuilder: (context, index) => const SizedBox(width: 8),
+                  itemBuilder: (context, index) {
+                    final filter = _statusFilters[index];
+                    final isSelected = _selectedStatusFilter == filter;
+
+                    return ChoiceChip(
+                      label: Text(
+                        filter,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : c.textMuted,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontSize: 13,
+                        ),
+                      ),
+                      selected: isSelected,
+                      selectedColor: AppColors.teal,
+                      backgroundColor: c.card,
+                      side: BorderSide(color: isSelected ? AppColors.teal : c.cardBorder),
+                      onSelected: (selected) {
+                        setState(() {
+                          _selectedStatusFilter = filter;
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              filteredList.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Center(
+                        child: Text('No hay productos en esta sección.', style: TextStyle(color: c.textMuted, fontSize: 13)),
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: filteredList.length,
+                      itemBuilder: (context, index) {
+                        final item = filteredList[index];
+                        final realIndex = _productList.indexOf(item);
+                        final isEditing = _editingIndex == realIndex;
+
+                        return Opacity(
+                          opacity: item.isActive ? 1.0 : 0.5,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isEditing ? AppColors.teal.withOpacity(0.08) : c.card,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isEditing
+                                    ? AppColors.teal
+                                    : (item.isActive ? AppColors.teal.withOpacity(0.3) : c.cardBorder),
+                                width: 1.2,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: item.isActive
+                                      ? AppColors.teal.withOpacity(0.15)
+                                      : Colors.grey.withOpacity(0.2),
+                                  child: Text(
+                                    item.name.isNotEmpty ? item.name[0].toUpperCase() : 'P',
+                                    style: TextStyle(
+                                      color: item.isActive ? AppColors.teal : c.textMuted,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.name,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                          color: c.textPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                            decoration: BoxDecoration(
+                                              color: item.isActive
+                                                  ? AppColors.teal.withOpacity(0.1)
+                                                  : Colors.grey.withOpacity(0.2),
+                                              borderRadius: BorderRadius.circular(6),
+                                            ),
+                                            child: Text(
+                                              item.category,
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w600,
+                                                color: item.isActive ? AppColors.teal : c.textMuted,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'Stock: ${item.stock}',
+                                        style: TextStyle(fontSize: 12, color: c.textMuted),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.teal),
+                                  onPressed: () => _startEditing(item),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    item.isActive ? Icons.toggle_on_rounded : Icons.toggle_off_rounded,
+                                    size: 28,
+                                    color: item.isActive ? AppColors.teal : Colors.redAccent.withOpacity(0.7),
+                                  ),
+                                  onPressed: () => _toggleProductStatus(item, c),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
               const SizedBox(height: 12),
               Divider(color: c.cardBorder.withOpacity(0.6), thickness: 1),
               const SizedBox(height: 12),
@@ -238,16 +500,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     TextField(
                       controller: _nameController,
                       style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(c, hintText: 'Ej. Coca Cola 2L', prefixIcon: Icons.shopping_bag_outlined),
+                      decoration: _buildInputDecoration(c, hintText: 'Ej. Coca Cola ', prefixIcon: Icons.shopping_bag_outlined),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildFieldLabel('Categoría', c),
-                        GestureDetector(
-                          onTap: () => setState(() => _showNewCategoryInput = !_showNewCategoryInput),
-                          child: Text(_showNewCategoryInput ? 'Seleccionar existente' : '+ Agregar categoría', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.teal)),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => _showManageListDialog(
+                                title: 'Categorías',
+                                items: _categories,
+                                onEdit: (oldVal, newVal) {
+                                  final idx = _categories.indexOf(oldVal);
+                                  if (idx != -1) _categories[idx] = newVal;
+                                  if (_selectedCategory == oldVal) _selectedCategory = newVal;
+                                },
+                                onDelete: (val) {
+                                  _categories.remove(val);
+                                  if (_selectedCategory == val) _selectedCategory = null;
+                                },
+                                c: c,
+                              ),
+                              child: Text('Gestionar', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: c.textMuted)),
+                            ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () => setState(() => _showNewCategoryInput = !_showNewCategoryInput),
+                              child: Text(_showNewCategoryInput ? 'Seleccionar' : '+ Nueva', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.teal)),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -260,7 +544,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       )
                     else
                       DropdownButtonFormField<String>(
-                        value: _selectedCategory,
+                        value: _categories.contains(_selectedCategory) ? _selectedCategory : null,
                         hint: Text('Selecciona una categoría', style: TextStyle(color: c.textMuted, fontSize: 14)),
                         icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.textMuted),
                         dropdownColor: c.card,
@@ -284,9 +568,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     if (_isInventoryable) ...[
                       const SizedBox(height: 12),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
-                            flex: 5,
+                            flex: 4,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -297,9 +582,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   decoration: BoxDecoration(color: c.isDark ? c.inputFill : Colors.white, border: Border.all(color: c.cardBorder), borderRadius: BorderRadius.circular(10)),
                                   child: Row(
                                     children: [
-                                      IconButton(icon: Icon(Icons.remove_rounded, size: 16, color: c.textPrimary), onPressed: () { if (_quantity > 1) setState(() => _quantity--); }),
-                                      Expanded(child: Center(child: Text('$_quantity', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: c.textPrimary)))),
-                                      IconButton(icon: Icon(Icons.add_rounded, size: 16, color: c.textPrimary), onPressed: () => setState(() => _quantity++)),
+                                      IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: Icon(Icons.remove_rounded, size: 16, color: c.textPrimary), onPressed: () { if (_quantity > 1) setState(() => _quantity--); }),
+                                      Expanded(child: Center(child: Text('$_quantity', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: c.textPrimary)))),
+                                      IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: Icon(Icons.add_rounded, size: 16, color: c.textPrimary), onPressed: () => setState(() => _quantity++)),
                                     ],
                                   ),
                                 ),
@@ -308,21 +593,56 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            flex: 5,
+                            flex: 6,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildFieldLabel('Unidad', c),
-                                const SizedBox(height: 4),
-                                DropdownButtonFormField<String>(
-                                  value: _selectedUnit,
-                                  icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.textMuted),
-                                  dropdownColor: c.card,
-                                  style: TextStyle(color: c.textPrimary, fontSize: 13, fontWeight: FontWeight.w500),
-                                  decoration: _buildInputDecoration(c),
-                                  items: _units.map((String unit) => DropdownMenuItem<String>(value: unit, child: Text(unit, style: TextStyle(color: c.textPrimary)))).toList(),
-                                  onChanged: (value) => setState(() => _selectedUnit = value),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildFieldLabel('Unidad de medida', c),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => _showManageListDialog(
+                                        title: 'Unidades',
+                                        items: _units,
+                                        onEdit: (oldVal, newVal) {
+                                          final idx = _units.indexOf(oldVal);
+                                          if (idx != -1) _units[idx] = newVal;
+                                          if (_selectedUnit == oldVal) _selectedUnit = newVal;
+                                        },
+                                        onDelete: (val) {
+                                          _units.remove(val);
+                                          if (_selectedUnit == val) _selectedUnit = _units.isNotEmpty ? _units.first : null;
+                                        },
+                                        c: c,
+                                      ),
+                                      child: Icon(Icons.settings_outlined, size: 16, color: c.textMuted),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    GestureDetector(
+                                      onTap: () => setState(() => _showNewUnitInput = !_showNewUnitInput),
+                                      child: Text(_showNewUnitInput ? 'Lista' : '+ Nueva', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.teal)),
+                                    ),
+                                  ],
                                 ),
+                                const SizedBox(height: 4),
+                                if (_showNewUnitInput)
+                                  TextField(
+                                    controller: _customUnitController,
+                                    style: TextStyle(color: c.textPrimary, fontSize: 13),
+                                    decoration: _buildInputDecoration(c, hintText: 'Ej. Litro...'),
+                                  )
+                                else
+                                  DropdownButtonFormField<String>(
+                                    value: _units.contains(_selectedUnit) ? _selectedUnit : (_units.isNotEmpty ? _units.first : null),
+                                    icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.textMuted),
+                                    dropdownColor: c.card,
+                                    style: TextStyle(color: c.textPrimary, fontSize: 13, fontWeight: FontWeight.w500),
+                                    decoration: _buildInputDecoration(c),
+                                    items: _units.map((String unit) => DropdownMenuItem<String>(value: unit, child: Text(unit, style: TextStyle(color: c.textPrimary)))).toList(),
+                                    onChanged: (value) => setState(() => _selectedUnit = value),
+                                  ),
                               ],
                             ),
                           ),
@@ -343,6 +663,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     if (_showNewCategoryInput && categoryToUse.isNotEmpty && !_categories.contains(categoryToUse)) {
                       _categories.add(categoryToUse);
                     }
+
+                    if (_showNewUnitInput && _customUnitController.text.trim().isNotEmpty) {
+                      final newUnit = _customUnitController.text.trim();
+                      if (!_units.contains(newUnit)) {
+                        _units.add(newUnit);
+                      }
+                      _selectedUnit = newUnit;
+                    }
+
                     if (_nameController.text.isNotEmpty) {
                       setState(() {
                         if (_editingIndex != null) {
@@ -362,22 +691,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       _clearForm();
                     }
                   },
-                  icon: Icon(_editingIndex != null ? Icons.save_rounded : Icons.check_circle_outline_rounded, color: Colors.white, size: 18),
-                  label: Text(_editingIndex != null ? 'Actualizar Producto' : 'Guardar en Inventario', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), elevation: 1),
+                  icon: const Icon(Icons.save_rounded, color: Colors.white, size: 20),
+                  label: Text(_editingIndex != null ? 'Actualizar Producto' : 'Guardar Producto', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), elevation: 0),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 1),
+      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 2),
     );
   }
 
-  Widget _buildFieldLabel(String text, AppPalette c) {
-    return Text(text, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary));
+  Widget _buildFieldLabel(String label, AppPalette c) {
+    return Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary));
   }
 
   InputDecoration _buildInputDecoration(AppPalette c, {String? hintText, IconData? prefixIcon}) {

@@ -5,35 +5,35 @@ import '../../theme/app_theme.dart';
 
 abstract class User {
   String name;
-  String email;
+  String username;
   String role;
   bool isActive;
 
   User({
     required this.name,
-    required this.email,
+    required this.username,
     required this.role,
     this.isActive = true,
   });
 }
 
 class CajeroUser extends User {
-  CajeroUser({required super.name, required super.email, super.isActive})
+  CajeroUser({required super.name, required super.username, super.isActive})
       : super(role: 'Cajero');
 }
 
 class AdminUser extends User {
-  AdminUser({required super.name, required super.email, super.isActive})
+  AdminUser({required super.name, required super.username, super.isActive})
       : super(role: 'Admin');
 }
 
 class MeseroUser extends User {
-  MeseroUser({required super.name, required super.email, super.isActive})
+  MeseroUser({required super.name, required super.username, super.isActive})
       : super(role: 'Mesero');
 }
 
 class CocineroUser extends User {
-  CocineroUser({required super.name, required super.email, super.isActive})
+  CocineroUser({required super.name, required super.username, super.isActive})
       : super(role: 'Cocinero');
 }
 
@@ -46,11 +46,14 @@ class UserManagementScreen extends StatefulWidget {
 
 class _UserManagementScreenState extends State<UserManagementScreen> {
   String _selectedFilter = 'Todos';
+
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  bool _isPasswordObscured = true;
   String? _selectedRoleForm = 'Cajero';
   int? _editingIndex;
 
@@ -67,17 +70,18 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   final List<String> _roles = ['Admin', 'Cajero', 'Mesero', 'Cocinero'];
 
   final List<User> _userList = [
-    CajeroUser(name: 'Justin', email: 'justin@gmail.com', isActive: true),
-    AdminUser(name: 'Yamil', email: 'yamil@gmail.com', isActive: false),
-    MeseroUser(name: 'Mauro', email: 'mauro@gmail.com', isActive: true),
-    CocineroUser(name: 'Jeffry', email: 'jeffry@gmail.com', isActive: true),
+    CajeroUser(name: 'Justin', username: 'justin123', isActive: true),
+    AdminUser(name: 'Yamil', username: 'yamil72', isActive: false),
+    MeseroUser(name: 'Mauro', username: 'mauro69', isActive: true),
+    CocineroUser(name: 'Jeffry', username: 'jeffry', isActive: true),
   ];
 
   @override
   void dispose() {
     _searchController.dispose();
     _nameController.dispose();
-    _emailController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -85,7 +89,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     return _userList.where((user) {
       final query = _searchController.text.toLowerCase().trim();
       final matchesSearch = user.name.toLowerCase().contains(query) ||
-          user.email.toLowerCase().contains(query);
+          user.username.toLowerCase().contains(query);
 
       final cleanFilter = _selectedFilter.trim();
       bool matchesRole = cleanFilter == 'Todos';
@@ -102,7 +106,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     }).toList();
   }
 
-  void _confirmDeleteUser(User user, AppPalette c) {
+  void _confirmToggleStatusUser(User user, AppPalette c) {
+    final willDeactivate = user.isActive;
+    final actionText = willDeactivate ? 'desactivar' : 'activar';
+    final titleText = willDeactivate ? 'Desactivar usuario' : 'Activar usuario';
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -110,39 +118,53 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           backgroundColor: c.card,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
-            'Eliminar usuario',
-            style: TextStyle(fontWeight: FontWeight.bold, color: c.textPrimary, fontSize: 18),
+            titleText,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: c.textPrimary,
+              fontSize: 18,
+            ),
           ),
           content: Text(
-            '¿Desea eliminar el usuario ${user.name}?',
+            '¿Desea $actionText al usuario ${user.name}?',
             style: TextStyle(color: c.textMuted, fontSize: 14),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancelar', style: TextStyle(color: c.textMuted, fontWeight: FontWeight.w600)),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(color: c.textMuted, fontWeight: FontWeight.w600),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[600],
+                backgroundColor: willDeactivate ? Colors.redAccent : AppColors.teal,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
               ),
               onPressed: () {
                 setState(() {
-                  _userList.remove(user);
+                  user.isActive = !user.isActive;
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Usuario "${user.name}" eliminado.'),
-                    backgroundColor: Colors.red[600],
+                    content: Text(
+                      willDeactivate
+                          ? 'Usuario "${user.name}" desactivado.'
+                          : 'Usuario "${user.name}" activado.',
+                    ),
+                    backgroundColor: willDeactivate ? Colors.redAccent : AppColors.teal,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                 );
               },
-              child: const Text('Eliminar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(
+                willDeactivate ? 'Desactivar' : 'Activar',
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         );
@@ -150,32 +172,36 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     );
   }
 
-  User _createUserInstance(String name, String email, String role, bool isActive) {
+  User _createUserInstance(String name, String username, String role, bool isActive) {
     switch (role) {
       case 'Admin':
-        return AdminUser(name: name, email: email, isActive: isActive);
+        return AdminUser(name: name, username: username, isActive: isActive);
       case 'Mesero':
-        return MeseroUser(name: name, email: email, isActive: isActive);
+        return MeseroUser(name: name, username: username, isActive: isActive);
       case 'Cocinero':
-        return CocineroUser(name: name, email: email, isActive: isActive);
+        return CocineroUser(name: name, username: username, isActive: isActive);
       case 'Cajero':
       default:
-        return CajeroUser(name: name, email: email, isActive: isActive);
+        return CajeroUser(name: name, username: username, isActive: isActive);
     }
   }
 
   void _openUserFormModal(AppPalette c, {User? userToEdit, int? originalIndex}) {
     if (userToEdit != null) {
       _nameController.text = userToEdit.name;
-      _emailController.text = userToEdit.email;
+      _usernameController.text = userToEdit.username;
+      _passwordController.clear();
       _selectedRoleForm = userToEdit.role;
       _editingIndex = originalIndex;
     } else {
       _nameController.clear();
-      _emailController.clear();
+      _usernameController.clear();
+      _passwordController.clear();
       _selectedRoleForm = 'Cajero';
       _editingIndex = null;
     }
+
+    _isPasswordObscured = true;
 
     showModalBottomSheet(
       context: context,
@@ -231,20 +257,49 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       },
                     ),
                     const SizedBox(height: 12),
-                    Text('Correo Electrónico', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary)),
+                    Text('Nombre de usuario', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary)),
                     const SizedBox(height: 4),
                     TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
+                      controller: _usernameController,
                       style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(c, hintText: 'ejemplo@gmail.com', prefixIcon: Icons.email_outlined),
+                      decoration: _buildInputDecoration(c, hintText: 'Ej. juanperez123', prefixIcon: Icons.account_circle_outlined),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Por favor ingresa un correo.';
+                          return 'Por favor ingresa un nombre de usuario.';
                         }
-                        final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                        if (!emailRegex.hasMatch(value.trim())) {
-                          return 'Ingresa un correo electrónico válido.';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    Text('Contraseña', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary)),
+                    const SizedBox(height: 4),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: _isPasswordObscured,
+                      style: TextStyle(color: c.textPrimary, fontSize: 14),
+                      decoration: _buildInputDecoration(
+                        c,
+                        hintText: '••••••••',
+                        prefixIcon: Icons.lock_outline,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                            color: c.textMuted,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setModalState(() {
+                              _isPasswordObscured = !_isPasswordObscured;
+                            });
+                          },
+                        ),
+                      ),
+                      validator: (value) {
+                        if (_editingIndex == null && (value == null || value.trim().isEmpty)) {
+                          return 'Por favor ingresa una contraseña.';
+                        }
+                        if (value != null && value.isNotEmpty && value.length < 6) {
+                          return 'La contraseña debe tener al menos 6 caracteres.';
                         }
                         return null;
                       },
@@ -277,7 +332,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                             setState(() {
                               final newUser = _createUserInstance(
                                 _nameController.text.trim(),
-                                _emailController.text.trim(),
+                                _usernameController.text.trim(),
                                 _selectedRoleForm!,
                                 _editingIndex != null ? _userList[_editingIndex!].isActive : true,
                               );
@@ -351,7 +406,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 onChanged: (_) => setState(() {}),
                 style: TextStyle(color: c.textPrimary),
                 decoration: InputDecoration(
-                  hintText: 'Buscar usuario por nombre o correo...',
+                  hintText: 'Buscar usuario por nombre o usuario...',
                   hintStyle: TextStyle(color: c.textMuted, fontSize: 14),
                   prefixIcon: Icon(Icons.search, color: c.textMuted),
                   filled: true,
@@ -439,93 +494,102 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           final user = filtered[index];
                           final realIndex = _userList.indexOf(user);
 
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: c.card,
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: user.isActive ? AppColors.teal.withOpacity(0.3) : c.cardBorder,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: AppColors.teal.withOpacity(0.15),
-                                  child: Text(
-                                    user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
-                                    style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.bold),
-                                  ),
+                          return Opacity(
+                            opacity: user.isActive ? 1.0 : 0.5,
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 10),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: c.card,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: user.isActive
+                                      ? AppColors.teal.withOpacity(0.3)
+                                      : c.cardBorder,
                                 ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        user.name,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: c.textPrimary),
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: user.isActive
+                                        ? AppColors.teal.withOpacity(0.15)
+                                        : Colors.grey.withOpacity(0.2),
+                                    child: Text(
+                                      user.name.isNotEmpty
+                                          ? user.name[0].toUpperCase()
+                                          : 'U',
+                                      style: TextStyle(
+                                        color: user.isActive
+                                            ? AppColors.teal
+                                            : c.textMuted,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.teal.withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: Text(
-                                              user.role,
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.teal,
-                                              ),
-                                            ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          user.name,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: c.textPrimary,
                                           ),
-                                          const SizedBox(width: 6),
-                                          GestureDetector(
-                                            onTap: () => setState(() => user.isActive = !user.isActive),
-                                            child: AnimatedContainer(
-                                              duration: const Duration(milliseconds: 200),
-                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 3),
                                               decoration: BoxDecoration(
                                                 color: user.isActive
-                                                    ? Colors.green.withOpacity(0.12)
+                                                    ? AppColors.teal.withOpacity(0.1)
                                                     : Colors.grey.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(20),
+                                                borderRadius: BorderRadius.circular(6),
                                               ),
                                               child: Text(
-                                                user.isActive ? 'Activo' : 'Inactivo',
+                                                user.role,
                                                 style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: user.isActive ? Colors.green[700] : Colors.grey[700],
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: user.isActive
+                                                      ? AppColors.teal
+                                                      : c.textMuted,
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        user.email,
-                                        style: TextStyle(fontSize: 12, color: c.textMuted),
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          '@${user.username}',
+                                          style: TextStyle(fontSize: 12, color: c.textMuted),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.edit_outlined, size: 18, color: AppColors.teal),
-                                  onPressed: () => _openUserFormModal(c, userToEdit: user, originalIndex: realIndex),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red[600]),
-                                  onPressed: () => _confirmDeleteUser(user, c),
-                                ),
-                              ],
+                                  IconButton(
+                                    icon: Icon(Icons.edit_outlined, size: 20, color: AppColors.teal),
+                                    onPressed: () => _openUserFormModal(c, userToEdit: user, originalIndex: realIndex),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      user.isActive
+                                          ? Icons.toggle_on_rounded
+                                          : Icons.toggle_off_rounded,
+                                      size: 28,
+                                      color: user.isActive
+                                          ? AppColors.teal
+                                          : Colors.redAccent.withOpacity(0.7),
+                                    ),
+                                    onPressed: () => _confirmToggleStatusUser(user, c),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -544,11 +608,12 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     );
   }
 
-  InputDecoration _buildInputDecoration(AppPalette c, {String? hintText, IconData? prefixIcon}) {
+  InputDecoration _buildInputDecoration(AppPalette c, {String? hintText, IconData? prefixIcon, Widget? suffixIcon}) {
     return InputDecoration(
       hintText: hintText,
       hintStyle: TextStyle(color: c.textMuted.withOpacity(0.7), fontSize: 13),
       prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: c.textMuted, size: 18) : null,
+      suffixIcon: suffixIcon,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       filled: true,
       fillColor: c.isDark ? c.inputFill : Colors.grey.shade50,
