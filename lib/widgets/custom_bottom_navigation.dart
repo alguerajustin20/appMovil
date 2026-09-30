@@ -1,91 +1,82 @@
 import 'package:flutter/material.dart';
+import '../screens/bench/dashboard-screendart/dashboard_screen.dart';
+import '../screens/inventory/add_product_screen.dart';
+import '../screens/manager/user_management_screen.dart';
+import '../screens/settings/settings_screen.dart';
 
 class CustomBottomNavigation extends StatelessWidget {
   final int currentIndex;
-  final Function(int)? onTap;
 
-  const CustomBottomNavigation({
-    super.key,
-    required this.currentIndex,
-    this.onTap,
-  });
+  const CustomBottomNavigation({super.key, required this.currentIndex});
+
+  void _navigateToScreen(BuildContext context, int index) {
+    if (index == currentIndex) return;
+
+    Widget targetScreen;
+    switch (index) {
+      case 0:
+        targetScreen = const DashboardScreen();
+        break;
+      case 1:
+        targetScreen = const AddProductScreen();
+        break;
+      case 2:
+        // poner la pantalla de facturas aquí
+        targetScreen = const Scaffold(
+          body: Center(child: Text('Pantalla de Facturas')),
+        );
+        break;
+      case 3:
+        targetScreen = const UserManagementScreen();
+        break;
+      case 4:
+        targetScreen = const SettingsScreen();
+        break;
+      default:
+        return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => targetScreen,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      {
-        'label': 'Dashboard',
-        'off': 'assets/icons/performance/miniaturas_claro.png',
-        'on': 'assets/icons/performance/miniaturas_oscuro.png',
-      },
-      {
-        'label': 'Inventario',
-        'off': 'assets/icons/inventory/archivo_caja_negra.png',
-        'on': 'assets/icons/inventory/archivo_caja_blanca.png',
-      },
-      {
-        'label': 'Usuarios',
-        'off': 'assets/icons/admin/usuario_claro.png',
-        'on': 'assets/icons/admin/usuario_negro.png',
-      },
-      {
-        'label': 'Ajustes',
-        'off': 'assets/icons/config/ajuste_negro.png',
-        'on': 'assets/icons/config/ajuste_blanco.png',
-      },
-    ];
-
-    // 🛡️ ENVOLVEMOS EN SAFEAREA PARA QUE NUNCA SEA TAPADO POR LOS BOTONES DE FÁBRICA
-    return SafeArea(
-      top: false, // Ignora la parte de arriba (barra de notificaciones)
-      bottom:
-          true, // 👈 LA CLAVE: Empuja el menú hacia arriba dinámicamente si los botones del sistema están visibles
-      child: Container(
-        height: 65,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Color(0xFFE0E0E0), width: 0.8)),
+    return BottomNavigationBar(
+      currentIndex: currentIndex,
+      onTap: (index) => _navigateToScreen(context, index),
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: const Color(0xFF007A8C),
+      unselectedItemColor: const Color(0xFF94A3B8),
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.grid_view_rounded),
+          label: 'Dashboard',
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(items.length, (index) {
-            final isSelected = currentIndex == index;
-            return InkWell(
-              onTap: () => onTap?.call(index),
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    isSelected ? items[index]['on']! : items[index]['off']!,
-                    width: 24,
-                    height: 24,
-                    fit: BoxFit.contain,
-                    color: isSelected ? const Color(0xFF007A8C) : Colors.grey,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.image_not_supported,
-                      size: 24,
-                      color: isSelected ? const Color(0xFF007A8C) : Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    items[index]['label']!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                      color: isSelected ? const Color(0xFF007A8C) : Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.inventory_2_outlined),
+          label: 'Inventario',
         ),
-      ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.receipt_long_outlined),
+          activeIcon: Icon(Icons.receipt_long),
+          label: 'Factura',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.group_outlined),
+          label: 'Usuarios',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings_outlined),
+          label: 'Ajustes',
+        ),
+      ],
     );
   }
 }

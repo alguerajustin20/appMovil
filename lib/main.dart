@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'screens/security/login_screen.dart';
+import 'package:integrador_vi_mobile/screens/security/login_screen.dart';
+import 'theme/app_theme.dart';
+
+/// Interruptor global de tema — cualquier pantalla puede leerlo o cambiarlo.
+/// Empieza en modo claro por defecto.
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
 void main() {
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
@@ -10,16 +15,17 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-
-      theme: ThemeData(
-        useMaterial3: true,
-
-        //colorSchemeSeed: Colors.purple
-      ),
-
-      home: LoginScreen(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, currentMode, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          themeMode: currentMode,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          home: const LoginScreen(),
+        );
+      },
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/theme/app_colors.dart';
+import '../../../theme/app_theme.dart';
 
 class DashboardBench extends StatefulWidget {
   const DashboardBench({super.key});
@@ -8,13 +10,14 @@ class DashboardBench extends StatefulWidget {
 }
 
 class _DashboardBench extends State<DashboardBench> {
-  // Se almacena el índice de la barra presionada por el usuario (-1 = ninguna)
   int selectedBarIndex = -1;
 
   @override
   Widget build(BuildContext context) {
+    final c = context.palette;
+
     return Card(
-      color: Colors.white,
+      color: c.card,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -23,116 +26,82 @@ class _DashboardBench extends State<DashboardBench> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Título interno del gráfico compacto
-            const Text(
+            Text(
               'Velocidad de Inventario',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: c.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
 
-            // Área del Gráfico Coordinada en Altura
             SizedBox(
-              height: 230, // Altura total fija del gráfico
+              height: 230,
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // Reservamos exactamente 24px arriba para los globos (tooltips) y 25px abajo para las etiquetas del día
                   final drawingHeight = constraints.maxHeight - 49;
 
-                  // Función matemática unificada para calcular la altura exacta de cualquier valor (Máx 1000)
                   double calculateHeight(double value) {
                     return (value / 1000) * drawingHeight;
                   }
 
-                  // Mapeo exacto de tus datos y colores
                   final List<Map<String, dynamic>> barData = [
-                    {
-                      'day': 'Lun',
-                      'value': 600.0,
-                      'color': const Color(0xFF036573),
-                    },
-                    {
-                      'day': 'Mar',
-                      'value': 820.0,
-                      'color': const Color(0xFF036573),
-                    },
-                    {
-                      'day': 'Mie',
-                      'value': 400.0,
-                      'color': const Color(0xFF036573),
-                    },
+                    {'day': 'Lun', 'value': 600.0, 'color': AppColors.teal},
+                    {'day': 'Mar', 'value': 820.0, 'color': AppColors.teal},
+                    {'day': 'Mie', 'value': 400.0, 'color': AppColors.teal},
                     {
                       'day': 'Jue',
                       'value': 700.0,
                       'color': const Color(0xFF90B9C6),
                     },
-                    {
-                      'day': 'Vie',
-                      'value': 1000.0,
-                      'color': const Color(0xFF036573),
-                    },
-                    {
-                      'day': 'Sab',
-                      'value': 300.0,
-                      'color': const Color(0xFF734610),
-                    },
-                    {
-                      'day': 'Dom',
-                      'value': 500.0,
-                      'color': const Color(0xFF036573),
-                    },
+                    {'day': 'Vie', 'value': 1000.0, 'color': AppColors.teal},
+                    {'day': 'Sab', 'value': 300.0, 'color': AppColors.brown},
+                    {'day': 'Dom', 'value': 500.0, 'color': AppColors.teal},
                   ];
 
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // 1. EJE Y COHERENTE: Usa exactamente las mismas alturas calculadas matemáticamente
                       SizedBox(
                         width: 32,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            // Contenedor que simula la altura del tope (1000) hasta la base (0)
                             SizedBox(
                               height: drawingHeight,
                               child: Stack(
                                 clipBehavior: Clip.none,
                                 children: [
-                                  // Etiqueta 1000: Alineada a la altura de una barra con valor 1000
                                   Positioned(
                                     bottom: calculateHeight(1000) - 6,
                                     right: 0,
-                                    child: const Text(
+                                    child: Text(
                                       '1000',
                                       style: TextStyle(
-                                        color: Colors.grey,
+                                        color: c.textMuted,
                                         fontSize: 11,
                                       ),
                                     ),
                                   ),
-                                  // Etiqueta 500: Alineada a la altura exacta del valor 500
                                   Positioned(
                                     bottom: calculateHeight(500) - 6,
                                     right: 0,
-                                    child: const Text(
+                                    child: Text(
                                       '500',
                                       style: TextStyle(
-                                        color: Colors.grey,
+                                        color: c.textMuted,
                                         fontSize: 11,
                                       ),
                                     ),
                                   ),
-                                  // Etiqueta 0: Alineada a la base exacta del gráfico
                                   Positioned(
                                     bottom: calculateHeight(0) - 6,
                                     right: 0,
-                                    child: const Text(
+                                    child: Text(
                                       '0',
                                       style: TextStyle(
-                                        color: Colors.grey,
+                                        color: c.textMuted,
                                         fontSize: 11,
                                       ),
                                     ),
@@ -140,15 +109,11 @@ class _DashboardBench extends State<DashboardBench> {
                                 ],
                               ),
                             ),
-                            const SizedBox(
-                              height: 25,
-                            ), // 👈 Compensación exacta de la altura de la etiqueta de los días
+                            const SizedBox(height: 25),
                           ],
                         ),
                       ),
                       const SizedBox(width: 12),
-
-                      // 2. RENDERIZADOR DE BARRAS NATIVAS
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -158,6 +123,7 @@ class _DashboardBench extends State<DashboardBench> {
                             final isSelected = selectedBarIndex == index;
 
                             return _buildInteractiveBar(
+                              context: context,
                               index: index,
                               day: item['day'],
                               height: calculateHeight(item['value']),
@@ -177,16 +143,15 @@ class _DashboardBench extends State<DashboardBench> {
             ),
 
             const SizedBox(height: 14),
-            const Divider(color: Color(0xFFF1F1F1), height: 1),
+            Divider(color: c.cardBorder, height: 1),
             const SizedBox(height: 16),
 
-            // 3. Leyenda inferior
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildLegendItem('Ingresos', const Color(0xFF036573)),
+                _buildLegendItem(context, 'Ingresos', AppColors.teal),
                 const SizedBox(width: 24),
-                _buildLegendItem('Salidas', const Color(0xFF734610)),
+                _buildLegendItem(context, 'Salidas', AppColors.brown),
               ],
             ),
           ],
@@ -195,8 +160,8 @@ class _DashboardBench extends State<DashboardBench> {
     );
   }
 
-  // Helper interno de barras interactivas
   Widget _buildInteractiveBar({
+    required BuildContext context,
     required int index,
     required String day,
     required double height,
@@ -204,6 +169,8 @@ class _DashboardBench extends State<DashboardBench> {
     required Color barColor,
     required bool isSelected,
   }) {
+    final c = context.palette;
+
     return GestureDetector(
       onTapDown: (_) => setState(() => selectedBarIndex = index),
       onTapUp: (_) => setState(() => selectedBarIndex = -1),
@@ -211,7 +178,6 @@ class _DashboardBench extends State<DashboardBench> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          // Globo indicador (Ocupa exactamente 24px de alto fijo)
           SizedBox(
             height: 24,
             child: AnimatedOpacity(
@@ -234,8 +200,6 @@ class _DashboardBench extends State<DashboardBench> {
               ),
             ),
           ),
-
-          // La Barra del Gráfico
           AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             width: isSelected ? 36 : 32,
@@ -257,15 +221,13 @@ class _DashboardBench extends State<DashboardBench> {
                   : [],
             ),
           ),
-
-          // Etiqueta de días (Ocupa exactamente 25px de alto total)
           const SizedBox(height: 8),
           SizedBox(
             height: 17,
             child: Text(
               day,
               style: TextStyle(
-                color: isSelected ? Colors.black87 : Colors.grey,
+                color: isSelected ? c.textPrimary : c.textMuted,
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
@@ -276,7 +238,9 @@ class _DashboardBench extends State<DashboardBench> {
     );
   }
 
-  Widget _buildLegendItem(String label, Color color) {
+  Widget _buildLegendItem(BuildContext context, String label, Color color) {
+    final c = context.palette;
+
     return Row(
       children: [
         Container(
@@ -287,8 +251,8 @@ class _DashboardBench extends State<DashboardBench> {
         const SizedBox(width: 8),
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.black87,
+          style: TextStyle(
+            color: c.textPrimary,
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
