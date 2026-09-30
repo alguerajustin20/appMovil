@@ -16,7 +16,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _userName = 'Yamil72';
   final String _userEmail = 'yamil';
   final String _userRole = 'Administrador';
-  String _selectedLanguage = 'Español';
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +26,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
+        automaticallyImplyLeading: false,
         title: Text(
           'Ajustes',
           style: TextStyle(
-            color: isDark ? Colors.white : AppColors.teal,
+            color: isDark ? const Color(0xFF00B4D8) : const Color(0xFF03738C),
+            fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),

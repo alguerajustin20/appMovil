@@ -277,13 +277,15 @@ class _FacturaScreenState extends State<FacturaScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        automaticallyImplyLeading: false,
         elevation: 0,
         titleSpacing: 20,
         title: Text(
           'Visualización de Factura',
           style: TextStyle(
-            color: c.textPrimary,
-            fontSize: 22,
+            color: c.isDark ? const Color(0xFF00B4D8) : const Color(0xFF03738C),
+            fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
