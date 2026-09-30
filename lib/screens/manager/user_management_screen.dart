@@ -19,22 +19,22 @@ abstract class User {
 
 class CajeroUser extends User {
   CajeroUser({required super.name, required super.username, super.isActive})
-      : super(role: 'Cajero');
+    : super(role: 'Cajero');
 }
 
 class AdminUser extends User {
   AdminUser({required super.name, required super.username, super.isActive})
-      : super(role: 'Admin');
+    : super(role: 'Admin');
 }
 
 class MeseroUser extends User {
   MeseroUser({required super.name, required super.username, super.isActive})
-      : super(role: 'Mesero');
+    : super(role: 'Mesero');
 }
 
 class CocineroUser extends User {
   CocineroUser({required super.name, required super.username, super.isActive})
-      : super(role: 'Cocinero');
+    : super(role: 'Cocinero');
 }
 
 class UserManagementScreen extends StatefulWidget {
@@ -88,7 +88,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   List<User> get _filteredUsers {
     return _userList.where((user) {
       final query = _searchController.text.toLowerCase().trim();
-      final matchesSearch = user.name.toLowerCase().contains(query) ||
+      final matchesSearch =
+          user.name.toLowerCase().contains(query) ||
           user.username.toLowerCase().contains(query);
 
       final cleanFilter = _selectedFilter.trim();
@@ -116,7 +117,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: c.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             titleText,
             style: TextStyle(
@@ -134,13 +137,20 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
                 'Cancelar',
-                style: TextStyle(color: c.textMuted, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: c.textMuted,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: willDeactivate ? Colors.redAccent : AppColors.teal,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                backgroundColor: willDeactivate
+                    ? Colors.redAccent
+                    : AppColors.teal,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 elevation: 0,
               ),
               onPressed: () {
@@ -155,15 +165,22 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           ? 'Usuario "${user.name}" desactivado.'
                           : 'Usuario "${user.name}" activado.',
                     ),
-                    backgroundColor: willDeactivate ? Colors.redAccent : AppColors.teal,
+                    backgroundColor: willDeactivate
+                        ? Colors.redAccent
+                        : AppColors.teal,
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 );
               },
               child: Text(
                 willDeactivate ? 'Desactivar' : 'Activar',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -172,7 +189,12 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     );
   }
 
-  User _createUserInstance(String name, String username, String role, bool isActive) {
+  User _createUserInstance(
+    String name,
+    String username,
+    String role,
+    bool isActive,
+  ) {
     switch (role) {
       case 'Admin':
         return AdminUser(name: name, username: username, isActive: isActive);
@@ -186,7 +208,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     }
   }
 
-  void _openUserFormModal(AppPalette c, {User? userToEdit, int? originalIndex}) {
+  void _openUserFormModal(
+    AppPalette c, {
+    User? userToEdit,
+    int? originalIndex,
+  }) {
     if (userToEdit != null) {
       _nameController.text = userToEdit.name;
       _usernameController.text = userToEdit.username;
@@ -230,8 +256,14 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _editingIndex != null ? 'Editar Usuario' : 'Agregar Usuario',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: c.textPrimary),
+                          _editingIndex != null
+                              ? 'Editar Usuario'
+                              : 'Agregar Usuario',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: c.textPrimary,
+                          ),
                         ),
                         IconButton(
                           icon: Icon(Icons.close_rounded, color: c.textMuted),
@@ -240,12 +272,23 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text('Nombre completo', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary)),
+                    Text(
+                      'Nombre completo',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextFormField(
                       controller: _nameController,
                       style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(c, hintText: 'Ej. Juan Pérez', prefixIcon: Icons.person_outline),
+                      decoration: _buildInputDecoration(
+                        c,
+                        hintText: 'Ej. Juan Pérez',
+                        prefixIcon: Icons.person_outline,
+                      ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Por favor ingresa un nombre.';
@@ -257,12 +300,23 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       },
                     ),
                     const SizedBox(height: 12),
-                    Text('Nombre de usuario', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary)),
+                    Text(
+                      'Nombre de usuario',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextFormField(
                       controller: _usernameController,
                       style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(c, hintText: 'Ej. juanperez123', prefixIcon: Icons.account_circle_outlined),
+                      decoration: _buildInputDecoration(
+                        c,
+                        hintText: 'Ej. juanperez123',
+                        prefixIcon: Icons.account_circle_outlined,
+                      ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Por favor ingresa un nombre de usuario.';
@@ -271,7 +325,14 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       },
                     ),
                     const SizedBox(height: 12),
-                    Text('Contraseña', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary)),
+                    Text(
+                      'Contraseña',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     TextFormField(
                       controller: _passwordController,
@@ -283,7 +344,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         prefixIcon: Icons.lock_outline,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _isPasswordObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                            _isPasswordObscured
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
                             color: c.textMuted,
                             size: 20,
                           ),
@@ -295,26 +358,47 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         ),
                       ),
                       validator: (value) {
-                        if (_editingIndex == null && (value == null || value.trim().isEmpty)) {
+                        if (_editingIndex == null &&
+                            (value == null || value.trim().isEmpty)) {
                           return 'Por favor ingresa una contraseña.';
                         }
-                        if (value != null && value.isNotEmpty && value.length < 6) {
+                        if (value != null &&
+                            value.isNotEmpty &&
+                            value.length < 6) {
                           return 'La contraseña debe tener al menos 6 caracteres.';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 12),
-                    Text('Rol / Cargo asignado', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary)),
+                    Text(
+                      'Rol / Cargo asignado',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     DropdownButtonFormField<String>(
                       value: _selectedRoleForm,
-                      icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.textMuted),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: c.textMuted,
+                      ),
                       dropdownColor: c.card,
                       style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(c, prefixIcon: Icons.badge_outlined),
-                      items: _roles.map((r) => DropdownMenuItem(value: r, child: Text(r))).toList(),
-                      onChanged: (val) => setModalState(() => _selectedRoleForm = val),
+                      decoration: _buildInputDecoration(
+                        c,
+                        prefixIcon: Icons.badge_outlined,
+                      ),
+                      items: _roles
+                          .map(
+                            (r) => DropdownMenuItem(value: r, child: Text(r)),
+                          )
+                          .toList(),
+                      onChanged: (val) =>
+                          setModalState(() => _selectedRoleForm = val),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Por favor selecciona un rol para el usuario.';
@@ -334,7 +418,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                 _nameController.text.trim(),
                                 _usernameController.text.trim(),
                                 _selectedRoleForm!,
-                                _editingIndex != null ? _userList[_editingIndex!].isActive : true,
+                                _editingIndex != null
+                                    ? _userList[_editingIndex!].isActive
+                                    : true,
                               );
 
                               if (_editingIndex != null) {
@@ -346,22 +432,40 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(_editingIndex != null ? '¡Usuario actualizado!' : '¡Usuario agregado!'),
+                                content: Text(
+                                  _editingIndex != null
+                                      ? '¡Usuario actualizado!'
+                                      : '¡Usuario agregado!',
+                                ),
                                 backgroundColor: AppColors.teal,
                                 behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             );
                           }
                         },
-                        icon: const Icon(Icons.check_circle_outline_rounded, color: Colors.white, size: 18),
+                        icon: const Icon(
+                          Icons.check_circle_outline_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                         label: Text(
-                          _editingIndex != null ? 'Actualizar Usuario' : 'Guardar Usuario',
-                          style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                          _editingIndex != null
+                              ? 'Actualizar Usuario'
+                              : 'Guardar Usuario',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.teal,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           elevation: 0,
                         ),
                       ),
@@ -383,13 +487,15 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+        automaticallyImplyLeading: false,
         elevation: 0,
         titleSpacing: 20,
         title: Text(
           'Gestión de Usuarios',
           style: TextStyle(
-            color: c.textPrimary,
-            fontSize: 20,
+            color: c.isDark ? const Color(0xFF00B4D8) : const Color(0xFF03738C),
+            fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -474,7 +580,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.group_outlined, size: 64, color: c.textMuted),
+                            Icon(
+                              Icons.group_outlined,
+                              size: 64,
+                              color: c.textMuted,
+                            ),
                             const SizedBox(height: 12),
                             Text(
                               'No hay usuarios registrados',
@@ -529,7 +639,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           user.name,
@@ -543,13 +654,20 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                         Row(
                                           children: [
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 8, vertical: 3),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 3,
+                                                  ),
                                               decoration: BoxDecoration(
                                                 color: user.isActive
-                                                    ? AppColors.teal.withOpacity(0.1)
-                                                    : Colors.grey.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(6),
+                                                    ? AppColors.teal
+                                                          .withOpacity(0.1)
+                                                    : Colors.grey.withOpacity(
+                                                        0.2,
+                                                      ),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
                                               ),
                                               child: Text(
                                                 user.role,
@@ -567,14 +685,25 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                         const SizedBox(height: 2),
                                         Text(
                                           '@${user.username}',
-                                          style: TextStyle(fontSize: 12, color: c.textMuted),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: c.textMuted,
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.edit_outlined, size: 20, color: AppColors.teal),
-                                    onPressed: () => _openUserFormModal(c, userToEdit: user, originalIndex: realIndex),
+                                    icon: Icon(
+                                      Icons.edit_outlined,
+                                      size: 20,
+                                      color: AppColors.teal,
+                                    ),
+                                    onPressed: () => _openUserFormModal(
+                                      c,
+                                      userToEdit: user,
+                                      originalIndex: realIndex,
+                                    ),
                                   ),
                                   IconButton(
                                     icon: Icon(
@@ -586,7 +715,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                           ? AppColors.teal
                                           : Colors.redAccent.withOpacity(0.7),
                                     ),
-                                    onPressed: () => _confirmToggleStatusUser(user, c),
+                                    onPressed: () =>
+                                        _confirmToggleStatusUser(user, c),
                                   ),
                                 ],
                               ),
@@ -608,18 +738,34 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     );
   }
 
-  InputDecoration _buildInputDecoration(AppPalette c, {String? hintText, IconData? prefixIcon, Widget? suffixIcon}) {
+  InputDecoration _buildInputDecoration(
+    AppPalette c, {
+    String? hintText,
+    IconData? prefixIcon,
+    Widget? suffixIcon,
+  }) {
     return InputDecoration(
       hintText: hintText,
       hintStyle: TextStyle(color: c.textMuted.withOpacity(0.7), fontSize: 13),
-      prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: c.textMuted, size: 18) : null,
+      prefixIcon: prefixIcon != null
+          ? Icon(prefixIcon, color: c.textMuted, size: 18)
+          : null,
       suffixIcon: suffixIcon,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       filled: true,
       fillColor: c.isDark ? c.inputFill : Colors.grey.shade50,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: c.cardBorder)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: c.cardBorder)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.teal, width: 1.5)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: c.cardBorder),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: c.cardBorder),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.teal, width: 1.5),
+      ),
     );
   }
 }

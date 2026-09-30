@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'usuario',
+                        'Usuario',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFFDB653),
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Ingrese su usuario',
+                          hintText: 'Ingrese su Usuario',
                           hintStyle: TextStyle(
                             color: isDarkMode ? palette.textMuted : Colors.grey,
                           ),
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 20),
                       Text(
-                        'contraseña',
+                        'Contraseña',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFFDB653),

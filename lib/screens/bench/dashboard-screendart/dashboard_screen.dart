@@ -41,8 +41,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: Text(
           'Dashboard',
           style: TextStyle(
-            color: isDarkMode ? Colors.white : Colors.black,
-            fontSize: 22,
+            color: isDarkMode
+                ? const Color(0xFF00B4D8)
+                : const Color(0xFF03738C),
+            fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -77,7 +79,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Text(
                   'Hola, yamil72',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: isDarkMode
                         ? const Color(0xFF00B4D8)
@@ -87,7 +89,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 4),
                 Text(
                   'Buenas tardes • Martes, 12 de Octubre',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(fontSize: 15, color: Colors.grey),
                 ),
                 const SizedBox(height: 24),
 

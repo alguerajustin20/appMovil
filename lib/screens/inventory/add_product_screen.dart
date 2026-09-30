@@ -26,7 +26,8 @@ class AddProductScreen extends StatefulWidget {
 
 class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _customCategoryController = TextEditingController();
+  final TextEditingController _customCategoryController =
+      TextEditingController();
   final TextEditingController _customUnitController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
@@ -39,15 +40,40 @@ class _AddProductScreenState extends State<AddProductScreen> {
   String? _selectedUnit = 'Paquete';
   String _selectedStatusFilter = 'Todos';
 
-  final List<String> _categories = ['Bebidas', 'Carnes', 'Verduras', 'Abarrotes'];
+  final List<String> _categories = [
+    'Bebidas',
+    'Carnes',
+    'Verduras',
+    'Abarrotes',
+  ];
   final List<String> _units = ['Paquete', 'Kg', 'Caja', 'Botella', 'onza'];
   final List<String> _statusFilters = ['Todos', 'Activo', 'Inactivo'];
 
   final List<ProductItem> _productList = [
-    ProductItem(name: 'Coca Cola ', category: 'Bebidas', stock: 15, isActive: true),
-    ProductItem(name: 'Carne de Res', category: 'Carnes', stock: 8, isActive: true),
-    ProductItem(name: 'Tomates', category: 'Verduras', stock: 0, isActive: false),
-    ProductItem(name: 'Jugo de Naranja', category: 'Bebidas', stock: 5, isActive: true),
+    ProductItem(
+      name: 'Coca Cola ',
+      category: 'Bebidas',
+      stock: 15,
+      isActive: true,
+    ),
+    ProductItem(
+      name: 'Carne de Res',
+      category: 'Carnes',
+      stock: 8,
+      isActive: true,
+    ),
+    ProductItem(
+      name: 'Tomates',
+      category: 'Verduras',
+      stock: 0,
+      isActive: false,
+    ),
+    ProductItem(
+      name: 'Jugo de Naranja',
+      category: 'Bebidas',
+      stock: 5,
+      isActive: true,
+    ),
   ];
 
   @override
@@ -62,7 +88,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
   List<ProductItem> get _filteredProducts {
     return _productList.where((item) {
       final query = _searchController.text.toLowerCase().trim();
-      final matchesSearch = item.name.toLowerCase().contains(query) ||
+      final matchesSearch =
+          item.name.toLowerCase().contains(query) ||
           item.category.toLowerCase().contains(query);
 
       bool matchesStatus = true;
@@ -122,53 +149,104 @@ class _AddProductScreenState extends State<AddProductScreen> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: c.card,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              title: Text('Gestionar $title', style: TextStyle(fontWeight: FontWeight.bold, color: c.textPrimary, fontSize: 18)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text(
+                'Gestionar $title',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: c.textPrimary,
+                  fontSize: 18,
+                ),
+              ),
               content: SizedBox(
                 width: double.maxFinite,
                 child: items.isEmpty
-                    ? Text('No hay elementos guardados.', style: TextStyle(color: c.textMuted))
+                    ? Text(
+                        'No hay elementos guardados.',
+                        style: TextStyle(color: c.textMuted),
+                      )
                     : ListView.builder(
                         shrinkWrap: true,
                         itemCount: items.length,
                         itemBuilder: (context, index) {
                           final item = items[index];
                           return ListTile(
-                            title: Text(item, style: TextStyle(color: c.textPrimary, fontSize: 14)),
+                            title: Text(
+                              item,
+                              style: TextStyle(
+                                color: c.textPrimary,
+                                fontSize: 14,
+                              ),
+                            ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.teal),
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 20,
+                                    color: AppColors.teal,
+                                  ),
                                   onPressed: () {
-                                    final editController = TextEditingController(text: item);
+                                    final editController =
+                                        TextEditingController(text: item);
                                     showDialog(
                                       context: context,
                                       builder: (ctx) => AlertDialog(
                                         backgroundColor: c.card,
-                                        title: Text('Editar $item', style: TextStyle(color: c.textPrimary, fontSize: 16)),
+                                        title: Text(
+                                          'Editar $item',
+                                          style: TextStyle(
+                                            color: c.textPrimary,
+                                            fontSize: 16,
+                                          ),
+                                        ),
                                         content: TextField(
                                           controller: editController,
-                                          style: TextStyle(color: c.textPrimary),
-                                          decoration: _buildInputDecoration(c, hintText: 'Nuevo nombre'),
+                                          style: TextStyle(
+                                            color: c.textPrimary,
+                                          ),
+                                          decoration: _buildInputDecoration(
+                                            c,
+                                            hintText: 'Nuevo nombre',
+                                          ),
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed: () => Navigator.pop(ctx),
-                                            child: Text('Cancelar', style: TextStyle(color: c.textMuted)),
+                                            child: Text(
+                                              'Cancelar',
+                                              style: TextStyle(
+                                                color: c.textMuted,
+                                              ),
+                                            ),
                                           ),
                                           ElevatedButton(
-                                            style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: AppColors.teal,
+                                            ),
                                             onPressed: () {
-                                              if (editController.text.trim().isNotEmpty) {
+                                              if (editController.text
+                                                  .trim()
+                                                  .isNotEmpty) {
                                                 setState(() {
-                                                  onEdit(item, editController.text.trim());
+                                                  onEdit(
+                                                    item,
+                                                    editController.text.trim(),
+                                                  );
                                                 });
                                                 setDialogState(() {});
                                                 Navigator.pop(ctx);
                                               }
                                             },
-                                            child: const Text('Guardar', style: TextStyle(color: Colors.white)),
+                                            child: const Text(
+                                              'Guardar',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -176,7 +254,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   },
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red[600]),
+                                  icon: Icon(
+                                    Icons.delete_outline_rounded,
+                                    size: 20,
+                                    color: Colors.red[600],
+                                  ),
                                   onPressed: () {
                                     setState(() {
                                       onDelete(item);
@@ -193,7 +275,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('Cerrar', style: TextStyle(color: c.textMuted, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    'Cerrar',
+                    style: TextStyle(
+                      color: c.textMuted,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             );
@@ -211,10 +299,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: c.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             isActivating ? 'Activar producto' : 'Desactivar producto',
-            style: TextStyle(fontWeight: FontWeight.bold, color: c.textPrimary, fontSize: 18),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: c.textPrimary,
+              fontSize: 18,
+            ),
           ),
           content: Text(
             isActivating
@@ -225,12 +319,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancelar', style: TextStyle(color: c.textMuted, fontWeight: FontWeight.w600)),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: c.textMuted,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: isActivating ? AppColors.teal : Colors.redAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                backgroundColor: isActivating
+                    ? AppColors.teal
+                    : Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 elevation: 0,
               ),
               onPressed: () {
@@ -247,15 +351,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           ? 'Producto "${item.name}" activado correctamente.'
                           : 'Producto "${item.name}" marcado como inactivo.',
                     ),
-                    backgroundColor: isActivating ? AppColors.teal : Colors.redAccent,
+                    backgroundColor: isActivating
+                        ? AppColors.teal
+                        : Colors.redAccent,
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 );
               },
               child: Text(
                 isActivating ? 'Activar' : 'Desactivar',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -271,15 +382,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: c.textPrimary, size: 20),
-          onPressed: () => Navigator.maybePop(context),
+        title: Text(
+          'Gestión de Inventario',
+          style: TextStyle(
+            color: c.isDark ? const Color(0xFF00B4D8) : const Color(0xFF03738C),
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        title: Text('Gestión de Inventario', style: TextStyle(color: c.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -294,14 +409,37 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Productos Existentes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: c.textPrimary)),
-                      Text('Toca para editar, activar o desactivar', style: TextStyle(fontSize: 12, color: c.textMuted)),
+                      Text(
+                        'Productos Existentes',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: c.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        'Toca para editar, activar o desactivar',
+                        style: TextStyle(fontSize: 14, color: c.textMuted),
+                      ),
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(color: AppColors.teal.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-                    child: Text('${filteredList.length} ítems', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.teal)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.teal.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '${filteredList.length} ítems',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.teal,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -324,7 +462,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _statusFilters.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 8),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 8),
                   itemBuilder: (context, index) {
                     final filter = _statusFilters[index];
                     final isSelected = _selectedStatusFilter == filter;
@@ -334,14 +473,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         filter,
                         style: TextStyle(
                           color: isSelected ? Colors.white : c.textMuted,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                           fontSize: 13,
                         ),
                       ),
                       selected: isSelected,
                       selectedColor: AppColors.teal,
                       backgroundColor: c.card,
-                      side: BorderSide(color: isSelected ? AppColors.teal : c.cardBorder),
+                      side: BorderSide(
+                        color: isSelected ? AppColors.teal : c.cardBorder,
+                      ),
                       onSelected: (selected) {
                         setState(() {
                           _selectedStatusFilter = filter;
@@ -357,7 +500,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Center(
-                        child: Text('No hay productos en esta sección.', style: TextStyle(color: c.textMuted, fontSize: 13)),
+                        child: Text(
+                          'No hay productos en esta sección.',
+                          style: TextStyle(color: c.textMuted, fontSize: 13),
+                        ),
                       ),
                     )
                   : ListView.builder(
@@ -375,12 +521,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             margin: const EdgeInsets.only(bottom: 10),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: isEditing ? AppColors.teal.withOpacity(0.08) : c.card,
+                              color: isEditing
+                                  ? AppColors.teal.withOpacity(0.08)
+                                  : c.card,
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
                                 color: isEditing
                                     ? AppColors.teal
-                                    : (item.isActive ? AppColors.teal.withOpacity(0.3) : c.cardBorder),
+                                    : (item.isActive
+                                          ? AppColors.teal.withOpacity(0.3)
+                                          : c.cardBorder),
                                 width: 1.2,
                               ),
                             ),
@@ -391,9 +541,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                       ? AppColors.teal.withOpacity(0.15)
                                       : Colors.grey.withOpacity(0.2),
                                   child: Text(
-                                    item.name.isNotEmpty ? item.name[0].toUpperCase() : 'P',
+                                    item.name.isNotEmpty
+                                        ? item.name[0].toUpperCase()
+                                        : 'P',
                                     style: TextStyle(
-                                      color: item.isActive ? AppColors.teal : c.textMuted,
+                                      color: item.isActive
+                                          ? AppColors.teal
+                                          : c.textMuted,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -401,7 +555,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         item.name,
@@ -415,19 +570,29 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                       Row(
                                         children: [
                                           Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 3,
+                                            ),
                                             decoration: BoxDecoration(
                                               color: item.isActive
-                                                  ? AppColors.teal.withOpacity(0.1)
-                                                  : Colors.grey.withOpacity(0.2),
-                                              borderRadius: BorderRadius.circular(6),
+                                                  ? AppColors.teal.withOpacity(
+                                                      0.1,
+                                                    )
+                                                  : Colors.grey.withOpacity(
+                                                      0.2,
+                                                    ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
                                             ),
                                             child: Text(
                                               item.category,
                                               style: TextStyle(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w600,
-                                                color: item.isActive ? AppColors.teal : c.textMuted,
+                                                color: item.isActive
+                                                    ? AppColors.teal
+                                                    : c.textMuted,
                                               ),
                                             ),
                                           ),
@@ -436,22 +601,34 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                       const SizedBox(height: 2),
                                       Text(
                                         'Stock: ${item.stock}',
-                                        style: TextStyle(fontSize: 12, color: c.textMuted),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: c.textMuted,
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.teal),
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 20,
+                                    color: AppColors.teal,
+                                  ),
                                   onPressed: () => _startEditing(item),
                                 ),
                                 IconButton(
                                   icon: Icon(
-                                    item.isActive ? Icons.toggle_on_rounded : Icons.toggle_off_rounded,
+                                    item.isActive
+                                        ? Icons.toggle_on_rounded
+                                        : Icons.toggle_off_rounded,
                                     size: 28,
-                                    color: item.isActive ? AppColors.teal : Colors.redAccent.withOpacity(0.7),
+                                    color: item.isActive
+                                        ? AppColors.teal
+                                        : Colors.redAccent.withOpacity(0.7),
                                   ),
-                                  onPressed: () => _toggleProductStatus(item, c),
+                                  onPressed: () =>
+                                      _toggleProductStatus(item, c),
                                 ),
                               ],
                             ),
@@ -470,17 +647,42 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(color: AppColors.teal.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
-                        child: Icon(_editingIndex != null ? Icons.edit_note_rounded : Icons.add_box_rounded, color: AppColors.teal, size: 20),
+                        decoration: BoxDecoration(
+                          color: AppColors.teal.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          _editingIndex != null
+                              ? Icons.edit_note_rounded
+                              : Icons.add_box_rounded,
+                          color: AppColors.teal,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      Text(_editingIndex != null ? 'Editar Producto' : 'Agregar Producto', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: c.textPrimary)),
+                      Text(
+                        _editingIndex != null
+                            ? 'Editar Producto'
+                            : 'Agregar Producto',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: c.textPrimary,
+                        ),
+                      ),
                     ],
                   ),
                   if (_editingIndex != null)
                     GestureDetector(
                       onTap: _clearForm,
-                      child: Text('Cancelar edición', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red[600])),
+                      child: Text(
+                        'Cancelar edición',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red[600],
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -500,7 +702,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     TextField(
                       controller: _nameController,
                       style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(c, hintText: 'Ej. Coca Cola ', prefixIcon: Icons.shopping_bag_outlined),
+                      decoration: _buildInputDecoration(
+                        c,
+                        hintText: 'Ej. Coca Cola ',
+                        prefixIcon: Icons.shopping_bag_outlined,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -516,20 +722,41 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 onEdit: (oldVal, newVal) {
                                   final idx = _categories.indexOf(oldVal);
                                   if (idx != -1) _categories[idx] = newVal;
-                                  if (_selectedCategory == oldVal) _selectedCategory = newVal;
+                                  if (_selectedCategory == oldVal)
+                                    _selectedCategory = newVal;
                                 },
                                 onDelete: (val) {
                                   _categories.remove(val);
-                                  if (_selectedCategory == val) _selectedCategory = null;
+                                  if (_selectedCategory == val)
+                                    _selectedCategory = null;
                                 },
                                 c: c,
                               ),
-                              child: Text('Gestionar', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: c.textMuted)),
+                              child: Text(
+                                'Gestionar',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: c.textMuted,
+                                ),
+                              ),
                             ),
                             const SizedBox(width: 8),
                             GestureDetector(
-                              onTap: () => setState(() => _showNewCategoryInput = !_showNewCategoryInput),
-                              child: Text(_showNewCategoryInput ? 'Seleccionar' : '+ Nueva', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.teal)),
+                              onTap: () => setState(
+                                () => _showNewCategoryInput =
+                                    !_showNewCategoryInput,
+                              ),
+                              child: Text(
+                                _showNewCategoryInput
+                                    ? 'Seleccionar'
+                                    : '+ Nueva',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.teal,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -540,29 +767,74 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       TextField(
                         controller: _customCategoryController,
                         style: TextStyle(color: c.textPrimary, fontSize: 14),
-                        decoration: _buildInputDecoration(c, hintText: 'Ej. Lácteos, Limpieza...', prefixIcon: Icons.create_new_folder_outlined),
+                        decoration: _buildInputDecoration(
+                          c,
+                          hintText: 'Ej. Lácteos, Limpieza...',
+                          prefixIcon: Icons.create_new_folder_outlined,
+                        ),
                       )
                     else
                       DropdownButtonFormField<String>(
-                        value: _categories.contains(_selectedCategory) ? _selectedCategory : null,
-                        hint: Text('Selecciona una categoría', style: TextStyle(color: c.textMuted, fontSize: 14)),
-                        icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.textMuted),
+                        value: _categories.contains(_selectedCategory)
+                            ? _selectedCategory
+                            : null,
+                        hint: Text(
+                          'Selecciona una categoría',
+                          style: TextStyle(color: c.textMuted, fontSize: 14),
+                        ),
+                        icon: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: c.textMuted,
+                        ),
                         dropdownColor: c.card,
                         style: TextStyle(color: c.textPrimary, fontSize: 14),
-                        decoration: _buildInputDecoration(c, prefixIcon: Icons.category_outlined),
-                        items: _categories.map((String category) => DropdownMenuItem<String>(value: category, child: Text(category, style: TextStyle(color: c.textPrimary)))).toList(),
-                        onChanged: (value) => setState(() => _selectedCategory = value),
+                        decoration: _buildInputDecoration(
+                          c,
+                          prefixIcon: Icons.category_outlined,
+                        ),
+                        items: _categories
+                            .map(
+                              (String category) => DropdownMenuItem<String>(
+                                value: category,
+                                child: Text(
+                                  category,
+                                  style: TextStyle(color: c.textPrimary),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) =>
+                            setState(() => _selectedCategory = value),
                       ),
                     const SizedBox(height: 12),
                     Container(
-                      decoration: BoxDecoration(color: c.isDark ? c.inputFill : Colors.grey.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: c.cardBorder.withOpacity(0.6))),
+                      decoration: BoxDecoration(
+                        color: c.isDark ? c.inputFill : Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: c.cardBorder.withOpacity(0.6),
+                        ),
+                      ),
                       child: CheckboxListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                        title: Text('Producto inventariable', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: c.textPrimary)),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 0,
+                        ),
+                        title: Text(
+                          'Producto inventariable',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: c.textPrimary,
+                          ),
+                        ),
                         value: _isInventoryable,
                         activeColor: AppColors.teal,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                        onChanged: (bool? value) => setState(() => _isInventoryable = value ?? true),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        onChanged: (bool? value) =>
+                            setState(() => _isInventoryable = value ?? true),
                       ),
                     ),
                     if (_isInventoryable) ...[
@@ -579,12 +851,51 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 const SizedBox(height: 4),
                                 Container(
                                   height: 44,
-                                  decoration: BoxDecoration(color: c.isDark ? c.inputFill : Colors.white, border: Border.all(color: c.cardBorder), borderRadius: BorderRadius.circular(10)),
+                                  decoration: BoxDecoration(
+                                    color: c.isDark
+                                        ? c.inputFill
+                                        : Colors.white,
+                                    border: Border.all(color: c.cardBorder),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                   child: Row(
                                     children: [
-                                      IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: Icon(Icons.remove_rounded, size: 16, color: c.textPrimary), onPressed: () { if (_quantity > 1) setState(() => _quantity--); }),
-                                      Expanded(child: Center(child: Text('$_quantity', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: c.textPrimary)))),
-                                      IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: Icon(Icons.add_rounded, size: 16, color: c.textPrimary), onPressed: () => setState(() => _quantity++)),
+                                      IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        icon: Icon(
+                                          Icons.remove_rounded,
+                                          size: 16,
+                                          color: c.textPrimary,
+                                        ),
+                                        onPressed: () {
+                                          if (_quantity > 1)
+                                            setState(() => _quantity--);
+                                        },
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: Text(
+                                            '$_quantity',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: c.textPrimary,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        icon: Icon(
+                                          Icons.add_rounded,
+                                          size: 16,
+                                          color: c.textPrimary,
+                                        ),
+                                        onPressed: () =>
+                                            setState(() => _quantity++),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -600,7 +911,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: _buildFieldLabel('Unidad de medida', c),
+                                      child: _buildFieldLabel(
+                                        'Unidad de medida',
+                                        c,
+                                      ),
                                     ),
                                     GestureDetector(
                                       onTap: () => _showManageListDialog(
@@ -609,20 +923,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                         onEdit: (oldVal, newVal) {
                                           final idx = _units.indexOf(oldVal);
                                           if (idx != -1) _units[idx] = newVal;
-                                          if (_selectedUnit == oldVal) _selectedUnit = newVal;
+                                          if (_selectedUnit == oldVal)
+                                            _selectedUnit = newVal;
                                         },
                                         onDelete: (val) {
                                           _units.remove(val);
-                                          if (_selectedUnit == val) _selectedUnit = _units.isNotEmpty ? _units.first : null;
+                                          if (_selectedUnit == val)
+                                            _selectedUnit = _units.isNotEmpty
+                                                ? _units.first
+                                                : null;
                                         },
                                         c: c,
                                       ),
-                                      child: Icon(Icons.settings_outlined, size: 16, color: c.textMuted),
+                                      child: Icon(
+                                        Icons.settings_outlined,
+                                        size: 16,
+                                        color: c.textMuted,
+                                      ),
                                     ),
                                     const SizedBox(width: 6),
                                     GestureDetector(
-                                      onTap: () => setState(() => _showNewUnitInput = !_showNewUnitInput),
-                                      child: Text(_showNewUnitInput ? 'Lista' : '+ Nueva', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.teal)),
+                                      onTap: () => setState(
+                                        () => _showNewUnitInput =
+                                            !_showNewUnitInput,
+                                      ),
+                                      child: Text(
+                                        _showNewUnitInput ? 'Lista' : '+ Nueva',
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.teal,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -630,18 +962,49 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 if (_showNewUnitInput)
                                   TextField(
                                     controller: _customUnitController,
-                                    style: TextStyle(color: c.textPrimary, fontSize: 13),
-                                    decoration: _buildInputDecoration(c, hintText: 'Ej. Litro...'),
+                                    style: TextStyle(
+                                      color: c.textPrimary,
+                                      fontSize: 13,
+                                    ),
+                                    decoration: _buildInputDecoration(
+                                      c,
+                                      hintText: 'Ej. Litro...',
+                                    ),
                                   )
                                 else
                                   DropdownButtonFormField<String>(
-                                    value: _units.contains(_selectedUnit) ? _selectedUnit : (_units.isNotEmpty ? _units.first : null),
-                                    icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.textMuted),
+                                    value: _units.contains(_selectedUnit)
+                                        ? _selectedUnit
+                                        : (_units.isNotEmpty
+                                              ? _units.first
+                                              : null),
+                                    icon: Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      color: c.textMuted,
+                                    ),
                                     dropdownColor: c.card,
-                                    style: TextStyle(color: c.textPrimary, fontSize: 13, fontWeight: FontWeight.w500),
+                                    style: TextStyle(
+                                      color: c.textPrimary,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                     decoration: _buildInputDecoration(c),
-                                    items: _units.map((String unit) => DropdownMenuItem<String>(value: unit, child: Text(unit, style: TextStyle(color: c.textPrimary)))).toList(),
-                                    onChanged: (value) => setState(() => _selectedUnit = value),
+                                    items: _units
+                                        .map(
+                                          (String unit) =>
+                                              DropdownMenuItem<String>(
+                                                value: unit,
+                                                child: Text(
+                                                  unit,
+                                                  style: TextStyle(
+                                                    color: c.textPrimary,
+                                                  ),
+                                                ),
+                                              ),
+                                        )
+                                        .toList(),
+                                    onChanged: (value) =>
+                                        setState(() => _selectedUnit = value),
                                   ),
                               ],
                             ),
@@ -658,13 +1021,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 height: 48,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    final categoryToUse = _showNewCategoryInput ? _customCategoryController.text.trim() : (_selectedCategory ?? 'General');
-                    final finalCategory = categoryToUse.isEmpty ? 'General' : categoryToUse;
-                    if (_showNewCategoryInput && categoryToUse.isNotEmpty && !_categories.contains(categoryToUse)) {
+                    final categoryToUse = _showNewCategoryInput
+                        ? _customCategoryController.text.trim()
+                        : (_selectedCategory ?? 'General');
+                    final finalCategory = categoryToUse.isEmpty
+                        ? 'General'
+                        : categoryToUse;
+                    if (_showNewCategoryInput &&
+                        categoryToUse.isNotEmpty &&
+                        !_categories.contains(categoryToUse)) {
                       _categories.add(categoryToUse);
                     }
 
-                    if (_showNewUnitInput && _customUnitController.text.trim().isNotEmpty) {
+                    if (_showNewUnitInput &&
+                        _customUnitController.text.trim().isNotEmpty) {
                       final newUnit = _customUnitController.text.trim();
                       if (!_units.contains(newUnit)) {
                         _units.add(newUnit);
@@ -682,18 +1052,56 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             isActive: _productList[_editingIndex!].isActive,
                           );
                         } else {
-                          _productList.insert(0, ProductItem(name: _nameController.text, category: finalCategory, stock: _isInventoryable ? _quantity : 0, isActive: true));
+                          _productList.insert(
+                            0,
+                            ProductItem(
+                              name: _nameController.text,
+                              category: finalCategory,
+                              stock: _isInventoryable ? _quantity : 0,
+                              isActive: true,
+                            ),
+                          );
                         }
                       });
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(_editingIndex != null ? '¡Producto actualizado!' : '¡Producto registrado!'), backgroundColor: AppColors.teal, behavior: SnackBarBehavior.floating, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                        SnackBar(
+                          content: Text(
+                            _editingIndex != null
+                                ? '¡Producto actualizado!'
+                                : '¡Producto registrado!',
+                          ),
+                          backgroundColor: AppColors.teal,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                       );
                       _clearForm();
                     }
                   },
-                  icon: const Icon(Icons.save_rounded, color: Colors.white, size: 20),
-                  label: Text(_editingIndex != null ? 'Actualizar Producto' : 'Guardar Producto', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), elevation: 0),
+                  icon: const Icon(
+                    Icons.save_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  label: Text(
+                    _editingIndex != null
+                        ? 'Actualizar Producto'
+                        : 'Guardar Producto',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -701,25 +1109,47 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 2),
+      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 1),
     );
   }
 
   Widget _buildFieldLabel(String label, AppPalette c) {
-    return Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary));
+    return Text(
+      label,
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: c.textPrimary,
+      ),
+    );
   }
 
-  InputDecoration _buildInputDecoration(AppPalette c, {String? hintText, IconData? prefixIcon}) {
+  InputDecoration _buildInputDecoration(
+    AppPalette c, {
+    String? hintText,
+    IconData? prefixIcon,
+  }) {
     return InputDecoration(
       hintText: hintText,
       hintStyle: TextStyle(color: c.textMuted.withOpacity(0.7), fontSize: 13),
-      prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: c.textMuted, size: 18) : null,
+      prefixIcon: prefixIcon != null
+          ? Icon(prefixIcon, color: c.textMuted, size: 18)
+          : null,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       filled: true,
       fillColor: c.isDark ? c.inputFill : Colors.grey.shade50,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: c.cardBorder)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: c.cardBorder)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.teal, width: 1.5)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: c.cardBorder),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: c.cardBorder),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.teal, width: 1.5),
+      ),
     );
   }
 }
