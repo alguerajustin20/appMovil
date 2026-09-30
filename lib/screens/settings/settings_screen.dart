@@ -12,8 +12,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _pushNotifications = true;
-
   // reemplazar con datos reales del usuario autenticado
   String _userName = 'Yamil72';
   final String _userEmail = 'yamil';

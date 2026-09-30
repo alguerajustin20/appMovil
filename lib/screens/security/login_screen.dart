@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:integrador_vi_mobile/screens/home/home_screen.dart';
+import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
 import 'package:integrador_vi_mobile/theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -176,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const HomeScreen(),
+                                builder: (context) => const DashboardScreen(),
                               ),
                             );
                           },
