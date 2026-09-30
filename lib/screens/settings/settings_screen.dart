@@ -12,13 +12,10 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _pushNotifications = true;
-
   // reemplazar con datos reales del usuario autenticado
   final String _userName = 'Yamil72';
   final String _userEmail = 'yamil';
   final String _userRole = 'Administrador';
-  final String _lastSync = 'hace 2m';
 
   @override
   Widget build(BuildContext context) {
@@ -76,16 +73,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () {},
               ),
               _divider(),
-              _switchTile(
-                isDark: isDark,
-                icon: isDark
-                    ? 'assets/icons/messages/biometric_oscuro.png'
-                    : 'assets/icons/messages/biometric_claro.png',
-                label: 'Permisos Biometricos',
-                subtitle: 'Uso de Face ID',
-                value: _pushNotifications,
-                onChanged: (v) => setState(() => _pushNotifications = v),
-              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -151,7 +138,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
 
       bottomNavigationBar: SafeArea(
-        child: CustomBottomNavigation(currentIndex: 3),
+        child: CustomBottomNavigation(currentIndex: 4),
       ),
     );
   }

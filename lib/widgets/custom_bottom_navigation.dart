@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/screens/outputs/factura-screendart/factura_screen.dart';
 import '../screens/bench/dashboard-screendart/dashboard_screen.dart';
 import '../screens/inventory/add_product_screen.dart';
 import '../screens/manager/user_management_screen.dart';
@@ -21,10 +22,7 @@ class CustomBottomNavigation extends StatelessWidget {
         targetScreen = const AddProductScreen();
         break;
       case 2:
-        // poner la pantalla de facturas aquí
-        targetScreen = const Scaffold(
-          body: Center(child: Text('Pantalla de Facturas')),
-        );
+        targetScreen = const FacturaScreen();
         break;
       case 3:
         targetScreen = const UserManagementScreen();
