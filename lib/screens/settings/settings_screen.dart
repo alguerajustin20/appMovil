@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../widgets/custom_bottom_navigation.dart';
 import '../../theme/app_colors.dart';
-import '../../main.dart'; 
-import '../security/login_screen.dart'; 
+import '../../main.dart';
+import '../security/login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -127,8 +126,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 8),
         ],
       ),
-
-    
     );
   }
 

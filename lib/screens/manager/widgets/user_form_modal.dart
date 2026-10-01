@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
-import '../user_management_screen.dart';
+import '../../manager/user-management-screen/user_management_screen.dart';
 
 class UserFormModal extends StatefulWidget {
   final User? userToEdit;
@@ -14,7 +14,8 @@ class UserFormModal extends StatefulWidget {
     String? hintText,
     IconData? prefixIcon,
     Widget? suffixIcon,
-  }) buildInputDecoration;
+  })
+  buildInputDecoration;
 
   const UserFormModal({
     super.key,
@@ -42,9 +43,12 @@ class _UserFormModalState extends State<UserFormModal> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.userToEdit?.name ?? '');
-    _usernameController =
-        TextEditingController(text: widget.userToEdit?.username ?? '');
+    _nameController = TextEditingController(
+      text: widget.userToEdit?.name ?? '',
+    );
+    _usernameController = TextEditingController(
+      text: widget.userToEdit?.username ?? '',
+    );
     _passwordController = TextEditingController();
     _selectedRole = widget.userToEdit?.role ?? 'Cajero';
   }
@@ -184,9 +188,7 @@ class _UserFormModalState extends State<UserFormModal> {
                     (value == null || value.trim().isEmpty)) {
                   return 'Por favor ingresa una contraseña.';
                 }
-                if (value != null &&
-                    value.isNotEmpty &&
-                    value.length < 6) {
+                if (value != null && value.isNotEmpty && value.length < 6) {
                   return 'La contraseña debe tener al menos 6 caracteres.';
                 }
                 return null;
@@ -204,10 +206,7 @@ class _UserFormModalState extends State<UserFormModal> {
             const SizedBox(height: 4),
             DropdownButtonFormField<String>(
               initialValue: _selectedRole,
-              icon: Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: c.textMuted,
-              ),
+              icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.textMuted),
               dropdownColor: c.card,
               style: TextStyle(color: c.textPrimary, fontSize: 14),
               decoration: widget.buildInputDecoration(
