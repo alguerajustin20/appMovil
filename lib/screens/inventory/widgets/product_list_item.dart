@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
-import '../add_product_screen.dart'; 
+import '../add-product-screen/add_product_screen.dart'; 
 
 class ProductListItem extends StatelessWidget {
   final ProductItem item;

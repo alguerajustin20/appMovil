@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
-import '../../theme/app_theme.dart';
-import 'widgets/product_list_item.dart';
-import 'widgets/manage_list_dialog.dart';
-import 'widgets/product_form_card.dart';
+import '../../../theme/app_theme.dart';
+import '../widgets/product_list_item.dart';
+import '../widgets/manage_list_dialog.dart';
+import '../widgets/product_form_card.dart';
 
 class ProductItem {
   String name;

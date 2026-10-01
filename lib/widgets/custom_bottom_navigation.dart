@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:integrador_vi_mobile/screens/outputs/factura-screendart/factura_screen.dart';
 import '../screens/bench/dashboard-screendart/dashboard_screen.dart';
-import '../screens/inventory/add_product_screen.dart';
+import '../screens/inventory/add-product-screen/add_product_screen.dart';
 import '../screens/manager/user-management-screen/user_management_screen.dart';
 import '../screens/settings/settings_screen.dart';
 
