@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../widgets/custom_bottom_navigation.dart';
 import '../../theme/app_colors.dart';
-import '../../main.dart'; // ajusta la ruta según dónde esté settings_screen.dart
-import '../security/login_screen.dart'; // ajusta la ruta según dónde esté home_screen.dart
+import '../../main.dart'; 
+import '../security/login_screen.dart'; 
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
