@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
-import 'manage_list_dialog.dart';
 
 class ProductFormCard extends StatelessWidget {
   final bool isEditing;
