@@ -20,6 +20,31 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/logo_B.png
+    - assets/images/logo_N.png
+    - assets/icons/admin/usuario_claro.png
+    - assets/icons/admin/usuario_negro.png
+    - assets/icons/security/candado_claro.png
+    - assets/icons/security/candado_oscuro.png
+    - assets/icons/messages/notificacion_blanca.png
+    - assets/icons/messages/notificacion_negra.png
+    - assets/icons/languages/idioma.png
+    - assets/icons/mod/modo_nocturno_apagado.png
+    - assets/icons/mod/modo_nocturno.png
+    - assets/icons/mod/modo_nocturno_encendido.png
+    - assets/icons/backup/sincronizar_blanco.png
+    - assets/icons/backup/sincronizar_negro.png
+    - assets/icons/docs/informacion_blanco.png
+    - assets/icons/docs/informacion_negro.png
+    - assets/icons/error/signo_de_admiracion_blanco.png
+    - assets/icons/error/signo_de_admiracion_negro.png
+    - assets/icons/log/cerrar_sesion_blanca.png 
+    - assets/icons/log/cerrar_sesion_negro.png
+    - assets/icons/performance/miniaturas_claro.png
+    - assets/icons/performance/miniaturas_oscuro.png
+    - assets/icons/inventory/archivo_caja_blanca.png
+    - assets/icons/inventory/archivo_caja_negra.png
+    - assets/icons/config/ajuste_blanco.png
+    - assets/icons/config/ajuste_negro.png
     - assets/icons/mail/email_oscuro.png
     - assets/icons/security/candado_oscuro.png
     - assets/icons/view/ojo_negro.png
@@ -28,6 +53,14 @@ flutter:
     - assets/icons/performance/
     - assets/icons/admin/
     - assets/icons/config/
+    - assets/icons/admin/account_claro.png
+    - assets/icons/admin/account_oscuro.png
+    - assets/icons/languages/language_claro2.png
+    - assets/icons/languages/language_oscuro2.png
+    - assets/icons/messages/biometric_claro.png
+    - assets/icons/messages/biometric_oscuro.png
+    - assets/icons/mod/moon_stars_claro.png
+    - assets/icons/mod/moon_stars_oscuro.png
 
 flutter_launcher_icons:
   android: true
