@@ -128,9 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
 
-      bottomNavigationBar: SafeArea(
-        child: CustomBottomNavigation(currentIndex: 4),
-      ),
+    
     );
   }
 
