@@ -40,7 +40,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         }
 
         final now = DateTime.now();
-        final backButtonHasBeenPressedTwice = _lastPressedAt != null &&
+        final backButtonHasBeenPressedTwice =
+            _lastPressedAt != null &&
             now.difference(_lastPressedAt!) < const Duration(seconds: 2);
 
         if (backButtonHasBeenPressedTwice) {
@@ -57,10 +58,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         }
       },
       child: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: _screens,
-        ),
+        body: IndexedStack(index: _currentIndex, children: _screens),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {

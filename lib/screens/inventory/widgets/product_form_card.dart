@@ -26,7 +26,12 @@ class ProductFormCard extends StatelessWidget {
   final VoidCallback onManageCategories;
   final VoidCallback onManageUnits;
   final Widget Function(String, AppPalette) buildFieldLabel;
-  final InputDecoration Function(AppPalette, {String? hintText, IconData? prefixIcon}) buildInputDecoration;
+  final InputDecoration Function(
+    AppPalette, {
+    String? hintText,
+    IconData? prefixIcon,
+  })
+  buildInputDecoration;
 
   const ProductFormCard({
     super.key,
@@ -209,9 +214,7 @@ class ProductFormCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: c.isDark ? c.inputFill : Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: c.cardBorder.withOpacity(0.6),
-                  ),
+                  border: Border.all(color: c.cardBorder.withOpacity(0.6)),
                 ),
                 child: CheckboxListTile(
                   contentPadding: const EdgeInsets.symmetric(
@@ -231,8 +234,7 @@ class ProductFormCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  onChanged: (bool? val) =>
-                      onInventoryableChanged(val ?? true),
+                  onChanged: (bool? val) => onInventoryableChanged(val ?? true),
                 ),
               ),
               if (isInventoryable) ...[
@@ -308,10 +310,7 @@ class ProductFormCard extends StatelessWidget {
                           Row(
                             children: [
                               Expanded(
-                                child: buildFieldLabel(
-                                  'Unidad de medida',
-                                  c,
-                                ),
+                                child: buildFieldLabel('Unidad de medida', c),
                               ),
                               GestureDetector(
                                 onTap: onManageUnits,
@@ -370,9 +369,7 @@ class ProductFormCard extends StatelessWidget {
                                       value: unit,
                                       child: Text(
                                         unit,
-                                        style: TextStyle(
-                                          color: c.textPrimary,
-                                        ),
+                                        style: TextStyle(color: c.textPrimary),
                                       ),
                                     ),
                                   )
