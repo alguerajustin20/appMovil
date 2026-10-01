@@ -51,7 +51,7 @@ class DashboardCards extends StatelessWidget {
                   ),
                 ),
                 if (badge != null) badge!,
-                Icon(icon, color: iconColor.withValues(alpha: 0.4), size: 28),
+                Icon(icon, color: iconColor.withValues(alpha: 0.8), size: 28),
               ],
             ),
           ],

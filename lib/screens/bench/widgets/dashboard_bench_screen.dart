@@ -27,7 +27,7 @@ class _DashboardBench extends State<DashboardBench> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Velocidad de Inventario',
+              'Frecuencia de Productos',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

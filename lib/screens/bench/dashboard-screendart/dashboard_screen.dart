@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_bench_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_cards_screen.dart';
-import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_tasks_screen.dart';
 import 'package:integrador_vi_mobile/widgets/custom_bottom_navigation.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -32,17 +31,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
+        centerTitle: true,
         automaticallyImplyLeading: false,
         backgroundColor: backgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         toolbarHeight: 65.0,
+        titleSpacing: 20.0,
         title: Text(
           'Dashboard',
           style: TextStyle(
-            color: primaryTitleColor,
+            color: isDarkMode
+                ? const Color(0xFF00B4D8)
+                : const Color(0xFF03738C),
+            fontSize: 25,
             fontWeight: FontWeight.bold,
-            fontSize: 22,
           ),
         ),
         actions: [
@@ -59,6 +62,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
+
       body: SafeArea(
         top: false,
         bottom: false,
@@ -71,6 +75,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // --- SALUDO 2 Y FECHA ---
+                Text(
+                  'Hola, yamil72',
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode
+                        ? const Color(0xFF00B4D8)
+                        : const Color(0xFF03738C),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Buenas tardes • Martes, 12 de Octubre',
+                  style: TextStyle(fontSize: 15, color: Colors.grey),
+                ),
+                const SizedBox(height: 24),
+
                 // PRIMER GRUPO DE 4 TARJETAS
                 GridView.count(
                   shrinkWrap: true,
@@ -81,14 +103,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   childAspectRatio: 1.35,
                   children: [
                     DashboardCards(
-                      title: 'Total en Inventario',
+                      title: 'Total de Productos',
                       value: '12,450',
                       valueColor: primaryTitleColor,
                       icon: Icons.inventory_2_outlined,
                       iconColor: defaultIconColor,
                     ),
                     DashboardCards(
-                      title: 'Tareas Pendientes',
+                      title: 'Comandas Pendientes',
                       value: '8',
                       valueColor: isDarkMode
                           ? const Color(0xFFFDB653)
@@ -139,11 +161,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                 // 📊 COMPONENTE GRÁFICO INTERACTIVO NATIVO
                 const DashboardBench(),
-
-                const SizedBox(height: 25),
-
-                // 📋 LISTA DE TAREAS RECIENTES
-                const DashboardTasks(),
 
                 const SizedBox(height: 15),
               ],
