@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
+//import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
 import 'package:integrador_vi_mobile/theme/app_theme.dart';
+import 'package:integrador_vi_mobile/widgets/custom_bottom_navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -173,10 +174,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const DashboardScreen(),
+                                builder: (context) => const MainNavigationScreen(),
                               ),
                             );
                           },

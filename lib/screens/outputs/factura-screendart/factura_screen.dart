@@ -332,7 +332,7 @@ class _FacturaScreenState extends State<FacturaScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 2),
+      
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
-import '../../widgets/custom_bottom_navigation.dart';
 import '../../theme/app_theme.dart';
+import 'widgets/user_list_item.dart';
+import 'widgets/user_form_modal.dart';
 
 abstract class User {
   String name;
@@ -19,22 +20,22 @@ abstract class User {
 
 class CajeroUser extends User {
   CajeroUser({required super.name, required super.username, super.isActive})
-    : super(role: 'Cajero');
+      : super(role: 'Cajero');
 }
 
 class AdminUser extends User {
   AdminUser({required super.name, required super.username, super.isActive})
-    : super(role: 'Admin');
+      : super(role: 'Admin');
 }
 
 class MeseroUser extends User {
   MeseroUser({required super.name, required super.username, super.isActive})
-    : super(role: 'Mesero');
+      : super(role: 'Mesero');
 }
 
 class CocineroUser extends User {
   CocineroUser({required super.name, required super.username, super.isActive})
-    : super(role: 'Cocinero');
+      : super(role: 'Cocinero');
 }
 
 class UserManagementScreen extends StatefulWidget {
@@ -46,16 +47,7 @@ class UserManagementScreen extends StatefulWidget {
 
 class _UserManagementScreenState extends State<UserManagementScreen> {
   String _selectedFilter = 'Todos';
-
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
-  bool _isPasswordObscured = true;
-  String? _selectedRoleForm = 'Cajero';
-  int? _editingIndex;
 
   final List<String> _filters = [
     'Todos',
@@ -79,9 +71,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    _nameController.dispose();
-    _usernameController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
@@ -105,6 +94,25 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
       return matchesSearch && matchesRole;
     }).toList();
+  }
+
+  User _createUserInstance(
+    String name,
+    String username,
+    String role,
+    bool isActive,
+  ) {
+    switch (role) {
+      case 'Admin':
+        return AdminUser(name: name, username: username, isActive: isActive);
+      case 'Mesero':
+        return MeseroUser(name: name, username: username, isActive: isActive);
+      case 'Cocinero':
+        return CocineroUser(name: name, username: username, isActive: isActive);
+      case 'Cajero':
+      default:
+        return CajeroUser(name: name, username: username, isActive: isActive);
+    }
   }
 
   void _confirmToggleStatusUser(User user, AppPalette c) {
@@ -145,9 +153,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: willDeactivate
-                    ? Colors.redAccent
-                    : AppColors.teal,
+                backgroundColor:
+                    willDeactivate ? Colors.redAccent : AppColors.teal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -165,9 +172,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           ? 'Usuario "${user.name}" desactivado.'
                           : 'Usuario "${user.name}" activado.',
                     ),
-                    backgroundColor: willDeactivate
-                        ? Colors.redAccent
-                        : AppColors.teal,
+                    backgroundColor:
+                        willDeactivate ? Colors.redAccent : AppColors.teal,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -189,46 +195,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     );
   }
 
-  User _createUserInstance(
-    String name,
-    String username,
-    String role,
-    bool isActive,
-  ) {
-    switch (role) {
-      case 'Admin':
-        return AdminUser(name: name, username: username, isActive: isActive);
-      case 'Mesero':
-        return MeseroUser(name: name, username: username, isActive: isActive);
-      case 'Cocinero':
-        return CocineroUser(name: name, username: username, isActive: isActive);
-      case 'Cajero':
-      default:
-        return CajeroUser(name: name, username: username, isActive: isActive);
-    }
-  }
-
   void _openUserFormModal(
     AppPalette c, {
     User? userToEdit,
     int? originalIndex,
   }) {
-    if (userToEdit != null) {
-      _nameController.text = userToEdit.name;
-      _usernameController.text = userToEdit.username;
-      _passwordController.clear();
-      _selectedRoleForm = userToEdit.role;
-      _editingIndex = originalIndex;
-    } else {
-      _nameController.clear();
-      _usernameController.clear();
-      _passwordController.clear();
-      _selectedRoleForm = 'Cajero';
-      _editingIndex = null;
-    }
-
-    _isPasswordObscured = true;
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -237,240 +208,39 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _editingIndex != null
-                              ? 'Editar Usuario'
-                              : 'Agregar Usuario',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: c.textPrimary,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close_rounded, color: c.textMuted),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Nombre completo',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: c.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    TextFormField(
-                      controller: _nameController,
-                      style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(
-                        c,
-                        hintText: 'Ej. Juan Pérez',
-                        prefixIcon: Icons.person_outline,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Por favor ingresa un nombre.';
-                        }
-                        if (value.trim().length < 3) {
-                          return 'El nombre debe tener al menos 3 caracteres.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Nombre de usuario',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: c.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    TextFormField(
-                      controller: _usernameController,
-                      style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(
-                        c,
-                        hintText: 'Ej. juanperez123',
-                        prefixIcon: Icons.account_circle_outlined,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Por favor ingresa un nombre de usuario.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Contraseña',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: c.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _isPasswordObscured,
-                      style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(
-                        c,
-                        hintText: '••••••••',
-                        prefixIcon: Icons.lock_outline,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordObscured
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: c.textMuted,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            setModalState(() {
-                              _isPasswordObscured = !_isPasswordObscured;
-                            });
-                          },
-                        ),
-                      ),
-                      validator: (value) {
-                        if (_editingIndex == null &&
-                            (value == null || value.trim().isEmpty)) {
-                          return 'Por favor ingresa una contraseña.';
-                        }
-                        if (value != null &&
-                            value.isNotEmpty &&
-                            value.length < 6) {
-                          return 'La contraseña debe tener al menos 6 caracteres.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Rol / Cargo asignado',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: c.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    DropdownButtonFormField<String>(
-                      value: _selectedRoleForm,
-                      icon: Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: c.textMuted,
-                      ),
-                      dropdownColor: c.card,
-                      style: TextStyle(color: c.textPrimary, fontSize: 14),
-                      decoration: _buildInputDecoration(
-                        c,
-                        prefixIcon: Icons.badge_outlined,
-                      ),
-                      items: _roles
-                          .map(
-                            (r) => DropdownMenuItem(value: r, child: Text(r)),
-                          )
-                          .toList(),
-                      onChanged: (val) =>
-                          setModalState(() => _selectedRoleForm = val),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor selecciona un rol para el usuario.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              final newUser = _createUserInstance(
-                                _nameController.text.trim(),
-                                _usernameController.text.trim(),
-                                _selectedRoleForm!,
-                                _editingIndex != null
-                                    ? _userList[_editingIndex!].isActive
-                                    : true,
-                              );
+        return UserFormModal(
+          userToEdit: userToEdit,
+          editingIndex: originalIndex,
+          roles: _roles,
+          palette: c,
+          buildInputDecoration: _buildInputDecoration,
+          onSave: (name, username, role, index) {
+            setState(() {
+              final newUser = _createUserInstance(
+                name,
+                username,
+                role,
+                index != null ? _userList[index].isActive : true,
+              );
 
-                              if (_editingIndex != null) {
-                                _userList[_editingIndex!] = newUser;
-                              } else {
-                                _userList.insert(0, newUser);
-                              }
-                            });
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  _editingIndex != null
-                                      ? '¡Usuario actualizado!'
-                                      : '¡Usuario agregado!',
-                                ),
-                                backgroundColor: AppColors.teal,
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        icon: const Icon(
-                          Icons.check_circle_outline_rounded,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        label: Text(
-                          _editingIndex != null
-                              ? 'Actualizar Usuario'
-                              : 'Guardar Usuario',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.teal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                      ),
-                    ),
-                  ],
+              if (index != null) {
+                _userList[index] = newUser;
+              } else {
+                _userList.insert(0, newUser);
+              }
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  index != null
+                      ? '¡Usuario actualizado!'
+                      : '¡Usuario agregado!',
+                ),
+                backgroundColor: AppColors.teal,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             );
@@ -511,28 +281,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 controller: _searchController,
                 onChanged: (_) => setState(() {}),
                 style: TextStyle(color: c.textPrimary),
-                decoration: InputDecoration(
+                decoration: _buildInputDecoration(
+                  c,
                   hintText: 'Buscar usuario por nombre o usuario...',
-                  hintStyle: TextStyle(color: c.textMuted, fontSize: 14),
-                  prefixIcon: Icon(Icons.search, color: c.textMuted),
-                  filled: true,
-                  fillColor: c.card,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: c.cardBorder),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: c.cardBorder),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.teal,
-                      width: 1.5,
-                    ),
-                  ),
+                  prefixIcon: Icons.search,
                 ),
               ),
               const SizedBox(height: 16),
@@ -604,123 +356,16 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           final user = filtered[index];
                           final realIndex = _userList.indexOf(user);
 
-                          return Opacity(
-                            opacity: user.isActive ? 1.0 : 0.5,
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 10),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: c.card,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: user.isActive
-                                      ? AppColors.teal.withOpacity(0.3)
-                                      : c.cardBorder,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: user.isActive
-                                        ? AppColors.teal.withOpacity(0.15)
-                                        : Colors.grey.withOpacity(0.2),
-                                    child: Text(
-                                      user.name.isNotEmpty
-                                          ? user.name[0].toUpperCase()
-                                          : 'U',
-                                      style: TextStyle(
-                                        color: user.isActive
-                                            ? AppColors.teal
-                                            : c.textMuted,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          user.name,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: c.textPrimary,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 3,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color: user.isActive
-                                                    ? AppColors.teal
-                                                          .withOpacity(0.1)
-                                                    : Colors.grey.withOpacity(
-                                                        0.2,
-                                                      ),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              child: Text(
-                                                user.role,
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: user.isActive
-                                                      ? AppColors.teal
-                                                      : c.textMuted,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          '@${user.username}',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: c.textMuted,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.edit_outlined,
-                                      size: 20,
-                                      color: AppColors.teal,
-                                    ),
-                                    onPressed: () => _openUserFormModal(
-                                      c,
-                                      userToEdit: user,
-                                      originalIndex: realIndex,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      user.isActive
-                                          ? Icons.toggle_on_rounded
-                                          : Icons.toggle_off_rounded,
-                                      size: 28,
-                                      color: user.isActive
-                                          ? AppColors.teal
-                                          : Colors.redAccent.withOpacity(0.7),
-                                    ),
-                                    onPressed: () =>
-                                        _confirmToggleStatusUser(user, c),
-                                  ),
-                                ],
-                              ),
+                          return UserListItem(
+                            user: user,
+                            palette: c,
+                            onEdit: () => _openUserFormModal(
+                              c,
+                              userToEdit: user,
+                              originalIndex: realIndex,
                             ),
+                            onToggleStatus: () =>
+                                _confirmToggleStatusUser(user, c),
                           );
                         },
                       ),
@@ -734,7 +379,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         backgroundColor: AppColors.teal,
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
-      bottomNavigationBar: const CustomBottomNavigation(currentIndex: 3),
     );
   }
 
