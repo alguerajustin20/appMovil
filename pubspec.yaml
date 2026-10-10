@@ -61,6 +61,8 @@ flutter:
     - assets/icons/messages/biometric_oscuro.png
     - assets/icons/mod/moon_stars_claro.png
     - assets/icons/mod/moon_stars_oscuro.png
+    - assets/icons/log/logs_blanco.png
+    - assets/icons/log/logs_oscuro.png
 
 flutter_launcher_icons:
   android: true
