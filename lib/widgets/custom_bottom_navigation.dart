@@ -4,7 +4,7 @@ import 'package:integrador_vi_mobile/screens/outputs/factura-screendart/factura_
 import '../screens/bench/dashboard-screendart/dashboard_screen.dart';
 import '../screens/inventory/add_product_screen.dart';
 import '../screens/manager/user_management_screen.dart';
-import '../screens/settings/settings_screen.dart';
+import '../screens/settings/settings-screen.dart/settings_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -40,7 +40,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         }
 
         final now = DateTime.now();
-        final backButtonHasBeenPressedTwice = _lastPressedAt != null &&
+        final backButtonHasBeenPressedTwice =
+            _lastPressedAt != null &&
             now.difference(_lastPressedAt!) < const Duration(seconds: 2);
 
         if (backButtonHasBeenPressedTwice) {
@@ -57,10 +58,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         }
       },
       child: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: _screens,
-        ),
+        body: IndexedStack(index: _currentIndex, children: _screens),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
