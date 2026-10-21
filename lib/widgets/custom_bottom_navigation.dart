@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/bench/dashboard-screendart/dashboard_screen.dart';
+<<<<<<< Updated upstream
 import '../screens/inventory/add_product_screen.dart';
 import '../screens/manager/user_management_screen.dart';
 import '../screens/settings/settings_screen.dart';
@@ -11,6 +12,11 @@ class CustomBottomNavigation extends StatelessWidget {
 
   void _navigateToScreen(BuildContext context, int index) {
     if (index == currentIndex) return;
+=======
+import '../screens/inventory/add-product-screen/add_product_screen.dart';
+import '../screens/manager/user-management-screen/user_management_screen.dart';
+import '../screens/settings/settings-screen.dart/settings_screen.dart';
+>>>>>>> Stashed changes
 
     Widget targetScreen;
     switch (index) {
