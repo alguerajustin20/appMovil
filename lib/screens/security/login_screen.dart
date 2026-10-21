@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:integrador_vi_mobile/screens/home/home_screen.dart';
+//import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
 import 'package:integrador_vi_mobile/theme/app_theme.dart';
+import 'package:integrador_vi_mobile/widgets/custom_bottom_navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -67,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'usuario',
+                        'Usuario',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFFDB653),
@@ -81,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Ingrese su usuario',
+                          hintText: 'Ingrese su Usuario',
                           hintStyle: TextStyle(
                             color: isDarkMode ? palette.textMuted : Colors.grey,
                           ),
@@ -112,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 20),
                       Text(
-                        'contraseña',
+                        'Contraseña',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFFDB653),
@@ -173,10 +174,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const HomeScreen(),
+                                builder: (context) =>
+                                    const MainNavigationScreen(),
                               ),
                             );
                           },
