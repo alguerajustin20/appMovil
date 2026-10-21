@@ -210,43 +210,49 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return UserFormModal(
-          userToEdit: userToEdit,
-          editingIndex: originalIndex,
-          roles: _roles,
-          palette: c,
-          buildInputDecoration: _buildInputDecoration,
-          onSave: (name, username, role, index) {
-            setState(() {
-              final newUser = _createUserInstance(
-                name,
-                username,
-                role,
-                index != null ? _userList[index].isActive : true,
+        // 🛡️ SOLUCIÓN: Protege la base del formulario contra los botones digitales del teléfono
+        return SafeArea(
+          top: false,
+          bottom:
+              true, // 👈 Desplaza el botón de guardar por encima de la barra táctil
+          child: UserFormModal(
+            userToEdit: userToEdit,
+            editingIndex: originalIndex,
+            roles: _roles,
+            palette: c,
+            buildInputDecoration: _buildInputDecoration,
+            onSave: (name, username, role, index) {
+              setState(() {
+                final newUser = _createUserInstance(
+                  name,
+                  username,
+                  role,
+                  index != null ? _userList[index].isActive : true,
+                );
+
+                if (index != null) {
+                  _userList[index] = newUser;
+                } else {
+                  _userList.insert(0, newUser);
+                }
+              });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    index != null
+                        ? '¡Usuario actualizado!'
+                        : '¡Usuario agregado!',
+                  ),
+                  backgroundColor: AppColors.teal,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               );
-
-              if (index != null) {
-                _userList[index] = newUser;
-              } else {
-                _userList.insert(0, newUser);
-              }
-            });
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  index != null
-                      ? '¡Usuario actualizado!'
-                      : '¡Usuario agregado!',
-                ),
-                backgroundColor: AppColors.teal,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            );
-          },
+            },
+          ),
         );
       },
     );

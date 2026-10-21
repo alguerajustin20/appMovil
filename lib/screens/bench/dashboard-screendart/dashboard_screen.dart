@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_bench_screen.dart';
 import 'package:integrador_vi_mobile/screens/bench/widgets/dashboard_cards_screen.dart';
 
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -168,7 +167,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
       ),
-      
     );
   }
 }

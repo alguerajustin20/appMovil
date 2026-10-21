@@ -154,97 +154,97 @@ class _FacturaScreenState extends State<FacturaScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'Detalle de Factura',
-                style: TextStyle(
-                  // Mantenemos el color base transparente para heredar el efecto flotante de la sombra
-                  color: Colors.transparent,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  // 🎨 CONDICIÓN APLICADA AL SUBRAYADO: Celeste brillante en oscuro / Teal en claro
-                  decorationColor: c.isDark
-                      ? const Color(0xFF00B4D8)
-                      : const Color(0xFF03738C),
-                  decorationThickness: 2.0,
-                  shadows: [
-                    Shadow(
-                      // 🛠️ CONDICIÓN APLICADA A LA SOMBRA VISIBLE DEL TEXTO
-                      color: c.isDark
-                          ? const Color(0xFF00B4D8)
-                          : const Color(0xFF03738C),
-                      // Desplazamiento vertical de -4 para elevar el texto sobre la línea
-                      offset: const Offset(0, -4),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              _buildTextRow('Id_factura: ', factura.idFactura, c),
-              _buildTextRow('Id_orden: ', factura.idOrden, c),
-              _buildTextRow(
-                'Id_mesero_atendiente: ',
-                factura.idMeseroAtendiente,
-                c,
-              ),
-              _buildTextRow(
-                'Id_cajero_cobrador: ',
-                factura.idCajeroCobrador,
-                c,
-              ),
-              _buildTextRow('Fecha_emision: ', factura.fechaEmision, c),
-              _buildTextRow('Metodo_pago: ', factura.metodoPago, c),
-              _buildTextRow('Subtotal: ', factura.subtotal, c),
-              _buildTextRow('Monto_impuestos: ', factura.montoImpuestos, c),
-              _buildTextRow('Monto_propina: ', factura.montoPropina, c),
-              _buildTextRow('Monto_total: ', factura.montoTotal, c),
-              _buildTextRow(
-                'Numero_factura_fiscal: ',
-                factura.numeroFacturaFiscal,
-                c,
-              ),
-              _buildTextRow('Activo: ', factura.isActive ? 'Si' : 'No', c),
-
-              const SizedBox(height: 24),
-
-              // Añadido el icono de cancelar al lado izquierdo
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons
-                        .cancel_outlined, // 👈 Ícono de cancelar alineado a la izquierda
-                    color: Colors.white,
-                    size: 18,
+        // 🛡️ SOLUCIÓN: El SafeArea evita que la barra del Xiaomi POCO F7 tape el botón rojo
+        return SafeArea(
+          top: false,
+          bottom:
+              true, // 👈 Crea el colchón dinámico contra los botones del sistema
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Detalle de Factura',
+                  style: TextStyle(
+                    color: Colors.transparent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                    decorationColor: c.isDark
+                        ? const Color(0xFF00B4D8)
+                        : const Color(0xFF03738C),
+                    decorationThickness: 2.0,
+                    shadows: [
+                      Shadow(
+                        color: c.isDark
+                            ? const Color(0xFF00B4D8)
+                            : const Color(0xFF03738C),
+                        offset: const Offset(0, -4),
+                      ),
+                    ],
                   ),
-                  label: const Text(
-                    'Dejar de visualizar Detalle',
-                    style: TextStyle(
+                ),
+
+                const SizedBox(height: 16),
+
+                _buildTextRow('Id_factura: ', factura.idFactura, c),
+                _buildTextRow('Id_orden: ', factura.idOrden, c),
+                _buildTextRow(
+                  'Id_mesero_atendiente: ',
+                  factura.idMeseroAtendiente,
+                  c,
+                ),
+                _buildTextRow(
+                  'Id_cajero_cobrador: ',
+                  factura.idCajeroCobrador,
+                  c,
+                ),
+                _buildTextRow('Fecha_emision: ', factura.fechaEmision, c),
+                _buildTextRow('Metodo_pago: ', factura.metodoPago, c),
+                _buildTextRow('Subtotal: ', factura.subtotal, c),
+                _buildTextRow('Monto_impuestos: ', factura.montoImpuestos, c),
+                _buildTextRow('Monto_propina: ', factura.montoPropina, c),
+                _buildTextRow('Monto_total: ', factura.montoTotal, c),
+                _buildTextRow(
+                  'Numero_factura_fiscal: ',
+                  factura.numeroFacturaFiscal,
+                  c,
+                ),
+                _buildTextRow('Activo: ', factura.isActive ? 'Si' : 'No', c),
+
+                const SizedBox(height: 24),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(
+                      Icons.cancel_outlined,
                       color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      size: 18,
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    label: const Text(
+                      'Dejar de visualizar Detalle',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    elevation: 0,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

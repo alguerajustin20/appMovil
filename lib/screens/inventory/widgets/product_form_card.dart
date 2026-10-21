@@ -7,25 +7,18 @@ class ProductFormCard extends StatelessWidget {
   final bool isEditing;
   final TextEditingController nameController;
   final TextEditingController customCategoryController;
-  final TextEditingController customUnitController;
   final bool showNewCategoryInput;
-  final bool showNewUnitInput;
   final bool isInventoryable;
   final int quantity;
   final String? selectedCategory;
-  final String? selectedUnit;
   final List<String> categories;
-  final List<String> units;
   final AppPalette palette;
   final VoidCallback onCancelEditing;
   final VoidCallback onToggleCategoryInput;
-  final VoidCallback onToggleUnitInput;
   final ValueChanged<bool> onInventoryableChanged;
   final ValueChanged<int> onQuantityChanged;
   final ValueChanged<String?> onCategoryChanged;
-  final ValueChanged<String?> onUnitChanged;
   final VoidCallback onManageCategories;
-  final VoidCallback onManageUnits;
   final Widget Function(String, AppPalette) buildFieldLabel;
   final InputDecoration Function(
     AppPalette, {
@@ -39,25 +32,18 @@ class ProductFormCard extends StatelessWidget {
     required this.isEditing,
     required this.nameController,
     required this.customCategoryController,
-    required this.customUnitController,
     required this.showNewCategoryInput,
-    required this.showNewUnitInput,
     required this.isInventoryable,
     required this.quantity,
     required this.selectedCategory,
-    required this.selectedUnit,
     required this.categories,
-    required this.units,
     required this.palette,
     required this.onCancelEditing,
     required this.onToggleCategoryInput,
-    required this.onToggleUnitInput,
     required this.onInventoryableChanged,
     required this.onQuantityChanged,
     required this.onCategoryChanged,
-    required this.onUnitChanged,
     required this.onManageCategories,
-    required this.onManageUnits,
     required this.buildFieldLabel,
     required this.buildInputDecoration,
   });
@@ -77,7 +63,7 @@ class ProductFormCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: AppColors.teal.withOpacity(0.12),
+                    color: AppColors.teal.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -117,15 +103,22 @@ class ProductFormCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: c.card,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: c.cardBorder.withOpacity(0.6)),
+            border: Border.all(color: c.cardBorder.withValues(alpha: 0.6)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildFieldLabel('Nombre del producto', c),
               const SizedBox(height: 4),
-              TextField(
+              TextFormField(
                 controller: nameController,
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty) {
+                    return 'Por favor ingresa un nombre.';
+                  }
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 style: TextStyle(color: c.textPrimary, fontSize: 14),
                 decoration: buildInputDecoration(
                   c,
@@ -169,12 +162,20 @@ class ProductFormCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               if (showNewCategoryInput)
-                TextField(
+                TextFormField(
                   controller: customCategoryController,
+                  validator: (val) {
+                    if (showNewCategoryInput &&
+                        (val == null || val.trim().isEmpty)) {
+                      return 'Por favor ingresa una categoría.';
+                    }
+                    return null;
+                  },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   style: TextStyle(color: c.textPrimary, fontSize: 14),
                   decoration: buildInputDecoration(
                     c,
-                    hintText: 'Ej. Lácteos, Limpieza...',
+                    hintText: 'Ej. Verduras, carnes...',
                     prefixIcon: Icons.create_new_folder_outlined,
                   ),
                 )
@@ -183,6 +184,14 @@ class ProductFormCard extends StatelessWidget {
                   initialValue: categories.contains(selectedCategory)
                       ? selectedCategory
                       : null,
+                  validator: (val) {
+                    if (!showNewCategoryInput &&
+                        (val == null || val.trim().isEmpty)) {
+                      return 'Por favor selecciona una categoría.';
+                    }
+                    return null;
+                  },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   hint: Text(
                     'Selecciona una categoría',
                     style: TextStyle(color: c.textMuted, fontSize: 14),
