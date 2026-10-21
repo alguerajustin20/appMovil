@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.5+1
+  flutter_dotenv: ^6.0.1
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
@@ -19,6 +23,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - .env
     - assets/images/logo_B.png
     - assets/images/logo_N.png
     - assets/icons/admin/usuario_claro.png
