@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_colors.dart';
-import '../../../theme/app_theme.dart';
+import '../../../themes/app_colors.dart';
+import '../../../themes/app_theme.dart';
 //import '../../../widgets/custom_bottom_navigation.dart';
 import '../../security/login_screen.dart';
 import '../widgets/account_section.dart';
@@ -9,7 +9,6 @@ import '../widgets/preferences_section.dart';
 import '../widgets/settings_logout_button.dart';
 import '../widgets/settings_profile_card.dart';
 import '../widgets/support_section.dart';
-import '../settings-screen.dart/activity_logs_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

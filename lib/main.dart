@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/security/login_screen.dart';
-import 'theme/app_theme.dart';
+import 'themes/app_theme.dart';
 
 /// Interruptor global de tema — cualquier pantalla puede leerlo o cambiarlo.
 /// Empieza en modo claro por defecto.

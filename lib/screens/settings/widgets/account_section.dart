@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_colors.dart';
+import '../../../themes/app_colors.dart';
 import 'change_password_dialog.dart';
 import 'settings_nav_tile.dart';
 import 'settings_section.dart';

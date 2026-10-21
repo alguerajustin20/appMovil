@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/theme/app_colors.dart';
-import '../../../../theme/app_theme.dart';
+import 'package:integrador_vi_mobile/themes/app_colors.dart';
+import '../../../themes/app_theme.dart';
 import '../user_management_screen.dart';
 
 class UserListItem extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 //import 'package:integrador_vi_mobile/screens/bench/dashboard-screendart/dashboard_screen.dart';
-import 'package:integrador_vi_mobile/theme/app_theme.dart';
+import 'package:integrador_vi_mobile/themes/app_theme.dart';
 import 'package:integrador_vi_mobile/widgets/custom_bottom_navigation.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -177,7 +177,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const MainNavigationScreen(),
+                                builder: (context) =>
+                                    const MainNavigationScreen(),
                               ),
                             );
                           },

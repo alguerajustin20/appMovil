@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_colors.dart';
+import '../../../themes/app_colors.dart';
 
 /// Botón de cerrar sesión. La navegación la decide la pantalla que lo usa.
 class SettingsLogoutButton extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/theme/app_colors.dart';
-import '../../../../theme/app_theme.dart';
-import '../add_product_screen.dart'; 
+import 'package:integrador_vi_mobile/themes/app_colors.dart';
+import '../../../themes/app_theme.dart';
+import '../add_product_screen.dart';
 
 class ProductListItem extends StatelessWidget {
   final ProductItem item;
@@ -33,7 +33,9 @@ class ProductListItem extends StatelessWidget {
           border: Border.all(
             color: isEditing
                 ? AppColors.teal
-                : (item.isActive ? AppColors.teal.withOpacity(0.3) : c.cardBorder),
+                : (item.isActive
+                      ? AppColors.teal.withOpacity(0.3)
+                      : c.cardBorder),
             width: 1.2,
           ),
         ),
@@ -66,7 +68,10 @@ class ProductListItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: item.isActive
                           ? AppColors.teal.withOpacity(0.1)
@@ -91,14 +96,22 @@ class ProductListItem extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.teal),
+              icon: const Icon(
+                Icons.edit_outlined,
+                size: 20,
+                color: AppColors.teal,
+              ),
               onPressed: onEdit,
             ),
             IconButton(
               icon: Icon(
-                item.isActive ? Icons.toggle_on_rounded : Icons.toggle_off_rounded,
+                item.isActive
+                    ? Icons.toggle_on_rounded
+                    : Icons.toggle_off_rounded,
                 size: 28,
-                color: item.isActive ? AppColors.teal : Colors.redAccent.withOpacity(0.7),
+                color: item.isActive
+                    ? AppColors.teal
+                    : Colors.redAccent.withOpacity(0.7),
               ),
               onPressed: onToggleStatus,
             ),

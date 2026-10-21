@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_theme.dart';
+import '../../../themes/app_theme.dart';
 import 'settings_leading_icon.dart';
 
 /// Fila de ajustes que navega o abre algo (con texto, ícono o flecha a la derecha).

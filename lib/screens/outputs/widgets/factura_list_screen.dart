@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/theme/app_colors.dart';
-import 'package:integrador_vi_mobile/theme/app_theme.dart';
+import 'package:integrador_vi_mobile/themes/app_colors.dart';
+import 'package:integrador_vi_mobile/themes/app_theme.dart';
 
 class FacturaList extends StatelessWidget {
   final List<dynamic> filteredFacturas;

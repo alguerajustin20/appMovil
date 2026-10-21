@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/theme/app_colors.dart';
-import '../../theme/app_theme.dart';
+import 'package:integrador_vi_mobile/themes/app_colors.dart';
+import '../../themes/app_theme.dart';
 import 'widgets/product_list_item.dart';
 import 'widgets/manage_list_dialog.dart';
 import 'widgets/product_form_card.dart';
@@ -28,7 +28,8 @@ class AddProductScreen extends StatefulWidget {
 
 class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _customCategoryController = TextEditingController();
+  final TextEditingController _customCategoryController =
+      TextEditingController();
   final TextEditingController _customUnitController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
@@ -41,15 +42,40 @@ class _AddProductScreenState extends State<AddProductScreen> {
   String? _selectedUnit = 'Paquete';
   String _selectedStatusFilter = 'Todos';
 
-  final List<String> _categories = ['Bebidas', 'Carnes', 'Verduras', 'Abarrotes'];
+  final List<String> _categories = [
+    'Bebidas',
+    'Carnes',
+    'Verduras',
+    'Abarrotes',
+  ];
   final List<String> _units = ['Paquete', 'Kg', 'Caja', 'Botella', 'onza'];
   final List<String> _statusFilters = ['Todos', 'Activo', 'Inactivo'];
 
   final List<ProductItem> _productList = [
-    ProductItem(name: 'Coca Cola', category: 'Bebidas', stock: 15, isActive: true),
-    ProductItem(name: 'Carne de Res', category: 'Carnes', stock: 8, isActive: true),
-    ProductItem(name: 'Tomates', category: 'Verduras', stock: 0, isActive: false),
-    ProductItem(name: 'Jugo de Naranja', category: 'Bebidas', stock: 5, isActive: true),
+    ProductItem(
+      name: 'Coca Cola',
+      category: 'Bebidas',
+      stock: 15,
+      isActive: true,
+    ),
+    ProductItem(
+      name: 'Carne de Res',
+      category: 'Carnes',
+      stock: 8,
+      isActive: true,
+    ),
+    ProductItem(
+      name: 'Tomates',
+      category: 'Verduras',
+      stock: 0,
+      isActive: false,
+    ),
+    ProductItem(
+      name: 'Jugo de Naranja',
+      category: 'Bebidas',
+      stock: 5,
+      isActive: true,
+    ),
   ];
 
   @override
@@ -141,10 +167,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: c.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             isActivating ? 'Activar producto' : 'Desactivar producto',
-            style: TextStyle(fontWeight: FontWeight.bold, color: c.textPrimary, fontSize: 18),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: c.textPrimary,
+              fontSize: 18,
+            ),
           ),
           content: Text(
             isActivating
@@ -155,12 +187,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancelar', style: TextStyle(color: c.textMuted, fontWeight: FontWeight.w600)),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: c.textMuted,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: isActivating ? AppColors.teal : Colors.redAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                backgroundColor: isActivating
+                    ? AppColors.teal
+                    : Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 elevation: 0,
               ),
               onPressed: () {
@@ -177,15 +219,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           ? 'Producto "${item.name}" activado correctamente.'
                           : 'Producto "${item.name}" marcado como inactivo.',
                     ),
-                    backgroundColor: isActivating ? AppColors.teal : Colors.redAccent,
+                    backgroundColor: isActivating
+                        ? AppColors.teal
+                        : Colors.redAccent,
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 );
               },
               child: Text(
                 isActivating ? 'Activar' : 'Desactivar',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -238,11 +287,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _editingIndex != null ? '¡Producto actualizado!' : '¡Producto registrado!',
+            _editingIndex != null
+                ? '¡Producto actualizado!'
+                : '¡Producto registrado!',
           ),
           backgroundColor: AppColors.teal,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
       _clearForm();
@@ -285,20 +338,34 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     children: [
                       Text(
                         'Productos Existentes',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: c.textPrimary),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: c.textPrimary,
+                        ),
                       ),
-                      Text('Toca para editar, activar o desactivar', style: TextStyle(fontSize: 14, color: c.textMuted)),
+                      Text(
+                        'Toca para editar, activar o desactivar',
+                        style: TextStyle(fontSize: 14, color: c.textMuted),
+                      ),
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.teal.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       '${filteredList.length} ítems',
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.teal),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.teal,
+                      ),
                     ),
                   ),
                 ],
@@ -322,7 +389,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _statusFilters.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 8),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 8),
                   itemBuilder: (context, index) {
                     final filter = _statusFilters[index];
                     final isSelected = _selectedStatusFilter == filter;
@@ -332,15 +400,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         filter,
                         style: TextStyle(
                           color: isSelected ? Colors.white : c.textMuted,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                           fontSize: 13,
                         ),
                       ),
                       selected: isSelected,
                       selectedColor: AppColors.teal,
                       backgroundColor: c.card,
-                      side: BorderSide(color: isSelected ? AppColors.teal : c.cardBorder),
-                      onSelected: (selected) => setState(() => _selectedStatusFilter = filter),
+                      side: BorderSide(
+                        color: isSelected ? AppColors.teal : c.cardBorder,
+                      ),
+                      onSelected: (selected) =>
+                          setState(() => _selectedStatusFilter = filter),
                     );
                   },
                 ),
@@ -351,7 +424,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Center(
-                        child: Text('No hay productos en esta sección.', style: TextStyle(color: c.textMuted, fontSize: 13)),
+                        child: Text(
+                          'No hay productos en esta sección.',
+                          style: TextStyle(color: c.textMuted, fontSize: 13),
+                        ),
                       ),
                     )
                   : ListView.builder(
@@ -362,7 +438,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         final item = filteredList[index];
                         return ProductListItem(
                           item: item,
-                          isEditing: _editingIndex == _productList.indexOf(item),
+                          isEditing:
+                              _editingIndex == _productList.indexOf(item),
                           palette: c,
                           onEdit: () => _startEditing(item),
                           onToggleStatus: () => _toggleProductStatus(item, c),
@@ -389,11 +466,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 units: _units,
                 palette: c,
                 onCancelEditing: _clearForm,
-                onToggleCategoryInput: () => setState(() => _showNewCategoryInput = !_showNewCategoryInput),
-                onToggleUnitInput: () => setState(() => _showNewUnitInput = !_showNewUnitInput),
-                onInventoryableChanged: (val) => setState(() => _isInventoryable = val),
+                onToggleCategoryInput: () => setState(
+                  () => _showNewCategoryInput = !_showNewCategoryInput,
+                ),
+                onToggleUnitInput: () =>
+                    setState(() => _showNewUnitInput = !_showNewUnitInput),
+                onInventoryableChanged: (val) =>
+                    setState(() => _isInventoryable = val),
                 onQuantityChanged: (val) => setState(() => _quantity = val),
-                onCategoryChanged: (val) => setState(() => _selectedCategory = val),
+                onCategoryChanged: (val) =>
+                    setState(() => _selectedCategory = val),
                 onUnitChanged: (val) => setState(() => _selectedUnit = val),
                 onManageCategories: () => _showManageListDialog(
                   title: 'Categorías',
@@ -419,7 +501,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   },
                   onDelete: (val) {
                     _units.remove(val);
-                    if (_selectedUnit == val) _selectedUnit = _units.isNotEmpty ? _units.first : null;
+                    if (_selectedUnit == val)
+                      _selectedUnit = _units.isNotEmpty ? _units.first : null;
                   },
                   c: c,
                 ),
@@ -433,14 +516,26 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 height: 48,
                 child: ElevatedButton.icon(
                   onPressed: _saveProduct,
-                  icon: const Icon(Icons.save_rounded, color: Colors.white, size: 20),
+                  icon: const Icon(
+                    Icons.save_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   label: Text(
-                    _editingIndex != null ? 'Actualizar Producto' : 'Guardar Producto',
-                    style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                    _editingIndex != null
+                        ? 'Actualizar Producto'
+                        : 'Guardar Producto',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.teal,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     elevation: 0,
                   ),
                 ),
@@ -456,7 +551,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget _buildFieldLabel(String label, AppPalette c) {
     return Text(
       label,
-      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: c.textPrimary),
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: c.textPrimary,
+      ),
     );
   }
 
@@ -468,7 +567,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return InputDecoration(
       hintText: hintText,
       hintStyle: TextStyle(color: c.textMuted.withOpacity(0.7), fontSize: 13),
-      prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: c.textMuted, size: 18) : null,
+      prefixIcon: prefixIcon != null
+          ? Icon(prefixIcon, color: c.textMuted, size: 18)
+          : null,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       filled: true,
       fillColor: c.isDark ? c.inputFill : Colors.grey.shade50,

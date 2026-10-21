@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_theme.dart';
+import '../../../themes/app_theme.dart';
 
 /// Etiqueta de sección + tarjeta con sus filas. Inserta los divisores solo.
 class SettingsSection extends StatelessWidget {

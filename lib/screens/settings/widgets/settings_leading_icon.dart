@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_theme.dart';
+import '../../../themes/app_theme.dart';
 
 /// Ícono PNG con su par claro/oscuro. Elige solo según el tema activo.
 class SettingsLeadingIcon extends StatelessWidget {

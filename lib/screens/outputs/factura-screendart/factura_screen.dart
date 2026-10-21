@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/screens/outputs/widgets/factura_filter_screen.dart';
 import 'package:integrador_vi_mobile/screens/outputs/widgets/factura_list_screen.dart';
 import 'package:integrador_vi_mobile/screens/outputs/widgets/factura_search_screen.dart';
-import 'package:integrador_vi_mobile/theme/app_theme.dart';
+import 'package:integrador_vi_mobile/themes/app_theme.dart';
 import 'package:integrador_vi_mobile/widgets/custom_bottom_navigation.dart';
 
 class Factura {
@@ -332,7 +332,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
           ),
         ),
       ),
-      
     );
   }
 }

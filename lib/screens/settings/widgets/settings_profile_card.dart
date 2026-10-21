@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_colors.dart';
-import '../../../theme/app_theme.dart';
+import '../../../themes/app_colors.dart';
+import '../../../themes/app_theme.dart';
 
 /// Tarjeta superior con avatar, nombre, correo, rol y botón de editar.
 class SettingsProfileCard extends StatelessWidget {

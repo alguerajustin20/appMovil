@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../theme/app_colors.dart';
-import '../../../theme/app_theme.dart';
+import '../../../themes/app_colors.dart';
+import '../../../themes/app_theme.dart';
 import 'settings_leading_icon.dart';
 
 /// Fila de ajustes con interruptor (por ejemplo, Modo Oscuro).
