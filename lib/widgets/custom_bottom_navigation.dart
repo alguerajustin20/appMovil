@@ -6,6 +6,9 @@ import '../screens/inventory/add-product-screen/add_product_screen.dart';
 import '../screens/manager/user-management-screen/user_management_screen.dart';
 import '../screens/settings/settings_screen.dart';
 
+
+
+
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
 
