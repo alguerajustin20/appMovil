@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/themes/app_colors.dart';
 import '../../../themes/app_theme.dart';
-import '../user_management_screen.dart';
+import '../user-management-screen/user_management_screen.dart';
 
 class UserFormModal extends StatefulWidget {
   final User? userToEdit;

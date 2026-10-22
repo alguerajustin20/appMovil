@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/theme/app_colors.dart';
-import '../../../theme/app_theme.dart';
+import 'package:integrador_vi_mobile/themes/app_colors.dart';
+import '../../../themes/app_theme.dart';
+import '../add-product-screen/add_product_screen.dart';
 import '../widgets/product_list_item.dart';
 import '../widgets/manage_list_dialog.dart';
 import '../widgets/product_form_card.dart';
@@ -30,15 +31,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _customCategoryController = TextEditingController();
+  final TextEditingController _customCategoryController =
+      TextEditingController();
   final TextEditingController _customUnitController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
   bool _isInventoryable = true;
   bool _showNewCategoryInput = false;
+  bool _showNewUnitInput = false;
   int _quantity = 1;
   int? _editingIndex;
   String? _selectedCategory;
+  String? _selectedUnit;
   String _selectedStatusFilter = 'Todos';
 
   final List<String> _categories = [
@@ -46,15 +50,27 @@ class _AddProductScreenState extends State<AddProductScreen> {
     'licores ',
     'Cervezas',
     'Bebidas',
-    ];
-  
+  ];
+
+  final List<String> _units = ['Unidad', 'kg', 'g', 'L', 'ml', 'Paquete'];
+
   final List<String> _statusFilters = ['Todos', 'Activo', 'Inactivo'];
 
   final List<ProductItem> _productList = [
-    ProductItem(name: 'Coca Cola', category: 'Bebidas', stock: 15, isActive: true),
+    ProductItem(
+      name: 'Coca Cola',
+      category: 'Bebidas',
+      stock: 15,
+      isActive: true,
+    ),
     ProductItem(name: 'gaseosa', category: 'Bebidas', stock: 8, isActive: true),
     ProductItem(name: 'Toña', category: 'Cervezas', stock: 0, isActive: false),
-    ProductItem(name: 'Jugo de Naranja', category: 'Bebidas naturales', stock: 5, isActive: true),
+    ProductItem(
+      name: 'Jugo de Naranja',
+      category: 'Bebidas naturales',
+      stock: 5,
+      isActive: true,
+    ),
   ];
 
   @override
@@ -91,9 +107,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _editingIndex = null;
       _selectedCategory = null;
-     
+      _selectedUnit = null;
+
       _showNewCategoryInput = false;
-      
+      _showNewUnitInput = false;
+
       _quantity = 1;
     });
   }
@@ -151,7 +169,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _editingIndex != null ? 'Editar Producto' : 'Nuevo Producto',
+                              _editingIndex != null
+                                  ? 'Editar Producto'
+                                  : 'Nuevo Producto',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -169,11 +189,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           isEditing: _editingIndex != null,
                           nameController: _nameController,
                           customCategoryController: _customCategoryController,
-                      showNewCategoryInput: _showNewCategoryInput,
+                          customUnitController: _customUnitController,
+                          showNewCategoryInput: _showNewCategoryInput,
+                          showNewUnitInput: _showNewUnitInput,
                           isInventoryable: _isInventoryable,
                           quantity: _quantity,
                           selectedCategory: _selectedCategory,
+                          selectedUnit: _selectedUnit,
                           categories: _categories,
+                          units: _units,
                           palette: c,
                           onCancelEditing: () {
                             _clearForm();
@@ -181,6 +205,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           },
                           onToggleCategoryInput: () => setStateModal(() {
                             _showNewCategoryInput = !_showNewCategoryInput;
+                          }),
+                          onToggleUnitInput: () => setStateModal(() {
+                            _showNewUnitInput = !_showNewUnitInput;
                           }),
                           onInventoryableChanged: (val) => setStateModal(() {
                             _isInventoryable = val;
@@ -191,17 +218,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           onCategoryChanged: (val) => setStateModal(() {
                             _selectedCategory = val;
                           }),
+                          onUnitChanged: (val) => setStateModal(() {
+                            _selectedUnit = val;
+                          }),
                           onManageCategories: () => _showManageListDialog(
                             title: 'Categorías',
                             items: _categories,
                             onEdit: (oldVal, newVal) {
                               final idx = _categories.indexOf(oldVal);
                               if (idx != -1) _categories[idx] = newVal;
-                              if (_selectedCategory == oldVal) _selectedCategory = newVal;
+                              if (_selectedCategory == oldVal)
+                                _selectedCategory = newVal;
                             },
                             onDelete: (val) {
                               _categories.remove(val);
-                              if (_selectedCategory == val) _selectedCategory = null;
+                              if (_selectedCategory == val)
+                                _selectedCategory = null;
+                            },
+                            c: c,
+                          ),
+                          onManageUnits: () => _showManageListDialog(
+                            title: 'Unidades',
+                            items: _units,
+                            onEdit: (oldVal, newVal) {
+                              final idx = _units.indexOf(oldVal);
+                              if (idx != -1) _units[idx] = newVal;
+                              if (_selectedUnit == oldVal) {
+                                _selectedUnit = newVal;
+                              }
+                            },
+                            onDelete: (val) {
+                              _units.remove(val);
+                              if (_selectedUnit == val) _selectedUnit = null;
                             },
                             c: c,
                           ),
@@ -401,9 +449,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
         backgroundColor: AppColors.teal,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
 
@@ -452,7 +498,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           color: c.textPrimary,
                         ),
                       ),
-                     
                     ],
                   ),
                   Container(
@@ -582,7 +627,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: c.textMuted.withValues(alpha: 0.7), fontSize: 13),
+      hintStyle: TextStyle(
+        color: c.textMuted.withValues(alpha: 0.7),
+        fontSize: 13,
+      ),
       prefixIcon: prefixIcon != null
           ? Icon(prefixIcon, color: c.textMuted, size: 18)
           : null,
