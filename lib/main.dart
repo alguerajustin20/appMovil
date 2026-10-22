@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/presentation/screens/security/login_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'core/di/injection.dart';
 import 'themes/app_theme.dart';
 
-/// Interruptor global de tema — cualquier pantalla puede leerlo o cambiarlo.
+//import 'package:integrador_vi_mobile/presentation/screens/security/login_screen.dart';
+
+import 'presentation/screens/categoriasAPI/categoriasAPI-screendart/categoria_screen.dart';
+
+/// Interruptor global de tema - cualquier pantalla puede leerlo o cambiarlo.
 /// Empieza en modo claro por defecto.
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
-void main() {
-  runApp(const MainApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+
+  runApp(MultiProvider(providers: appProviders, child: const MainApp()));
 }
 
 class MainApp extends StatelessWidget {
@@ -23,7 +32,8 @@ class MainApp extends StatelessWidget {
           themeMode: currentMode,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
-          home: const LoginScreen(),
+          //home: const LoginScreen(),
+          home: const CategoriaScreen(),
         );
       },
     );
