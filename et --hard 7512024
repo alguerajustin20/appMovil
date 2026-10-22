@@ -1,0 +1,99 @@
+[33m14ec012[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32muser_managment[m[33m, [m[1;31morigin/user_managment[m[33m)[m Merge pull request #30 from alguerajustin20/development
+[33m4ef7503[m Merge pull request #26 from alguerajustin20/login
+[33m3232380[m Agregados archivos .gitkeep para rastrear carpetas vacias
+[33mfd8e49b[m Resuelto conflicto de imports en custom_bottom_navigation.dart
+[33m0b89859[m Guardando cambios locales antes de fusionar
+[33m6edf7b2[m Merge pull request #25 from alguerajustin20/user_management
+[33m9da4096[m Commit inicial: proyecto user_management
+[33mc80ac79[m Merge pull request #24 from alguerajustin20/login
+[33mef8d5a8[m[33m ([m[1;32mlogin[m[33m)[m fix: resuelve conflicto en navegacion y limpia codigo para login
+[33m3a2ce35[m refactor: rutas actualizadas y archivos eliminados
+[33mb1e5b31[m Resolver conflictos de merge e integrar modulo de login
+[33mb79a1aa[m Merge branches 'development' and 'development' of https://github.com/alguerajustin20/appMovil into development
+[33maadd0fc[m feat:corroboracion de los commits de mi rama
+[33m9f88e81[m Merge pull request #22 from alguerajustin20/user_managment
+[33ma428243[m rediseño de la pantalla agregar producto
+[33m1a9b3c6[m[33m ([m[1;32mdevelopment[m[33m)[m Merge pull request #21 from alguerajustin20/Maurosbr-/SettingsScreen
+[33m7512024[m Rstructuración de la pantalla agregar producto e implementación de validaciones
+[33m3b5297e[m feat:implementacion de carpetas y nueva pantalla de logs con modo oscuro
+[33m46bd48e[m Merge branch 'login'
+[33m2e76c9f[m Formateo global de documentos del proyecto de Flutter
+[33m43ef646[m Reorganizacion global de directorios del proyecto de Flutter
+[33maadf5c7[m Correccion global de bugs visuales en formularios/submenus/pop-ups
+[33mbd1d6b1[m Merge pull request #20 from alguerajustin20/development
+[33m4dc4174[m completado todo
+[33mf8b8e7f[m validacion en la pantalla dashboard y orden en las carpetas de mi pantalla
+[33m39e3fbb[m Merge branch 'development' of https://github.com/alguerajustin20/appMovil into user_managment
+[33m2298976[m cambio de color en titulos
+[33m4ce3181[m Merge pull request #19 from alguerajustin20/EMILIO-br/feature/dashboard-screen
+[33mff77d5a[m Actualizacion global de la fuente y la paleta de colores de todos los encabezados en todo mi proyecto Flutter
+[33m8718457[m Merge pull request #18 from alguerajustin20/development
+[33m0b022ae[m Merge branch 'EMILIO-br/feature/dashboard-screen' into development
+[33md256e31[m Materializacion de la vista/pantalla de Factura, y consumo de sus respectivos widgets
+[33m1390a89[m Creacion de los widgets propios de la vista/pantalla Factura
+[33ma6181db[m Reacomodacion del proyecto Flutter para la nueva vista/pantalla de Factura
+[33mfaf43ac[m  actualización de  diseño y controles de estado en pantalla de productos y usuarios
+[33md73bc2f[m Merge pull request #17 from alguerajustin20/Maurosbr-/SettingsScreen
+[33m2b1d7e6[m feat: Ajustes - username editable, modal de contrasena, modal de ayuda; se elimina selector de idioma por indicacion del profesor
+[33m4103257[m Merge pull request #16 from alguerajustin20/development
+[33m6a9e428[m insercion  de usuarios, validacion de formulario y tarjetas de estado
+[33m1109f89[m implentación dr productos ,alerta en la eliminacion de producto,actualizar producto, boton de productos activo e inactivo y opción de nuevas categorias
+[33mf6f9053[m implementación del boton factura al widget custom_bottom_navigation.dart
+[33m070b09e[m Merge pull request #15 from alguerajustin20/Maurosbr-/SettingsScreen
+[33m222438b[m Merge remote-tracking branch 'origin/development' into Maurosbr-/SettingsScreen
+[33me2fc705[m feat: modo oscuro en Inventario y Usuarios usando AppPalette
+[33m7812b5d[m feat: modo oscuro en Dashboard (cards, tasks, bench) y Ajustes con Permisos Biometricos
+[33m2f8ea36[m Merge pull request #14 from alguerajustin20/login
+[33madb4789[m Actualizacion de codigo en login
+[33m01db27e[m chore: remove main_dev_mauro.dart file
+[33m310ba74[m feat: adapt home and dashboard screens to dynamic dark/light theme
+[33m5301c5a[m[33m ([m[1;33mtag: [m[1;33majustes-estable[m[33m)[m feat: Ajustes integrada con navegacion, modo oscuro y logout (version estable)
+[33m51932f0[m merge: integrar development (login, navegacion completa) con SettingsScreen y modo oscuro
+[33m331b8fc[m fix: corregir rutas de iconos con par claro/oscuro en SettingsScreen
+[33m6a9fedf[m pantalla de agregar producto y validacion en la pantalla principal que al momento que el usuario estando en la pantalla principal  le de hacia atras no pase nada es nedecir no cierre seccion
+[33m6640f87[m pantalla agregar productos y verificacion si el producto es inventariable
+[33m0836019[m Merge pull request #13 from alguerajustin20/development
+[33md6c92c1[m Merge pull request #12 from alguerajustin20/login
+[33m1fa8eb9[m se camnio el nombre de la app
+[33m9ad6bab[m Merge pull request #11 from alguerajustin20/login
+[33m905109a[m Merge pull request #10 from alguerajustin20/login
+[33m31b888f[m Cambios incluidos en esta actualización:
+[33m3d7fdc1[m Cambios incluidos en esta actualización:
+[33m00d0cba[m Cambios incluidos en esta actualización:
+[33m0e129d9[m Merge pull request #9 from alguerajustin20/EMILIO-br/feature/dashboard-screen
+[33mc91e153[m Conexion visual e interactiva #2 entre la vista/pantalla Dashboard y el resto de vistas/pantallas del proyecto Flutter
+[33m7eb642c[m fix: corregir rutas de iconos con par claro/oscuro (WIP: falta aplicar ternario a iconos restantes de Cuenta/Preferencias/Soporte)
+[33maa7a682[m Merge pull request #8 from alguerajustin20/development
+[33m800dfa0[m Merge branch 'EMILIO-br/feature/dashboard-screen' into development
+[33m1fa5346[m Merge pull request #7 from alguerajustin20/login
+[33m771b00c[m feat: implementar pantalla de login (UI) con branding Campestre Admin
+[33m22ccba1[m refactor: mover settings_screen.dart a la carpeta screens/ para mantener convención del proyecto
+[33m5508e31[m fix: resolver conflictos de merge con development
+[33m64b51bd[m feat: agregar logo, iconos personalizados y assets a SettingsScreen
+[33ma5d9766[m Formateo de documento a todos los .dart del proyecto Flutter
+[33me891b90[m Conexion visual e interactiva entre la vista/pantalla Dashboard y el resto de vistas/pantallas del proyecto Flutter
+[33mcb374fc[m Conexion visual e interactiva entre la vista/pantalla de Home y el resto de vistas/pantallas del proyecto Flutter
+[33mb5727ec[m Conexion visual e interactiva entre la vista/pantalla de Usuarios y el resto de vistas/pantallas del proyecto Flutter
+[33m3e954b0[m Correccion del widget general Barra de Botones, se solucionaron rutas mal nombradas y errores tanto en la parte del UI y UX de este widget con el resto del proyecto Flutter
+[33m899047a[m Preparar la vista/pantalla del Dashboard para que opere en conjunto con la vista/pantalla Home, Usuarios, y en futuro con Inventario y Ajustes
+[33mee56899[m Correccion de los assets generales, y actualizacion de sus directorios usados en todo el proyecto Flutter
+[33md6d2a3a[m Merge pull request #5 from alguerajustin20/EMILIO-br/feature/dashboard-screen
+[33m4850158[m Merge branch 'develoment' into EMILIO-br/feature/dashboard-screen
+[33m23bbc88[m Formateo al documento .dart que contiene el widget dedicado al grafico de barras del Dashboard
+[33m1cfdea8[m Ingreso del tercer widget propio de esta vista/pantalla, el Grupo de widgets llamado Tareas Recientes
+[33m06bd951[m Ingreso de Dashboard, segundo Grupo de widgets de esta vista/pantalla
+[33m897a114[m Ingreso del primer widget, Grupo de Tarjetas de Texto
+[33md673869[m Se prepara banner, logo y espacio para los primeros widgets
+[33me45543e[m Preparar estructura del proyecto para el Dashboard
+[33md32c2cc[m[33m ([m[1;31morigin/develoment[m[33m, [m[1;32mdeveloment[m[33m)[m Merge branch 'login' into develoment
+[33m1a51fca[m  pantalla principal home  y navegacion a usuarios entre la pantalla gestion usuarios
+[33m9374de3[m Merge branch 'login' into develoment # Please enter a commit message to explain why this merge is necessary, # especially if it merges an updated upstream into a topic branch. # # Lines starting with '#' will be ignored, and an empty message aborts # the commit.
+[33m994612b[m pantalla de login y barra inferior de navegacion
+[33m3d92b30[m Merge master into Maurosbr-/SettingsScreen y agregar SettingsScreen
+[33m018d2c3[m Merge pull request #4 from alguerajustin20/user_managment
+[33mff68745[m Merge pull request #3 from alguerajustin20/develoment
+[33m7ef85d1[m Merge pull request #2 from alguerajustin20/login
+[33ma5b4b1d[m[33m ([m[1;32mmaster[m[33m)[m Merge pull request #1 from alguerajustin20/login
+[33mcdeed17[m fix: resolver conflicto de merge en README
+[33m909a8cf[m feat: estructura inicial para modulo de login
+[33md99d0a9[m Initial commit

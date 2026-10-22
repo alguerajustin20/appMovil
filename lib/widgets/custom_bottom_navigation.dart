@@ -16,7 +16,6 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
   DateTime? _lastPressedAt;
-
   final List<Widget> _screens = const [
     DashboardScreen(),
     AddProductScreen(),
