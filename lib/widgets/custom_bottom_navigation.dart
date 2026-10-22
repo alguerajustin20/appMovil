@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:integrador_vi_mobile/screens/outputs/factura-screendart/factura_screen.dart';
-import '../screens/bench/dashboard-screendart/dashboard_screen.dart';
-import '../screens/inventory/add-product-screen/add_product_screen.dart';
-import '../screens/manager/user-management-screen/user_management_screen.dart';
-import '../screens/settings/settings-screen.dart/settings_screen.dart';
+import 'package:integrador_vi_mobile/presentation/screens/outputs/factura-screendart/factura_screen.dart';
+import '../presentation/screens/bench/dashboard-screendart/dashboard_screen.dart';
+import '../presentation/screens/inventory/add-product-screen/add_product_screen.dart';
+import '../presentation/screens/manager/user-management-screen/user_management_screen.dart';
+import '../presentation/screens/settings/settings-screen.dart/settings_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
