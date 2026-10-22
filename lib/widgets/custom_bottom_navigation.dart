@@ -4,7 +4,7 @@ import 'package:integrador_vi_mobile/screens/outputs/factura-screendart/factura_
 import '../screens/bench/dashboard-screendart/dashboard_screen.dart';
 import '../screens/inventory/add-product-screen/add_product_screen.dart';
 import '../screens/manager/user-management-screen/user_management_screen.dart';
-import '../screens/settings/settings_screen.dart';
+import '../screens/settings/settings-screen.dart/settings_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -16,7 +16,6 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
   DateTime? _lastPressedAt;
-
   final List<Widget> _screens = const [
     DashboardScreen(),
     AddProductScreen(),

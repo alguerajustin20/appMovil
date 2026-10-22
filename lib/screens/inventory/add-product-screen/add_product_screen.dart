@@ -27,55 +27,34 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _customCategoryController =
-      TextEditingController();
+  final TextEditingController _customCategoryController = TextEditingController();
   final TextEditingController _customUnitController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
   bool _isInventoryable = true;
   bool _showNewCategoryInput = false;
-  bool _showNewUnitInput = false;
   int _quantity = 1;
   int? _editingIndex;
   String? _selectedCategory;
-  String? _selectedUnit = 'Paquete';
   String _selectedStatusFilter = 'Todos';
 
   final List<String> _categories = [
+    'Bebidas naturales',
+    'licores ',
+    'Cervezas',
     'Bebidas',
-    'Carnes',
-    'Verduras',
-    'Abarrotes',
-  ];
-  final List<String> _units = ['Paquete', 'Kg', 'Caja', 'Botella', 'onza'];
+    ];
+  
   final List<String> _statusFilters = ['Todos', 'Activo', 'Inactivo'];
 
   final List<ProductItem> _productList = [
-    ProductItem(
-      name: 'Coca Cola',
-      category: 'Bebidas',
-      stock: 15,
-      isActive: true,
-    ),
-    ProductItem(
-      name: 'Carne de Res',
-      category: 'Carnes',
-      stock: 8,
-      isActive: true,
-    ),
-    ProductItem(
-      name: 'Tomates',
-      category: 'Verduras',
-      stock: 0,
-      isActive: false,
-    ),
-    ProductItem(
-      name: 'Jugo de Naranja',
-      category: 'Bebidas',
-      stock: 5,
-      isActive: true,
-    ),
+    ProductItem(name: 'Coca Cola', category: 'Bebidas', stock: 15, isActive: true),
+    ProductItem(name: 'gaseosa', category: 'Bebidas', stock: 8, isActive: true),
+    ProductItem(name: 'Toña', category: 'Cervezas', stock: 0, isActive: false),
+    ProductItem(name: 'Jugo de Naranja', category: 'Bebidas naturales', stock: 5, isActive: true),
   ];
 
   @override
@@ -112,9 +91,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _editingIndex = null;
       _selectedCategory = null;
-      _selectedUnit = 'Paquete';
+     
       _showNewCategoryInput = false;
-      _showNewUnitInput = false;
+      
       _quantity = 1;
     });
   }
@@ -135,6 +114,145 @@ class _AddProductScreenState extends State<AddProductScreen> {
       _quantity = item.stock > 0 ? item.stock : 1;
       _isInventoryable = item.stock > 0;
     });
+    _showProductFormModal();
+  }
+
+  void _showProductFormModal() {
+    final c = context.palette;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: c.card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setStateModal) {
+            return SafeArea(
+              top: false,
+              bottom: true,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                ),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _editingIndex != null ? 'Editar Producto' : 'Nuevo Producto',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: c.textPrimary,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close, color: c.textMuted),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        ProductFormCard(
+                          isEditing: _editingIndex != null,
+                          nameController: _nameController,
+                          customCategoryController: _customCategoryController,
+                      showNewCategoryInput: _showNewCategoryInput,
+                          isInventoryable: _isInventoryable,
+                          quantity: _quantity,
+                          selectedCategory: _selectedCategory,
+                          categories: _categories,
+                          palette: c,
+                          onCancelEditing: () {
+                            _clearForm();
+                            Navigator.of(context).pop();
+                          },
+                          onToggleCategoryInput: () => setStateModal(() {
+                            _showNewCategoryInput = !_showNewCategoryInput;
+                          }),
+                          onInventoryableChanged: (val) => setStateModal(() {
+                            _isInventoryable = val;
+                          }),
+                          onQuantityChanged: (val) => setStateModal(() {
+                            _quantity = val;
+                          }),
+                          onCategoryChanged: (val) => setStateModal(() {
+                            _selectedCategory = val;
+                          }),
+                          onManageCategories: () => _showManageListDialog(
+                            title: 'Categorías',
+                            items: _categories,
+                            onEdit: (oldVal, newVal) {
+                              final idx = _categories.indexOf(oldVal);
+                              if (idx != -1) _categories[idx] = newVal;
+                              if (_selectedCategory == oldVal) _selectedCategory = newVal;
+                            },
+                            onDelete: (val) {
+                              _categories.remove(val);
+                              if (_selectedCategory == val) _selectedCategory = null;
+                            },
+                            c: c,
+                          ),
+                          buildFieldLabel: _buildFieldLabel,
+                          buildInputDecoration: _buildInputDecoration,
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _saveProduct();
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.check_circle_outline_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            label: Text(
+                              _editingIndex != null
+                                  ? 'Actualizar Producto'
+                                  : 'Guardar Producto',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.teal,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   void _showManageListDialog({
@@ -244,62 +362,52 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   void _saveProduct() {
+    final productName = _nameController.text.trim();
     final categoryToUse = _showNewCategoryInput
         ? _customCategoryController.text.trim()
         : (_selectedCategory ?? 'General');
-    final finalCategory = categoryToUse.isEmpty ? 'General' : categoryToUse;
 
-    if (_showNewCategoryInput &&
-        categoryToUse.isNotEmpty &&
-        !_categories.contains(categoryToUse)) {
+    if (_showNewCategoryInput && !_categories.contains(categoryToUse)) {
       _categories.add(categoryToUse);
     }
 
-    if (_showNewUnitInput && _customUnitController.text.trim().isNotEmpty) {
-      final newUnit = _customUnitController.text.trim();
-      if (!_units.contains(newUnit)) {
-        _units.add(newUnit);
-      }
-      _selectedUnit = newUnit;
-    }
-
-    if (_nameController.text.isNotEmpty) {
-      setState(() {
-        if (_editingIndex != null) {
-          _productList[_editingIndex!] = ProductItem(
-            name: _nameController.text,
-            category: finalCategory,
+    setState(() {
+      if (_editingIndex != null) {
+        _productList[_editingIndex!] = ProductItem(
+          name: productName,
+          category: categoryToUse,
+          stock: _isInventoryable ? _quantity : 0,
+          isActive: _productList[_editingIndex!].isActive,
+        );
+      } else {
+        _productList.insert(
+          0,
+          ProductItem(
+            name: productName,
+            category: categoryToUse,
             stock: _isInventoryable ? _quantity : 0,
-            isActive: _productList[_editingIndex!].isActive,
-          );
-        } else {
-          _productList.insert(
-            0,
-            ProductItem(
-              name: _nameController.text,
-              category: finalCategory,
-              stock: _isInventoryable ? _quantity : 0,
-              isActive: true,
-            ),
-          );
-        }
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _editingIndex != null
-                ? '¡Producto actualizado!'
-                : '¡Producto registrado!',
+            isActive: true,
           ),
-          backgroundColor: AppColors.teal,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+        );
+      }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          _editingIndex != null
+              ? '¡Producto actualizado correctamente!'
+              : '¡Producto registrado correctamente!',
         ),
-      );
-      _clearForm();
-    }
+        backgroundColor: AppColors.teal,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+
+    _clearForm();
   }
 
   @override
@@ -344,10 +452,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           color: c.textPrimary,
                         ),
                       ),
-                      Text(
-                        'Toca para editar, activar o desactivar',
-                        style: TextStyle(fontSize: 14, color: c.textMuted),
-                      ),
+                     
                     ],
                   ),
                   Container(
@@ -356,7 +461,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.teal.withOpacity(0.1),
+                      color: AppColors.teal.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -371,7 +476,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 ],
               ),
               const SizedBox(height: 10),
-
               TextField(
                 controller: _searchController,
                 onChanged: (_) => setState(() {}),
@@ -383,7 +487,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-
               SizedBox(
                 height: 36,
                 child: ListView.separated(
@@ -419,7 +522,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-
               filteredList.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -446,104 +548,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         );
                       },
                     ),
-
-              const SizedBox(height: 12),
-              Divider(color: c.cardBorder.withOpacity(0.6), thickness: 1),
-              const SizedBox(height: 12),
-
-              ProductFormCard(
-                isEditing: _editingIndex != null,
-                nameController: _nameController,
-                customCategoryController: _customCategoryController,
-                customUnitController: _customUnitController,
-                showNewCategoryInput: _showNewCategoryInput,
-                showNewUnitInput: _showNewUnitInput,
-                isInventoryable: _isInventoryable,
-                quantity: _quantity,
-                selectedCategory: _selectedCategory,
-                selectedUnit: _selectedUnit,
-                categories: _categories,
-                units: _units,
-                palette: c,
-                onCancelEditing: _clearForm,
-                onToggleCategoryInput: () => setState(
-                  () => _showNewCategoryInput = !_showNewCategoryInput,
-                ),
-                onToggleUnitInput: () =>
-                    setState(() => _showNewUnitInput = !_showNewUnitInput),
-                onInventoryableChanged: (val) =>
-                    setState(() => _isInventoryable = val),
-                onQuantityChanged: (val) => setState(() => _quantity = val),
-                onCategoryChanged: (val) =>
-                    setState(() => _selectedCategory = val),
-                onUnitChanged: (val) => setState(() => _selectedUnit = val),
-                onManageCategories: () => _showManageListDialog(
-                  title: 'Categorías',
-                  items: _categories,
-                  onEdit: (oldVal, newVal) {
-                    final idx = _categories.indexOf(oldVal);
-                    if (idx != -1) _categories[idx] = newVal;
-                    if (_selectedCategory == oldVal) _selectedCategory = newVal;
-                  },
-                  onDelete: (val) {
-                    _categories.remove(val);
-                    if (_selectedCategory == val) _selectedCategory = null;
-                  },
-                  c: c,
-                ),
-                onManageUnits: () => _showManageListDialog(
-                  title: 'Unidades',
-                  items: _units,
-                  onEdit: (oldVal, newVal) {
-                    final idx = _units.indexOf(oldVal);
-                    if (idx != -1) _units[idx] = newVal;
-                    if (_selectedUnit == oldVal) _selectedUnit = newVal;
-                  },
-                  onDelete: (val) {
-                    _units.remove(val);
-                    if (_selectedUnit == val)
-                      _selectedUnit = _units.isNotEmpty ? _units.first : null;
-                  },
-                  c: c,
-                ),
-                buildFieldLabel: _buildFieldLabel,
-                buildInputDecoration: _buildInputDecoration,
-              ),
-
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: _saveProduct,
-                  icon: const Icon(
-                    Icons.save_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  label: Text(
-                    _editingIndex != null
-                        ? 'Actualizar Producto'
-                        : 'Guardar Producto',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _clearForm();
+          _showProductFormModal();
+        },
+        backgroundColor: AppColors.teal,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -566,7 +582,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: c.textMuted.withOpacity(0.7), fontSize: 13),
+      hintStyle: TextStyle(color: c.textMuted.withValues(alpha: 0.7), fontSize: 13),
       prefixIcon: prefixIcon != null
           ? Icon(prefixIcon, color: c.textMuted, size: 18)
           : null,
@@ -580,6 +596,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: c.cardBorder),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
