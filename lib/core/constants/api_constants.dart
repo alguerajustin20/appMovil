@@ -3,17 +3,22 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiConstants {
+  /// Obtiene la URL base de la API.
+  /// Si existe en el .env la usa; si no, toma por defecto la IP del emulador (10.0.2.2:8080).
   String get baseUrl {
-    final configured = dotenv.env['BASE_API_URL'] ?? 'http://localhost:8080';
-    if (!kIsWeb && Platform.isAndroid && configured.contains('localhost')) {
-      return configured.replaceAll('localhost', '10.0.2.2');
+    try {
+      final configured = dotenv.env['BASE_API_URL'];
+      if (configured != null && configured.isNotEmpty) {
+        if (!kIsWeb && Platform.isAndroid && configured.contains('localhost')) {
+          return configured.replaceAll('localhost', '10.0.2.2');
+        }
+        return configured;
+      }
+    } catch (_) {
+      // Manejo preventivo si dotenv no fue cargado
     }
-    return configured;
+    return 'http://10.0.2.2:8080';
   }
-
-  String get environment => dotenv.env['ENVIRONMENT'] ?? 'development';
-  String get apiUsername => dotenv.env['API_USERNAME'] ?? 'yamil72';
-  String get apiPassword => dotenv.env['API_PASSWORD'] ?? '123456';
 
   ApiConstants._privateConstructor();
   static final ApiConstants _instance = ApiConstants._privateConstructor();
@@ -26,7 +31,7 @@ class ApiConstants {
   static const String categoriasBuscar = '/api/Categorias/buscar';
   static const String categoriasRestaurar = '/api/Categorias/restaurar';
 
-  // Endpoints de Autenticación
+  // Endpoints de Autenticación Reales
   static const String login = '/api/Auth/login';
   static const String refresh = '/api/Auth/refresh';
   static const String logout = '/api/Auth/logout';
