@@ -7,18 +7,25 @@ class ProductFormCard extends StatelessWidget {
   final bool isEditing;
   final TextEditingController nameController;
   final TextEditingController customCategoryController;
+  final TextEditingController customUnitController;
   final bool showNewCategoryInput;
+  final bool showNewUnitInput;
   final bool isInventoryable;
   final int quantity;
   final String? selectedCategory;
+  final String? selectedUnit;
   final List<String> categories;
+  final List<String> units;
   final AppPalette palette;
   final VoidCallback onCancelEditing;
   final VoidCallback onToggleCategoryInput;
+  final VoidCallback onToggleUnitInput;
   final ValueChanged<bool> onInventoryableChanged;
   final ValueChanged<int> onQuantityChanged;
   final ValueChanged<String?> onCategoryChanged;
+  final ValueChanged<String?> onUnitChanged;
   final VoidCallback onManageCategories;
+  final VoidCallback onManageUnits;
   final Widget Function(String, AppPalette) buildFieldLabel;
   final InputDecoration Function(
     AppPalette, {
@@ -32,18 +39,25 @@ class ProductFormCard extends StatelessWidget {
     required this.isEditing,
     required this.nameController,
     required this.customCategoryController,
+    required this.customUnitController,
     required this.showNewCategoryInput,
+    required this.showNewUnitInput,
     required this.isInventoryable,
     required this.quantity,
     required this.selectedCategory,
+    required this.selectedUnit,
     required this.categories,
+    required this.units,
     required this.palette,
     required this.onCancelEditing,
     required this.onToggleCategoryInput,
+    required this.onToggleUnitInput,
     required this.onInventoryableChanged,
     required this.onQuantityChanged,
     required this.onCategoryChanged,
+    required this.onUnitChanged,
     required this.onManageCategories,
+    required this.onManageUnits,
     required this.buildFieldLabel,
     required this.buildInputDecoration,
   });
