@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/themes/app_colors.dart';
 import '../../../themes/app_theme.dart';
-import '../add-product-screen/add_product_screen.dart';
 import '../widgets/product_list_item.dart';
 import '../widgets/manage_list_dialog.dart';
 import '../widgets/product_form_card.dart';
