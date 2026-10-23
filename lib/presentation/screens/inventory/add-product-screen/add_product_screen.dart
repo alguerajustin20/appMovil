@@ -1,23 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../core/network/api_client.dart';
+import '../../../../data/models/product_model.dart';
+import '../../../../data/repositories/product_repository.dart';
 import '../widgets/product_list_item.dart';
 import '../widgets/manage_list_dialog.dart';
 import '../widgets/product_form_card.dart';
-
-class ProductItem {
-  String name;
-  String category;
-  int stock;
-  bool isActive;
-
-  ProductItem({
-    required this.name,
-    required this.category,
-    required this.stock,
-    this.isActive = true,
-  });
-}
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -30,43 +19,63 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _customCategoryController =
-      TextEditingController();
+  final TextEditingController _customCategoryController = TextEditingController();
   final TextEditingController _customUnitController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
   bool _isInventoryable = true;
   bool _showNewCategoryInput = false;
   int _quantity = 1;
-  int? _editingIndex;
+  int? _editingId;
   String? _selectedCategory;
   String _selectedStatusFilter = 'Todos';
 
+  bool _isLoading = true;
+  List<ProductModel> _productList = [];
+
   final List<String> _categories = [
     'Bebidas naturales',
-    'licores ',
+    'licores',
     'Cervezas',
     'Bebidas',
   ];
 
   final List<String> _statusFilters = ['Todos', 'Activo', 'Inactivo'];
 
-  final List<ProductItem> _productList = [
-    ProductItem(
-      name: 'Coca Cola',
-      category: 'Bebidas',
-      stock: 15,
-      isActive: true,
-    ),
-    ProductItem(name: 'gaseosa', category: 'Bebidas', stock: 8, isActive: true),
-    ProductItem(name: 'Toña', category: 'Cervezas', stock: 0, isActive: false),
-    ProductItem(
-      name: 'Jugo de Naranja',
-      category: 'Bebidas naturales',
-      stock: 5,
-      isActive: true,
-    ),
-  ];
+  late final ProductRepository _productRepository = ProductRepository(ApiClient());
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts(_selectedStatusFilter);
+  }
+
+  Future<void> _loadProducts(String statusFilter) async {
+    setState(() => _isLoading = true);
+    try {
+      List<ProductModel> products = [];
+
+      if (statusFilter == 'Activo') {
+        products = await _productRepository.getActivos();
+      } else if (statusFilter == 'Inactivo') {
+        products = await _productRepository.getInactivos();
+      } else {
+        final activos = await _productRepository.getActivos();
+        final inactivos = await _productRepository.getInactivos();
+        products = [...activos, ...inactivos];
+      }
+
+      setState(() {
+        _productList = products;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar productos: $e'), backgroundColor: Colors.redAccent),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -77,18 +86,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
     super.dispose();
   }
 
-  List<ProductItem> get _filteredProducts {
+  List<ProductModel> get _filteredProducts {
     return _productList.where((item) {
       final query = _searchController.text.toLowerCase().trim();
       final matchesSearch =
-          item.name.toLowerCase().contains(query) ||
-          item.category.toLowerCase().contains(query);
+          item.nombre.toLowerCase().contains(query) ||
+          item.categoria.toLowerCase().contains(query);
 
       bool matchesStatus = true;
       if (_selectedStatusFilter == 'Activo') {
-        matchesStatus = item.isActive;
+        matchesStatus = item.activo;
       } else if (_selectedStatusFilter == 'Inactivo') {
-        matchesStatus = !item.isActive;
+        matchesStatus = !item.activo;
       }
 
       return matchesSearch && matchesStatus;
@@ -100,26 +109,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _customCategoryController.clear();
     _customUnitController.clear();
     setState(() {
-      _editingIndex = null;
+      _editingId = null;
       _selectedCategory = null;
-
       _showNewCategoryInput = false;
-
       _quantity = 1;
     });
   }
 
-  void _startEditing(ProductItem item) {
-    final index = _productList.indexOf(item);
+  void _startEditing(ProductModel item) {
     setState(() {
-      _editingIndex = index;
-      _nameController.text = item.name;
-      if (_categories.contains(item.category)) {
-        _selectedCategory = item.category;
+      _editingId = item.id;
+      _nameController.text = item.nombre;
+      if (_categories.contains(item.categoria)) {
+        _selectedCategory = item.categoria;
         _showNewCategoryInput = false;
       } else {
         _selectedCategory = null;
-        _customCategoryController.text = item.category;
+        _customCategoryController.text = item.categoria;
         _showNewCategoryInput = true;
       }
       _quantity = item.stock > 0 ? item.stock : 1;
@@ -162,9 +168,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _editingIndex != null
-                                  ? 'Editar Producto'
-                                  : 'Nuevo Producto',
+                              _editingId != null ? 'Editar Producto' : 'Nuevo Producto',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -179,7 +183,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         ),
                         const SizedBox(height: 10),
                         ProductFormCard(
-                          isEditing: _editingIndex != null,
+                          isEditing: _editingId != null,
                           nameController: _nameController,
                           customCategoryController: _customCategoryController,
                           showNewCategoryInput: _showNewCategoryInput,
@@ -204,22 +208,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           onCategoryChanged: (val) => setStateModal(() {
                             _selectedCategory = val;
                           }),
-                          onManageCategories: () => _showManageListDialog(
-                            title: 'Categorías',
-                            items: _categories,
-                            onEdit: (oldVal, newVal) {
-                              final idx = _categories.indexOf(oldVal);
-                              if (idx != -1) _categories[idx] = newVal;
-                              if (_selectedCategory == oldVal)
-                                _selectedCategory = newVal;
-                            },
-                            onDelete: (val) {
-                              _categories.remove(val);
-                              if (_selectedCategory == val)
-                                _selectedCategory = null;
-                            },
-                            c: c,
-                          ),
+                          onManageCategories: () {},
                           buildFieldLabel: _buildFieldLabel,
                           buildInputDecoration: _buildInputDecoration,
                         ),
@@ -240,9 +229,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               size: 20,
                             ),
                             label: Text(
-                              _editingIndex != null
-                                  ? 'Actualizar Producto'
-                                  : 'Guardar Producto',
+                              _editingId != null ? 'Actualizar Producto' : 'Guardar Producto',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -270,157 +257,62 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  void _showManageListDialog({
-    required String title,
-    required List<String> items,
-    required Function(String item, String newValue) onEdit,
-    required Function(String item) onDelete,
-    required AppPalette c,
-  }) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return ManageListDialog(
-          title: title,
-          items: items,
-          onEdit: onEdit,
-          onDelete: onDelete,
-          palette: c,
-          buildInputDecoration: _buildInputDecoration,
-        );
-      },
-    );
-  }
-
-  void _toggleProductStatus(ProductItem item, AppPalette c) {
-    final isActivating = !item.isActive;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: c.card,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Text(
-            isActivating ? 'Activar producto' : 'Desactivar producto',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: c.textPrimary,
-              fontSize: 18,
-            ),
-          ),
-          content: Text(
-            isActivating
-                ? '¿Quieres activar el producto "${item.name}" nuevamente?'
-                : '¿Quieres desactivar el producto "${item.name}"?',
-            style: TextStyle(color: c.textMuted, fontSize: 14),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Cancelar',
-                style: TextStyle(
-                  color: c.textMuted,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isActivating
-                    ? AppColors.teal
-                    : Colors.redAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 0,
-              ),
-              onPressed: () {
-                setState(() {
-                  item.isActive = isActivating;
-                  final realIndex = _productList.indexOf(item);
-                  if (_editingIndex == realIndex) _clearForm();
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      isActivating
-                          ? 'Producto "${item.name}" activado correctamente.'
-                          : 'Producto "${item.name}" marcado como inactivo.',
-                    ),
-                    backgroundColor: isActivating
-                        ? AppColors.teal
-                        : Colors.redAccent,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                );
-              },
-              child: Text(
-                isActivating ? 'Activar' : 'Desactivar',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _saveProduct() {
+  Future<void> _saveProduct() async {
     final productName = _nameController.text.trim();
     final categoryToUse = _showNewCategoryInput
         ? _customCategoryController.text.trim()
         : (_selectedCategory ?? 'General');
 
-    if (_showNewCategoryInput && !_categories.contains(categoryToUse)) {
-      _categories.add(categoryToUse);
-    }
-
-    setState(() {
-      if (_editingIndex != null) {
-        _productList[_editingIndex!] = ProductItem(
-          name: productName,
-          category: categoryToUse,
-          stock: _isInventoryable ? _quantity : 0,
-          isActive: _productList[_editingIndex!].isActive,
-        );
-      } else {
-        _productList.insert(
-          0,
-          ProductItem(
-            name: productName,
-            category: categoryToUse,
-            stock: _isInventoryable ? _quantity : 0,
-            isActive: true,
-          ),
-        );
-      }
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          _editingIndex != null
-              ? '¡Producto actualizado correctamente!'
-              : '¡Producto registrado correctamente!',
-        ),
-        backgroundColor: AppColors.teal,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
+    final nuevoProducto = ProductModel(
+      id: _editingId,
+      nombre: productName,
+      categoria: categoryToUse,
+      stock: _isInventoryable ? _quantity : 0,
+      activo: true,
     );
 
-    _clearForm();
+    try {
+      if (_editingId != null) {
+        await _productRepository.actualizar(_editingId!, nuevoProducto);
+      } else {
+        await _productRepository.crear(nuevoProducto);
+      }
+
+      await _loadProducts(_selectedStatusFilter);
+      _clearForm();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_editingId != null ? '¡Producto actualizado!' : '¡Producto registrado!'),
+          backgroundColor: AppColors.teal,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.redAccent),
+      );
+    }
+  }
+Future<void> _toggleProductStatus(ProductModel item, AppPalette c) async {
+    if (item.id == null) return;
+    try {
+      if (item.activo) {
+        await _productRepository.cambiarEstado(item.id!); 
+      } else {
+        await _productRepository.restaurar(item.id!);     
+      }
+      
+      await _loadProducts(_selectedStatusFilter);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Estado actualizado correctamente'), backgroundColor: AppColors.teal),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cambiar estado: $e'), backgroundColor: Colors.redAccent),
+      );
+    }
   }
 
   @override
@@ -433,7 +325,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
         automaticallyImplyLeading: false,
         centerTitle: true,
         elevation: 0,
-        scrolledUnderElevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           'Gestión de Inventario',
@@ -444,127 +335,120 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Productos Existentes',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: c.textPrimary,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Productos Existentes',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.teal.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${filteredList.length} ítems',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.teal,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _searchController,
+                      onChanged: (_) => setState(() {}),
+                      style: TextStyle(color: c.textPrimary, fontSize: 14),
+                      decoration: _buildInputDecoration(
+                        c,
+                        hintText: 'Buscar producto por nombre o categoría...',
+                        prefixIcon: Icons.search_rounded,
                       ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
                     ),
-                    decoration: BoxDecoration(
-                      color: AppColors.teal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '${filteredList.length} ítems',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.teal,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _searchController,
-                onChanged: (_) => setState(() {}),
-                style: TextStyle(color: c.textPrimary, fontSize: 14),
-                decoration: _buildInputDecoration(
-                  c,
-                  hintText: 'Buscar producto por nombre o categoría...',
-                  prefixIcon: Icons.search_rounded,
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 36,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _statusFilters.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final filter = _statusFilters[index];
-                    final isSelected = _selectedStatusFilter == filter;
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 36,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _statusFilters.length,
+                        separatorBuilder: (context, index) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          final filter = _statusFilters[index];
+                          final isSelected = _selectedStatusFilter == filter;
 
-                    return ChoiceChip(
-                      label: Text(
-                        filter,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : c.textMuted,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          fontSize: 13,
-                        ),
+                          return ChoiceChip(
+                            label: Text(
+                              filter,
+                              style: TextStyle(
+                                color: isSelected ? Colors.white : c.textMuted,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                fontSize: 13,
+                              ),
+                            ),
+                            selected: isSelected,
+                            selectedColor: AppColors.teal,
+                            backgroundColor: c.card,
+                            side: BorderSide(
+                              color: isSelected ? AppColors.teal : c.cardBorder,
+                            ),
+                            onSelected: (selected) {
+                              if (selected) {
+                                setState(() => _selectedStatusFilter = filter);
+                                _loadProducts(filter);
+                              }
+                            },
+                          );
+                        },
                       ),
-                      selected: isSelected,
-                      selectedColor: AppColors.teal,
-                      backgroundColor: c.card,
-                      side: BorderSide(
-                        color: isSelected ? AppColors.teal : c.cardBorder,
-                      ),
-                      onSelected: (selected) =>
-                          setState(() => _selectedStatusFilter = filter),
-                    );
-                  },
+                    ),
+                    const SizedBox(height: 12),
+                    filteredList.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: Text(
+                                'No hay productos en esta sección.',
+                                style: TextStyle(color: c.textMuted, fontSize: 13),
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: filteredList.length,
+                            itemBuilder: (context, index) {
+                              final item = filteredList[index];
+                              return ProductListItem(
+                                item: item,
+                                isEditing: _editingId == item.id,
+                                palette: c,
+                                onEdit: () => _startEditing(item),
+                                onToggleStatus: () => _toggleProductStatus(item, c),
+                              );
+                            },
+                          ),
+                    const SizedBox(height: 30),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              filteredList.isEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Center(
-                        child: Text(
-                          'No hay productos en esta sección.',
-                          style: TextStyle(color: c.textMuted, fontSize: 13),
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: filteredList.length,
-                      itemBuilder: (context, index) {
-                        final item = filteredList[index];
-                        return ProductListItem(
-                          item: item,
-                          isEditing:
-                              _editingIndex == _productList.indexOf(item),
-                          palette: c,
-                          onEdit: () => _startEditing(item),
-                          onToggleStatus: () => _toggleProductStatus(item, c),
-                        );
-                      },
-                    ),
-              const SizedBox(height: 30),
-            ],
-          ),
-        ),
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _clearForm();
@@ -611,14 +495,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: c.cardBorder),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 1.2),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),

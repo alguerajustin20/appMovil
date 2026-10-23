@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../../theme/app_theme.dart';
-import '../user-management-screen/user_management_screen.dart';
+import '../../../../data/models/user_model.dart';
 
 class UserFormModal extends StatefulWidget {
-  final User? userToEdit;
-  final int? editingIndex;
+  final UserModel? userToEdit;
   final List<String> roles;
   final AppPalette palette;
-  final Function(String name, String username, String role, int? index) onSave;
+  final Function(String name, String username, String role, String? password) onSave;
   final InputDecoration Function(
     AppPalette c, {
     String? hintText,
@@ -20,7 +19,6 @@ class UserFormModal extends StatefulWidget {
   const UserFormModal({
     super.key,
     this.userToEdit,
-    this.editingIndex,
     required this.roles,
     required this.palette,
     required this.onSave,
@@ -44,13 +42,33 @@ class _UserFormModalState extends State<UserFormModal> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(
-      text: widget.userToEdit?.name ?? '',
+      text: widget.userToEdit?.nombreCompleto ?? '',
     );
     _usernameController = TextEditingController(
       text: widget.userToEdit?.username ?? '',
     );
     _passwordController = TextEditingController();
-    _selectedRole = widget.userToEdit?.role ?? 'Cajero';
+    
+    if (widget.userToEdit != null) {
+      _selectedRole = _getRoleName(widget.userToEdit!.idRol);
+    } else {
+      _selectedRole = widget.roles.isNotEmpty ? widget.roles.first : 'Cajero';
+    }
+  }
+
+  String _getRoleName(int idRol) {
+    switch (idRol) {
+      case 1:
+        return 'Admin';
+      case 2:
+        return 'Cajero';
+      case 3:
+        return 'Mesero';
+      case 4:
+        return 'Cocinero';
+      default:
+        return 'Cajero';
+    }
   }
 
   @override
@@ -64,6 +82,7 @@ class _UserFormModalState extends State<UserFormModal> {
   @override
   Widget build(BuildContext context) {
     final c = widget.palette;
+    final isEditing = widget.userToEdit != null;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -82,9 +101,7 @@ class _UserFormModalState extends State<UserFormModal> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.editingIndex != null
-                      ? 'Editar Usuario'
-                      : 'Agregar Usuario',
+                  isEditing ? 'Editar Usuario' : 'Agregar Usuario',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -152,7 +169,7 @@ class _UserFormModalState extends State<UserFormModal> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Contraseña',
+              isEditing ? 'Contraseña (Opcional)' : 'Contraseña',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -184,8 +201,7 @@ class _UserFormModalState extends State<UserFormModal> {
                 ),
               ),
               validator: (value) {
-                if (widget.editingIndex == null &&
-                    (value == null || value.trim().isEmpty)) {
+                if (!isEditing && (value == null || value.trim().isEmpty)) {
                   return 'Por favor ingresa una contraseña.';
                 }
                 if (value != null && value.isNotEmpty && value.length < 6) {
@@ -205,7 +221,7 @@ class _UserFormModalState extends State<UserFormModal> {
             ),
             const SizedBox(height: 4),
             DropdownButtonFormField<String>(
-              initialValue: _selectedRole,
+              value: _selectedRole,
               icon: Icon(Icons.keyboard_arrow_down_rounded, color: c.textMuted),
               dropdownColor: c.card,
               style: TextStyle(color: c.textPrimary, fontSize: 14),
@@ -235,7 +251,7 @@ class _UserFormModalState extends State<UserFormModal> {
                       _nameController.text.trim(),
                       _usernameController.text.trim(),
                       _selectedRole!,
-                      widget.editingIndex,
+                      _passwordController.text.trim().isEmpty ? null : _passwordController.text.trim(),
                     );
                     Navigator.pop(context);
                   }
@@ -246,9 +262,7 @@ class _UserFormModalState extends State<UserFormModal> {
                   size: 18,
                 ),
                 label: Text(
-                  widget.editingIndex != null
-                      ? 'Actualizar Usuario'
-                      : 'Guardar Usuario',
+                  isEditing ? 'Actualizar Usuario' : 'Guardar Usuario',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,

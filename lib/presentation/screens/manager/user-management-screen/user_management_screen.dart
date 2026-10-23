@@ -1,42 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../core/network/api_client.dart';
+import '../../../../data/models/user_model.dart';
+import '../../../../data/repositories/user_repository.dart';
 import '../widgets/user_list_item.dart';
 import '../widgets/user_form_modal.dart';
-
-abstract class User {
-  String name;
-  String username;
-  String role;
-  bool isActive;
-
-  User({
-    required this.name,
-    required this.username,
-    required this.role,
-    this.isActive = true,
-  });
-}
-
-class CajeroUser extends User {
-  CajeroUser({required super.name, required super.username, super.isActive})
-    : super(role: 'Cajero');
-}
-
-class AdminUser extends User {
-  AdminUser({required super.name, required super.username, super.isActive})
-    : super(role: 'Admin');
-}
-
-class MeseroUser extends User {
-  MeseroUser({required super.name, required super.username, super.isActive})
-    : super(role: 'Mesero');
-}
-
-class CocineroUser extends User {
-  CocineroUser({required super.name, required super.username, super.isActive})
-    : super(role: 'Cocinero');
-}
 
 class UserManagementScreen extends StatefulWidget {
   const UserManagementScreen({super.key});
@@ -48,6 +17,9 @@ class UserManagementScreen extends StatefulWidget {
 class _UserManagementScreenState extends State<UserManagementScreen> {
   String _selectedFilter = 'Todos';
   final TextEditingController _searchController = TextEditingController();
+
+  bool _isLoading = true;
+  List<UserModel> _userList = [];
 
   final List<String> _filters = [
     'Todos',
@@ -61,12 +33,40 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
   final List<String> _roles = ['Admin', 'Cajero', 'Mesero', 'Cocinero'];
 
-  final List<User> _userList = [
-    CajeroUser(name: 'Justin', username: 'justin123', isActive: true),
-    AdminUser(name: 'Yamil', username: 'yamil72', isActive: false),
-    MeseroUser(name: 'Mauro', username: 'mauro69', isActive: true),
-    CocineroUser(name: 'Jeffry', username: 'jeffry', isActive: true),
-  ];
+  late final UserRepository _userRepository = UserRepository(ApiClient());
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers(_selectedFilter);
+  }
+
+  Future<void> _loadUsers(String filter) async {
+    setState(() => _isLoading = true);
+    try {
+      List<UserModel> users = [];
+
+      if (filter == 'Activos') {
+        users = await _userRepository.getActivos();
+      } else if (filter == 'Inactivos') {
+        users = await _userRepository.getInactivos();
+      } else {
+        final activos = await _userRepository.getActivos();
+        final inactivos = await _userRepository.getInactivos();
+        users = [...activos, ...inactivos];
+      }
+
+      setState(() {
+        _userList = users;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar usuarios: $e'), backgroundColor: Colors.redAccent),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -74,49 +74,61 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     super.dispose();
   }
 
-  List<User> get _filteredUsers {
+  String _getRoleName(int idRol) {
+    switch (idRol) {
+      case 1:
+        return 'Admin';
+      case 2:
+        return 'Cajero';
+      case 3:
+        return 'Mesero';
+      case 4:
+        return 'Cocinero';
+      default:
+        return 'Cajero';
+    }
+  }
+
+  int _getRoleId(String role) {
+    switch (role) {
+      case 'Admin':
+        return 1;
+      case 'Cajero':
+        return 2;
+      case 'Mesero':
+        return 3;
+      case 'Cocinero':
+        return 4;
+      default:
+        return 2;
+    }
+  }
+
+  List<UserModel> get _filteredUsers {
     return _userList.where((user) {
       final query = _searchController.text.toLowerCase().trim();
       final matchesSearch =
-          user.name.toLowerCase().contains(query) ||
+          user.nombreCompleto.toLowerCase().contains(query) ||
           user.username.toLowerCase().contains(query);
 
       final cleanFilter = _selectedFilter.trim();
       bool matchesRole = cleanFilter == 'Todos';
       if (!matchesRole) {
-        if (cleanFilter == 'Activos') matchesRole = user.isActive;
-        if (cleanFilter == 'Inactivos') matchesRole = !user.isActive;
-        if (cleanFilter == 'Admins') matchesRole = user.role == 'Admin';
-        if (cleanFilter == 'Cajeros') matchesRole = user.role == 'Cajero';
-        if (cleanFilter == 'Cocineros') matchesRole = user.role == 'Cocinero';
-        if (cleanFilter == 'Meseros') matchesRole = user.role == 'Mesero';
+        final roleName = _getRoleName(user.idRol);
+        if (cleanFilter == 'Activos') matchesRole = user.activo;
+        if (cleanFilter == 'Inactivos') matchesRole = !user.activo;
+        if (cleanFilter == 'Admins') matchesRole = roleName == 'Admin';
+        if (cleanFilter == 'Cajeros') matchesRole = roleName == 'Cajero';
+        if (cleanFilter == 'Cocineros') matchesRole = roleName == 'Cocinero';
+        if (cleanFilter == 'Meseros') matchesRole = roleName == 'Mesero';
       }
 
       return matchesSearch && matchesRole;
     }).toList();
   }
 
-  User _createUserInstance(
-    String name,
-    String username,
-    String role,
-    bool isActive,
-  ) {
-    switch (role) {
-      case 'Admin':
-        return AdminUser(name: name, username: username, isActive: isActive);
-      case 'Mesero':
-        return MeseroUser(name: name, username: username, isActive: isActive);
-      case 'Cocinero':
-        return CocineroUser(name: name, username: username, isActive: isActive);
-      case 'Cajero':
-      default:
-        return CajeroUser(name: name, username: username, isActive: isActive);
-    }
-  }
-
-  void _confirmToggleStatusUser(User user, AppPalette c) {
-    final willDeactivate = user.isActive;
+  void _confirmToggleStatusUser(UserModel user, AppPalette c) {
+    final willDeactivate = user.activo;
     final actionText = willDeactivate ? 'desactivar' : 'activar';
     final titleText = willDeactivate ? 'Desactivar usuario' : 'Activar usuario';
 
@@ -137,7 +149,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             ),
           ),
           content: Text(
-            '¿Desea $actionText al usuario ${user.name}?',
+            '¿Desea $actionText al usuario ${user.nombreCompleto}?',
             style: TextStyle(color: c.textMuted, fontSize: 14),
           ),
           actions: [
@@ -161,27 +173,41 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 ),
                 elevation: 0,
               ),
-              onPressed: () {
-                setState(() {
-                  user.isActive = !user.isActive;
-                });
+              onPressed: () async {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      willDeactivate
-                          ? 'Usuario "${user.name}" desactivado.'
-                          : 'Usuario "${user.name}" activado.',
+                try {
+                  if (willDeactivate && user.id != null) {
+                    await _userRepository.cambiarEstado(user.id!);
+                  } else if (!willDeactivate && user.id != null) {
+                    await _userRepository.restaurar(user.id!);
+                  }
+                  
+                  if (!mounted) return;
+                  await _loadUsers(_selectedFilter);
+                  
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        willDeactivate
+                            ? 'Usuario "${user.nombreCompleto}" desactivado.'
+                            : 'Usuario "${user.nombreCompleto}" activado.',
+                      ),
+                      backgroundColor: willDeactivate
+                          ? Colors.redAccent
+                          : AppColors.teal,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                    backgroundColor: willDeactivate
-                        ? Colors.redAccent
-                        : AppColors.teal,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                );
+                  );
+                } catch (e) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error al cambiar estado: $e'), backgroundColor: Colors.redAccent),
+                  );
+                }
               },
               child: Text(
                 willDeactivate ? 'Desactivar' : 'Activar',
@@ -199,8 +225,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
   void _openUserFormModal(
     AppPalette c, {
-    User? userToEdit,
-    int? originalIndex,
+    UserModel? userToEdit,
   }) {
     showModalBottomSheet(
       context: context,
@@ -210,47 +235,55 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        // 🛡️ SOLUCIÓN: Protege la base del formulario contra los botones digitales del teléfono
         return SafeArea(
           top: false,
-          bottom:
-              true, // 👈 Desplaza el botón de guardar por encima de la barra táctil
+          bottom: true,
           child: UserFormModal(
             userToEdit: userToEdit,
-            editingIndex: originalIndex,
             roles: _roles,
             palette: c,
             buildInputDecoration: _buildInputDecoration,
-            onSave: (name, username, role, index) {
-              setState(() {
-                final newUser = _createUserInstance(
-                  name,
-                  username,
-                  role,
-                  index != null ? _userList[index].isActive : true,
+            onSave: (name, username, role, password) async {
+              try {
+                final newUser = UserModel(
+                  id: userToEdit?.id,
+                  idRol: _getRoleId(role),
+                  nombreCompleto: name,
+                  username: username,
+                  password: password,
+                  activo: userToEdit?.activo ?? true,
                 );
 
-                if (index != null) {
-                  _userList[index] = newUser;
+                if (userToEdit != null && userToEdit.id != null) {
+                  await _userRepository.actualizar(userToEdit.id!, newUser);
                 } else {
-                  _userList.insert(0, newUser);
+                  await _userRepository.crear(newUser);
                 }
-              });
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    index != null
-                        ? '¡Usuario actualizado!'
-                        : '¡Usuario agregado!',
+                if (!mounted) return;
+                await _loadUsers(_selectedFilter);
+
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      userToEdit != null
+                          ? '¡Usuario actualizado!'
+                          : '¡Usuario agregado!',
+                    ),
+                    backgroundColor: AppColors.teal,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  backgroundColor: AppColors.teal,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              );
+                );
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error al guardar: $e'), backgroundColor: Colors.redAccent),
+                );
+              }
             },
           ),
         );
@@ -278,110 +311,113 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-              TextField(
-                controller: _searchController,
-                onChanged: (_) => setState(() {}),
-                style: TextStyle(color: c.textPrimary),
-                decoration: _buildInputDecoration(
-                  c,
-                  hintText: 'Buscar usuario por nombre o usuario...',
-                  prefixIcon: Icons.search,
-                ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                height: 36,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _filters.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final filter = _filters[index];
-                    final isSelected = _selectedFilter == filter;
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _searchController,
+                      onChanged: (_) => setState(() {}),
+                      style: TextStyle(color: c.textPrimary),
+                      decoration: _buildInputDecoration(
+                        c,
+                        hintText: 'Buscar usuario por nombre o usuario...',
+                        prefixIcon: Icons.search,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 36,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _filters.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          final filter = _filters[index];
+                          final isSelected = _selectedFilter == filter;
 
-                    return ChoiceChip(
-                      label: Text(
-                        filter,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : c.textMuted,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          fontSize: 13,
-                        ),
-                      ),
-                      selected: isSelected,
-                      selectedColor: AppColors.teal,
-                      backgroundColor: c.card,
-                      side: BorderSide(
-                        color: isSelected ? AppColors.teal : c.cardBorder,
-                      ),
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedFilter = filter;
-                        });
-                      },
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: filtered.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.group_outlined,
-                              size: 64,
-                              color: c.textMuted,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'No hay usuarios registrados',
+                          return ChoiceChip(
+                            label: Text(
+                              filter,
                               style: TextStyle(
-                                fontSize: 15,
-                                color: c.textMuted,
-                                fontWeight: FontWeight.w500,
+                                color: isSelected ? Colors.white : c.textMuted,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                fontSize: 13,
                               ),
                             ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: filtered.length,
-                        itemBuilder: (context, index) {
-                          final user = filtered[index];
-                          final realIndex = _userList.indexOf(user);
-
-                          return UserListItem(
-                            user: user,
-                            palette: c,
-                            onEdit: () => _openUserFormModal(
-                              c,
-                              userToEdit: user,
-                              originalIndex: realIndex,
+                            selected: isSelected,
+                            selectedColor: AppColors.teal,
+                            backgroundColor: c.card,
+                            side: BorderSide(
+                              color: isSelected ? AppColors.teal : c.cardBorder,
                             ),
-                            onToggleStatus: () =>
-                                _confirmToggleStatusUser(user, c),
+                            onSelected: (selected) {
+                              if (selected) {
+                                setState(() {
+                                  _selectedFilter = filter;
+                                });
+                                _loadUsers(filter);
+                              }
+                            },
                           );
                         },
                       ),
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.group_outlined,
+                                    size: 64,
+                                    color: c.textMuted,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'No hay usuarios registrados',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: c.textMuted,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                final user = filtered[index];
+
+                                return UserListItem(
+                                  user: user,
+                                  palette: c,
+                                  onEdit: () => _openUserFormModal(
+                                    c,
+                                    userToEdit: user,
+                                  ),
+                                  onToggleStatus: () =>
+                                      _confirmToggleStatusUser(user, c),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openUserFormModal(c),
         backgroundColor: AppColors.teal,
@@ -398,7 +434,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   }) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: c.textMuted.withOpacity(0.7), fontSize: 13),
+      hintStyle: TextStyle(color: c.textMuted.withValues(alpha: 0.7), fontSize: 13),
       prefixIcon: prefixIcon != null
           ? Icon(prefixIcon, color: c.textMuted, size: 18)
           : null,
