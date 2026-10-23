@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/api_constants.dart';
 
 /// Cliente HTTP personalizado para gestionar peticiones a la API en Docker
@@ -23,16 +24,23 @@ class ApiClient {
   /// Verifica si existe un token activo para enviar en las peticiones.
   Future<void> ensureAuthenticated() async {
     if (_authToken == null || _authToken!.isEmpty) {
-      // Si no hay token guardado, las llamadas que requieran rol retornarán 401 Unauthorized
+      final prefs = await SharedPreferences.getInstance();
+      _authToken = prefs.getString('jwt_token');
     }
   }
 
-  /// Encabezados por defecto para enviar JSON y el Token Bearer.
-  Map<String, String> _buildHeaders([Map<String, String>? customHeaders]) {
+  /// Encabezados por defecto para enviar JSON y el Token Bearer de forma automática.
+  Future<Map<String, String>> _buildHeaders([Map<String, String>? customHeaders]) async {
     final headers = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
+
+    // Si el token en memoria está vacío, intenta recuperarlo de SharedPreferences
+    if (_authToken == null || _authToken!.isEmpty) {
+      final prefs = await SharedPreferences.getInstance();
+      _authToken = prefs.getString('jwt_token');
+    }
 
     if (_authToken != null && _authToken!.isNotEmpty) {
       headers['Authorization'] = 'Bearer $_authToken';
@@ -56,8 +64,9 @@ class ApiClient {
       queryParameters: query != null && query.isNotEmpty ? query : null,
     );
 
+    final resolvedHeaders = await _buildHeaders(headers);
     final response = await _client
-        .get(uri, headers: _buildHeaders(headers))
+        .get(uri, headers: resolvedHeaders)
         .timeout(ApiConstants.timeoutDuration);
 
     return _processResponse(response);
@@ -72,10 +81,11 @@ class ApiClient {
     final baseUrl = ApiConstants.instance.baseUrl;
     final url = Uri.parse('$baseUrl$path');
 
+    final resolvedHeaders = await _buildHeaders(headers);
     final response = await _client
         .post(
           url,
-          headers: _buildHeaders(headers),
+          headers: resolvedHeaders,
           body: body != null ? jsonEncode(body) : null,
         )
         .timeout(ApiConstants.timeoutDuration);
@@ -92,10 +102,11 @@ class ApiClient {
     final baseUrl = ApiConstants.instance.baseUrl;
     final url = Uri.parse('$baseUrl$path');
 
+    final resolvedHeaders = await _buildHeaders(headers);
     final response = await _client
         .put(
           url,
-          headers: _buildHeaders(headers),
+          headers: resolvedHeaders,
           body: body != null ? jsonEncode(body) : null,
         )
         .timeout(ApiConstants.timeoutDuration);
@@ -112,10 +123,11 @@ class ApiClient {
     final baseUrl = ApiConstants.instance.baseUrl;
     final url = Uri.parse('$baseUrl$path');
 
+    final resolvedHeaders = await _buildHeaders(headers);
     final response = await _client
         .patch(
           url,
-          headers: _buildHeaders(headers),
+          headers: resolvedHeaders,
           body: body != null ? jsonEncode(body) : null,
         )
         .timeout(ApiConstants.timeoutDuration);
@@ -128,8 +140,9 @@ class ApiClient {
     final baseUrl = ApiConstants.instance.baseUrl;
     final url = Uri.parse('$baseUrl$path');
 
+    final resolvedHeaders = await _buildHeaders(headers);
     final response = await _client
-        .delete(url, headers: _buildHeaders(headers))
+        .delete(url, headers: resolvedHeaders)
         .timeout(ApiConstants.timeoutDuration);
 
     return _processResponse(response);

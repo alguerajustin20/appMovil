@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../../theme/app_theme.dart';
 import '../add-product-screen/add_product_screen.dart';
+import '../../../../../data/models/product_model.dart';
 
 class ProductListItem extends StatelessWidget {
-  final ProductItem item;
+  final ProductModel item;
   final bool isEditing;
   final AppPalette palette;
   final VoidCallback onEdit;
