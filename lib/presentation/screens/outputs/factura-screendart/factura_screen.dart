@@ -6,26 +6,21 @@ import 'package:integrador_vi_mobile/themes/app_theme.dart';
 
 class Factura {
   final String name;
-  final String mes;
-  bool isActive;
-
-  // Variables requeridas para el pop-up informativo
-  final String idFactura;
-  final String idOrden;
-  final String idMeseroAtendiente;
-  final String idCajeroCobrador;
+  final int idFactura;
+  final int idOrden;
+  final int idMeseroAtendiente;
+  final int idCajeroCobrador;
   final String fechaEmision;
   final String metodoPago;
-  final String subtotal;
-  final String montoImpuestos;
-  final String montoPropina;
-  final String montoTotal;
+  final double subtotal;
+  final double montoImpuestos;
+  final double montoPropina;
+  final double montoTotal;
   final String numeroFacturaFiscal;
+  final int mesa;
 
   Factura({
     required this.name,
-    required this.mes,
-    this.isActive = true,
     required this.idFactura,
     required this.idOrden,
     required this.idMeseroAtendiente,
@@ -37,7 +32,43 @@ class Factura {
     required this.montoPropina,
     required this.montoTotal,
     required this.numeroFacturaFiscal,
+    required this.mesa,
   });
+
+  String obtenerMesCalculado() {
+    if (fechaEmision.length >= 7) {
+      String caracteresMes = fechaEmision.substring(5, 7);
+      switch (caracteresMes) {
+        case '01':
+          return 'Enero';
+        case '02':
+          return 'Febrero';
+        case '03':
+          return 'Marzo';
+        case '04':
+          return 'Abril';
+        case '05':
+          return 'Mayo';
+        case '06':
+          return 'Junio';
+        case '07':
+          return 'Julio';
+        case '08':
+          return 'Agosto';
+        case '09':
+          return 'Septiembre';
+        case '10':
+          return 'Octubre';
+        case '11':
+          return 'Noviembre';
+        case '12':
+          return 'Diciembre';
+        default:
+          return 'Indefinido';
+      }
+    }
+    return 'Indefinido';
+  }
 }
 
 class FacturaScreen extends StatefulWidget {
@@ -48,76 +79,75 @@ class FacturaScreen extends StatefulWidget {
 }
 
 class _FacturaScreenState extends State<FacturaScreen> {
-  String _selectedFilter = 'Todas';
+  String _selectedFilter = 'Todas las Facturas';
   final TextEditingController _searchController = TextEditingController();
 
-  final List<String> _filters = ['Todas', 'Activas', 'Inactivas'];
+  final List<String> _filters = [
+    'Todas las Facturas',
+    'Con Tarjeta',
+    'Con Efectivo',
+  ];
 
-  // 🎲 LISTA CON DATOS TOTALMENTE AL AZAR GENERADOS INDEPENDIENTEMENTE PARA CADA FACTURA
   final List<Factura> _facturaList = [
     Factura(
       name: 'FAC001',
-      mes: 'Marzo',
-      isActive: true,
-      idFactura: '87612',
-      idOrden: '4491',
-      idMeseroAtendiente: '4',
-      idCajeroCobrador: '2',
-      fechaEmision: '12/03/2026',
+      idFactura: 1090,
+      idOrden: 8,
+      idMeseroAtendiente: 1,
+      idCajeroCobrador: 1,
+      fechaEmision: '2026-06-20T17:58:58.657',
       metodoPago: 'Efectivo',
-      subtotal: '\$35.50',
-      montoImpuestos: '\$5.32',
-      montoPropina: '\$3.50',
-      montoTotal: '\$44.32',
-      numeroFacturaFiscal: 'NF-0009841',
+      subtotal: 455.00,
+      montoImpuestos: 68.25,
+      montoPropina: 0.00,
+      montoTotal: 523.25,
+      numeroFacturaFiscal: 'FAC-202600071',
+      mesa: 3,
     ),
     Factura(
       name: 'FAC002',
-      mes: 'Junio',
-      isActive: false,
-      idFactura: '12904',
-      idOrden: '8812',
-      idMeseroAtendiente: '11',
-      idCajeroCobrador: '1',
-      fechaEmision: '24/06/2026',
+      idFactura: 1091,
+      idOrden: 12,
+      idMeseroAtendiente: 3,
+      idCajeroCobrador: 2,
+      fechaEmision: '2026-01-15T11:22:14.301',
       metodoPago: 'Tarjeta de Crédito',
-      subtotal: '\$120.00',
-      montoImpuestos: '\$18.00',
-      montoPropina: '\$15.00',
-      montoTotal: '\$153.00',
-      numeroFacturaFiscal: 'NF-0010415',
+      subtotal: 820.00,
+      montoImpuestos: 123.00,
+      montoPropina: 40.00,
+      montoTotal: 983.00,
+      numeroFacturaFiscal: 'FAC-202600072',
+      mesa: 1,
     ),
     Factura(
       name: 'FAC003',
-      mes: 'Enero',
-      isActive: true,
-      idFactura: '5102',
-      idOrden: '2195',
-      idMeseroAtendiente: '2',
-      idCajeroCobrador: '2',
-      fechaEmision: '15/01/2026',
-      metodoPago: 'Transferencia',
-      subtotal: '\$68.25',
-      montoImpuestos: '\$10.24',
-      montoPropina: '\$6.00',
-      montoTotal: '\$84.49',
-      numeroFacturaFiscal: 'NF-0008512',
+      idFactura: 1092,
+      idOrden: 5,
+      idMeseroAtendiente: 2,
+      idCajeroCobrador: 1,
+      fechaEmision: '2026-04-10T20:05:33.112',
+      metodoPago: 'Tarjeta de Débito',
+      subtotal: 210.00,
+      montoImpuestos: 31.50,
+      montoPropina: 15.00,
+      montoTotal: 256.50,
+      numeroFacturaFiscal: 'FAC-202600073',
+      mesa: 5,
     ),
     Factura(
       name: 'FAC004',
-      mes: 'Noviembre',
-      isActive: true,
-      idFactura: '4',
-      idOrden: '7764',
-      idMeseroAtendiente: '8',
-      idCajeroCobrador: '1',
-      fechaEmision: '09/11/2026',
-      metodoPago: 'Tarjeta de Débito',
-      subtotal: '\$42.10',
-      montoImpuestos: '\$6.31',
-      montoPropina: '\$4.00',
-      montoTotal: '\$52.41',
-      numeroFacturaFiscal: 'NF-0011984',
+      idFactura: 1093,
+      idOrden: 19,
+      idMeseroAtendiente: 1,
+      idCajeroCobrador: 2,
+      fechaEmision: '2026-06-28T23:14:02.994',
+      metodoPago: 'Efectivo',
+      subtotal: 340.00,
+      montoImpuestos: 51.00,
+      montoPropina: 20.00,
+      montoTotal: 411.00,
+      numeroFacturaFiscal: 'FAC-202600074',
+      mesa: 2,
     ),
   ];
 
@@ -127,20 +157,25 @@ class _FacturaScreenState extends State<FacturaScreen> {
     super.dispose();
   }
 
-  // Filtra de manera exacta las facturas evaluando el campo del Mes (.mes)
   List<Factura> get _filteredFacturas {
     return _facturaList.where((factura) {
+      final mesCalculado = factura.obtenerMesCalculado().toLowerCase();
       final query = _searchController.text.toLowerCase().trim();
-      final matchesSearch = factura.mes.toLowerCase().contains(query);
+
+      final matchesSearch = query.isEmpty || mesCalculado.contains(query);
 
       final cleanFilter = _selectedFilter.trim();
-      bool matchesStatus = cleanFilter == 'Todas';
-      if (!matchesStatus) {
-        if (cleanFilter == 'Activas') matchesStatus = factura.isActive;
-        if (cleanFilter == 'Inactivas') matchesStatus = !factura.isActive;
+      bool matchesPayment = cleanFilter == 'Todas las Facturas';
+      if (!matchesPayment) {
+        if (cleanFilter == 'Con Tarjeta') {
+          matchesPayment = factura.metodoPago.toLowerCase().contains('tarjeta');
+        }
+        if (cleanFilter == 'Con Efectivo') {
+          matchesPayment = factura.metodoPago.toLowerCase() == 'efectivo';
+        }
       }
 
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesPayment;
     }).toList();
   }
 
@@ -149,69 +184,88 @@ class _FacturaScreenState extends State<FacturaScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: c.card,
+      // 🛡️ SE ACTIVA EL BLOQUEO TÁCTIL: Solo se cierra con el botón rojo
+      isDismissible: false,
+      enableDrag: false,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        // 🛡️ SOLUCIÓN: El SafeArea evita que la barra del Xiaomi POCO F7 tape el botón rojo
         return SafeArea(
           top: false,
-          bottom:
-              true, // 👈 Crea el colchón dinámico contra los botones del sistema
+          bottom: true,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Detalle de Factura',
-                  style: TextStyle(
-                    color: Colors.transparent,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                    decorationColor: c.isDark
-                        ? const Color(0xFF00B4D8)
-                        : const Color(0xFF03738C),
-                    decorationThickness: 2.0,
-                    shadows: [
-                      Shadow(
-                        color: c.isDark
-                            ? const Color(0xFF00B4D8)
-                            : const Color(0xFF03738C),
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
+                Center(
+                  child: Text(
+                    'Detalle de Factura',
+                    style: TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                      decorationColor: c.isDark
+                          ? const Color(0xFF00B4D8)
+                          : const Color(0xFF03738C),
+                      decorationThickness: 2.0,
+                      shadows: [
+                        Shadow(
+                          color: c.isDark
+                              ? const Color(0xFF00B4D8)
+                              : const Color(0xFF03738C),
+                          offset: const Offset(0, -4),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 16),
 
-                _buildTextRow('Id_factura: ', factura.idFactura, c),
-                _buildTextRow('Id_orden: ', factura.idOrden, c),
+                _buildTextRow('id_orden: ', factura.idOrden.toString(), c),
                 _buildTextRow(
-                  'Id_mesero_atendiente: ',
-                  factura.idMeseroAtendiente,
+                  'id_mesero_atendiente: ',
+                  factura.idMeseroAtendiente.toString(),
                   c,
                 ),
                 _buildTextRow(
-                  'Id_cajero_cobrador: ',
-                  factura.idCajeroCobrador,
+                  'id_cajero_cobrador: ',
+                  factura.idCajeroCobrador.toString(),
                   c,
                 ),
-                _buildTextRow('Fecha_emision: ', factura.fechaEmision, c),
-                _buildTextRow('Metodo_pago: ', factura.metodoPago, c),
-                _buildTextRow('Subtotal: ', factura.subtotal, c),
-                _buildTextRow('Monto_impuestos: ', factura.montoImpuestos, c),
-                _buildTextRow('Monto_propina: ', factura.montoPropina, c),
-                _buildTextRow('Monto_total: ', factura.montoTotal, c),
+                _buildTextRow('fecha_emision: ', factura.fechaEmision, c),
+                _buildTextRow('metodo_pago: ', factura.metodoPago, c),
                 _buildTextRow(
-                  'Numero_factura_fiscal: ',
+                  'subtotal: ',
+                  '\$${factura.subtotal.toStringAsFixed(2)}',
+                  c,
+                ),
+                _buildTextRow(
+                  'monto_impuestos: ',
+                  '\$${factura.montoImpuestos.toStringAsFixed(2)}',
+                  c,
+                ),
+                _buildTextRow(
+                  'monto_propina: ',
+                  '\$${factura.montoPropina.toStringAsFixed(2)}',
+                  c,
+                ),
+                _buildTextRow(
+                  'monto_total: ',
+                  '\$${factura.montoTotal.toStringAsFixed(2)}',
+                  c,
+                ),
+                _buildTextRow(
+                  'numero_factura_fiscal: ',
                   factura.numeroFacturaFiscal,
                   c,
                 ),
-                _buildTextRow('Activo: ', factura.isActive ? 'Si' : 'No', c),
+                _buildTextRow('mesa: ', factura.mesa.toString(), c),
 
                 const SizedBox(height: 24),
 
@@ -250,20 +304,22 @@ class _FacturaScreenState extends State<FacturaScreen> {
     );
   }
 
-  // Helper para pintar de forma limpia cada línea de texto plano con encabezado en negrita
   Widget _buildTextRow(String header, String value, AppPalette c) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: RichText(
-        text: TextSpan(
-          style: TextStyle(fontSize: 14, color: c.textPrimary),
-          children: [
-            TextSpan(
-              text: header,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            TextSpan(text: value),
-          ],
+      child: Center(
+        child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: TextStyle(fontSize: 14, color: c.textPrimary),
+            children: [
+              TextSpan(
+                text: header,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextSpan(text: value),
+            ],
+          ),
         ),
       ),
     );
@@ -273,7 +329,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
   Widget build(BuildContext context) {
     final c = context.palette;
     final filtered = _filteredFacturas;
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -281,7 +336,7 @@ class _FacturaScreenState extends State<FacturaScreen> {
         elevation: 0,
         titleSpacing: 20,
         title: Text(
-          'Visualización de Factura',
+          'Resumen Facturas activas',
           style: TextStyle(
             color: c.isDark ? const Color(0xFF00B4D8) : const Color(0xFF03738C),
             fontSize: 25,
@@ -320,11 +375,7 @@ class _FacturaScreenState extends State<FacturaScreen> {
                   onViewDetailsPressed: (factura, index) {
                     _openFacturaDetailsModal(c, factura);
                   },
-                  onToggleActive: (factura) {
-                    setState(() {
-                      factura.isActive = !factura.isActive;
-                    });
-                  },
+                  onToggleActive: (factura) {},
                 ),
               ),
             ],

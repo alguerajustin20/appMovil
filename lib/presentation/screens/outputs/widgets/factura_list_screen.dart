@@ -54,11 +54,7 @@ class FacturaList extends StatelessWidget {
           decoration: BoxDecoration(
             color: palette.card,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: factura.isActive
-                  ? AppColors.teal.withOpacity(0.3)
-                  : palette.cardBorder,
-            ),
+            border: Border.all(color: palette.cardBorder),
           ),
           child: Row(
             children: [
@@ -67,7 +63,7 @@ class FacturaList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      factura.name,
+                      factura.numeroFacturaFiscal,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -77,52 +73,40 @@ class FacturaList extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: () => onToggleActive(factura),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: factura.isActive
-                                  ? Colors.green.withOpacity(0.12)
-                                  : Colors.grey.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              factura.isActive ? 'Activa' : 'Inactiva',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: factura.isActive
-                                    ? Colors.green
-                                    : Colors.grey,
-                              ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.mustard.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Mesa ${factura.mesa}',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.mustard,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
-                      'Mes • ${factura.mes}',
+                      'Mes • ${factura.obtenerMesCalculado()}',
                       style: TextStyle(fontSize: 12, color: palette.textMuted),
                     ),
                   ],
                 ),
               ),
 
-              // Se añade el widget Material para activar el efecto de onda táctil (Ripple)
               Material(
-                color: Colors
-                    .transparent, // Mantiene el fondo limpio de tu tarjeta
+                color: Colors.transparent,
                 child: InkWell(
                   onTap: () => onViewDetailsPressed(factura, index),
-                  borderRadius: BorderRadius.circular(
-                    8,
-                  ), // Redondeado para que la onda no se desborde
+                  borderRadius: BorderRadius.circular(8),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10.0,

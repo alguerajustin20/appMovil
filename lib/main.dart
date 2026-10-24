@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'core/di/injection.dart';
 import 'themes/app_theme.dart';
 
-//import 'package:integrador_vi_mobile/presentation/screens/security/login_screen.dart';
+import 'package:integrador_vi_mobile/presentation/screens/security/login_screen.dart';
 
-import 'presentation/screens/categoriasAPI/categoriasAPI-screendart/categoria_screen.dart';
+//import 'presentation/screens/categoriasAPI/categoriasAPI-screendart/categoria_screen.dart';
 
 /// Interruptor global de tema - cualquier pantalla puede leerlo o cambiarlo.
 /// Empieza en modo claro por defecto.
@@ -32,8 +32,8 @@ class MainApp extends StatelessWidget {
           themeMode: currentMode,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
-          //home: const LoginScreen(),
-          home: const CategoriaScreen(),
+          home: const LoginScreen(),
+          //home: const CategoriaScreen(),
         );
       },
     );
