@@ -326,7 +326,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       style: TextStyle(color: c.textPrimary),
                       decoration: _buildInputDecoration(
                         c,
-                        hintText: 'Buscar usuario por nombre o usuario...',
+                        hintText: 'Buscar por nombre o usuario...',
                         prefixIcon: Icons.search,
                       ),
                     ),
