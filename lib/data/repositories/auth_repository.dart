@@ -31,7 +31,11 @@ class AuthRepository {
 
       return authResponse;
     } else if (response.statusCode == 401) {
-      throw const FormatException('Usuario o contraseña incorrectos.');
+      // Extrae el mensaje de error del JSON devuelto por la API
+      final Map<String, dynamic> errorData = jsonDecode(response.body);
+      final mensajeBackend =
+          errorData['mensaje'] ?? 'Credenciales incorrectas.';
+      throw FormatException(mensajeBackend);
     } else {
       throw Exception('Error en el servidor (Código: ${response.statusCode})');
     }

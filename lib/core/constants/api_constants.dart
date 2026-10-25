@@ -31,6 +31,16 @@ class ApiConstants {
   static const String categoriasBuscar = '/api/Categorias/buscar';
   static const String categoriasRestaurar = '/api/Categorias/restaurar';
 
+  // Endpoints de Productos (Swagger)
+  static const String productos = '/api/Productos';
+  static const String productosActivos = '/api/Productos/activos';
+  static const String productosInactivos = '/api/Productos/inactivos';
+  static const String productosBuscar = '/api/Productos/buscar';
+  static const String productosRestaurar = '/api/Productos/restaurar';
+  
+  // Endpoints de Usuarios (Swagger)
+  static const String usuarios = '/api/Usuarios';
+  
   // Endpoints de Autenticación Reales
   static const String login = '/api/Auth/login';
   static const String refresh = '/api/Auth/refresh';
