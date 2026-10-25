@@ -32,7 +32,7 @@ class UserModel {
       'id_rol': idRol,
       'nombre_completo': nombreCompleto,
       'username': username,
-      // Enviamos 'Password' con mayúscula para cumplir con la validación de .NET:
+     
       'Password': password != null && password!.isNotEmpty ? password : '',
       'password_hash': password != null && password!.isNotEmpty ? password : '',
       'activo': activo,

@@ -3,9 +3,10 @@ import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../data/models/product_model.dart';
+import '../../../../data/models/categoria_model.dart';
 import '../../../../data/repositories/product_repository.dart';
+import '../../../../data/repositories/categoria_repository.dart';
 import '../widgets/product_list_item.dart';
-import '../widgets/manage_list_dialog.dart';
 import '../widgets/product_form_card.dart';
 
 class AddProductScreen extends StatefulWidget {
@@ -32,22 +33,41 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   bool _isLoading = true;
   List<ProductModel> _productList = [];
-
-  final List<String> _categories = [
-    'Bebidas naturales',
-    'licores',
-    'Cervezas',
-    'Bebidas',
-  ];
+  List<CategoriaModel> _categoryList = [];
 
   final List<String> _statusFilters = ['Todos', 'Activo', 'Inactivo'];
 
   late final ProductRepository _productRepository = ProductRepository(ApiClient());
+  late final CategoriaRepository _categoriaRepository = CategoriaRepository(ApiClient());
 
   @override
   void initState() {
     super.initState();
-    _loadProducts(_selectedStatusFilter);
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    setState(() => _isLoading = true);
+    try {
+      await _loadCategories();
+      await _loadProducts(_selectedStatusFilter);
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar datos: $e'), backgroundColor: Colors.redAccent),
+      );
+    }
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final categories = await _categoriaRepository.getActivos();
+      setState(() {
+        _categoryList = categories;
+      });
+    } catch (e) {
+      debugPrint('Error cargando categorías: $e');
+    }
   }
 
   Future<void> _loadProducts(String statusFilter) async {
@@ -120,7 +140,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _editingId = item.id;
       _nameController.text = item.nombre;
-      if (_categories.contains(item.categoria)) {
+      final categoryNames = _categoryList.map((c) => c.nombre).toList();
+      if (categoryNames.contains(item.categoria)) {
         _selectedCategory = item.categoria;
         _showNewCategoryInput = false;
       } else {
@@ -136,6 +157,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   void _showProductFormModal() {
     final c = context.palette;
+    final categoryNames = _categoryList.map((cat) => cat.nombre).toList();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -190,7 +213,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           isInventoryable: _isInventoryable,
                           quantity: _quantity,
                           selectedCategory: _selectedCategory,
-                          categories: _categories,
+                          categories: categoryNames,
                           palette: c,
                           onCancelEditing: () {
                             _clearForm();
@@ -272,6 +295,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
 
     try {
+      if (_showNewCategoryInput && categoryToUse.isNotEmpty) {
+        await _categoriaRepository.crear(CategoriaModel(
+          idCategoria: 0,
+          nombre: categoryToUse,
+          activo: true,
+        ));
+        await _loadCategories();
+      }
+
       if (_editingId != null) {
         await _productRepository.actualizar(_editingId!, nuevoProducto);
       } else {
@@ -294,13 +326,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
       );
     }
   }
-Future<void> _toggleProductStatus(ProductModel item, AppPalette c) async {
+
+  Future<void> _toggleProductStatus(ProductModel item, AppPalette c) async {
     if (item.id == null) return;
     try {
       if (item.activo) {
-        await _productRepository.cambiarEstado(item.id!); 
+        await _productRepository.cambiarEstado(item.id!);
       } else {
-        await _productRepository.restaurar(item.id!);     
+        await _productRepository.restaurar(item.id!);
       }
       
       await _loadProducts(_selectedStatusFilter);
@@ -471,7 +504,7 @@ Future<void> _toggleProductStatus(ProductModel item, AppPalette c) async {
     );
   }
 
-  InputDecoration _buildInputDecoration(
+    InputDecoration _buildInputDecoration(
     AppPalette c, {
     String? hintText,
     IconData? prefixIcon,
