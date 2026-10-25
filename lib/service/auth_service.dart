@@ -32,6 +32,13 @@ class AuthService {
       );
     }
 
+    // 3. RESTRICCIÓN 2: Validar borrado lógico (Usuario Inactivo)
+    if (authResponse.usuario?.activo == false) {
+      throw const FormatException(
+        'Acceso denegado: Su usuario se encuentra desactivado.',
+      );
+    }
+
     return authResponse;
   }
 }
