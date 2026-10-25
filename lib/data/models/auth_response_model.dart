@@ -31,24 +31,20 @@ class UserInfoModel {
   final String username;
   final String nombreCompleto;
   final int idRol;
-  final bool activo;
 
   UserInfoModel({
     required this.idUsuario,
     required this.username,
     required this.nombreCompleto,
     required this.idRol,
-    required this.activo,
   });
 
   factory UserInfoModel.fromJson(Map<String, dynamic> json) {
     return UserInfoModel(
-      idUsuario: json['idUsuario'] ?? 0,
+      idUsuario: json['idUsuario'] ?? json['id_usuario'] ?? 0,
       username: json['username'] ?? '',
-      nombreCompleto: json['nombreCompleto'] ?? '',
-      idRol: json['idRol'] ?? 0,
-      // Mapea 'activo' o 'isActivo' que devuelve el backend
-      activo: json['activo'] ?? json['isActivo'] ?? true,
+      nombreCompleto: json['nombreCompleto'] ?? json['nombre_completo'] ?? '',
+      idRol: json['idRol'] ?? json['id_rol'] ?? 0,
     );
   }
 }
