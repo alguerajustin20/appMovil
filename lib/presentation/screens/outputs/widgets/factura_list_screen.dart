@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/themes/app_colors.dart';
 import 'package:integrador_vi_mobile/themes/app_theme.dart';
+import '../../../../data/models/factura_model.dart'; // Importación del modelo profesional
 
 class FacturaList extends StatelessWidget {
-  final List<dynamic> filteredFacturas;
+  final List<FacturaModel>
+  filteredFacturas;
   final AppPalette palette;
-  final Function(dynamic, int) onViewDetailsPressed;
-  final Function(dynamic) onToggleActive;
+  final Function(FacturaModel, int)
+  onViewDetailsPressed; // Tipado fuerte aplicado
+  final Function(FacturaModel) onToggleActive; // Tipado fuerte aplicado
 
   const FacturaList({
     super.key,
@@ -84,15 +87,15 @@ class FacturaList extends StatelessWidget {
                 child: InkWell(
                   onTap: () => onViewDetailsPressed(factura, index),
                   borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
                       horizontal: 10.0,
                       vertical: 6.0,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
+                        Text(
                           'Detalle',
                           style: TextStyle(
                             fontSize: 13,
@@ -100,8 +103,8 @@ class FacturaList extends StatelessWidget {
                             color: AppColors.teal,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(
+                        SizedBox(width: 4),
+                        Icon(
                           Icons.visibility_outlined,
                           size: 18,
                           color: AppColors.teal,
