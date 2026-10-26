@@ -1,73 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:integrador_vi_mobile/presentation/screens/outputs/widgets/factura_filter_screen.dart';
-import 'package:integrador_vi_mobile/presentation/screens/outputs/widgets/factura_list_screen.dart';
-import 'package:integrador_vi_mobile/presentation/screens/outputs/widgets/factura_search_screen.dart';
-import 'package:integrador_vi_mobile/themes/app_theme.dart';
-
-class Factura {
-  final String name;
-  final int idFactura;
-  final int idOrden;
-  final int idMeseroAtendiente;
-  final int idCajeroCobrador;
-  final String fechaEmision;
-  final String metodoPago;
-  final double subtotal;
-  final double montoImpuestos;
-  final double montoPropina;
-  final double montoTotal;
-  final String numeroFacturaFiscal;
-
-  Factura({
-    required this.name,
-    required this.idFactura,
-    required this.idOrden,
-    required this.idMeseroAtendiente,
-    required this.idCajeroCobrador,
-    required this.fechaEmision,
-    required this.metodoPago,
-    required this.subtotal,
-    required this.montoImpuestos,
-    required this.montoPropina,
-    required this.montoTotal,
-    required this.numeroFacturaFiscal,
-  });
-
-  String obtenerMesCalculado() {
-    if (fechaEmision.length >= 7) {
-      String caracteresMes = fechaEmision.substring(5, 7);
-      switch (caracteresMes) {
-        case '01':
-          return 'Enero';
-        case '02':
-          return 'Febrero';
-        case '03':
-          return 'Marzo';
-        case '04':
-          return 'Abril';
-        case '05':
-          return 'Mayo';
-        case '06':
-          return 'Junio';
-        case '07':
-          return 'Julio';
-        case '08':
-          return 'Agosto';
-        case '09':
-          return 'Septiembre';
-        case '10':
-          return 'Octubre';
-        case '11':
-          return 'Noviembre';
-        case '12':
-          return 'Diciembre';
-        default:
-          return 'Indefinido';
-      }
-    }
-    return 'Indefinido';
-  }
-}
+import 'package:provider/provider.dart';
+import '../../../../themes/app_colors.dart';
+import '../../../../themes/app_theme.dart';
+import '../../../providers/factura_provider.dart';
+import '../../outputs/widgets/factura_filter_screen.dart';
+import '../../outputs/widgets/factura_list_screen.dart';
+import '../../outputs/widgets/factura_search_screen.dart';
+import '../../../../data/models/factura_model.dart';
 
 class FacturaScreen extends StatefulWidget {
   const FacturaScreen({super.key});
@@ -86,64 +25,13 @@ class _FacturaScreenState extends State<FacturaScreen> {
     'Con Efectivo',
   ];
 
-  final List<Factura> _facturaList = [
-    Factura(
-      name: 'FAC001',
-      idFactura: 1090,
-      idOrden: 8,
-      idMeseroAtendiente: 1,
-      idCajeroCobrador: 1,
-      fechaEmision: '2026-06-20T17:58:58.657',
-      metodoPago: 'Efectivo',
-      subtotal: 455.00,
-      montoImpuestos: 68.25,
-      montoPropina: 0.00,
-      montoTotal: 523.25,
-      numeroFacturaFiscal: 'FAC-202600071',
-    ),
-    Factura(
-      name: 'FAC002',
-      idFactura: 1091,
-      idOrden: 12,
-      idMeseroAtendiente: 3,
-      idCajeroCobrador: 2,
-      fechaEmision: '2026-01-15T11:22:14.301',
-      metodoPago: 'Tarjeta de Crédito',
-      subtotal: 820.00,
-      montoImpuestos: 123.00,
-      montoPropina: 40.00,
-      montoTotal: 983.00,
-      numeroFacturaFiscal: 'FAC-202600072',
-    ),
-    Factura(
-      name: 'FAC003',
-      idFactura: 1092,
-      idOrden: 5,
-      idMeseroAtendiente: 2,
-      idCajeroCobrador: 1,
-      fechaEmision: '2026-04-10T20:05:33.112',
-      metodoPago: 'Tarjeta de Débito',
-      subtotal: 210.00,
-      montoImpuestos: 31.50,
-      montoPropina: 15.00,
-      montoTotal: 256.50,
-      numeroFacturaFiscal: 'FAC-202600073',
-    ),
-    Factura(
-      name: 'FAC004',
-      idFactura: 1093,
-      idOrden: 19,
-      idMeseroAtendiente: 1,
-      idCajeroCobrador: 2,
-      fechaEmision: '2026-06-28T23:14:02.994',
-      metodoPago: 'Efectivo',
-      subtotal: 340.00,
-      montoImpuestos: 51.00,
-      montoPropina: 20.00,
-      montoTotal: 411.00,
-      numeroFacturaFiscal: 'FAC-202600074',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FacturaProvider>().cargarFacturasActivas();
+    });
+  }
 
   @override
   void dispose() {
@@ -151,8 +39,8 @@ class _FacturaScreenState extends State<FacturaScreen> {
     super.dispose();
   }
 
-  List<Factura> get _filteredFacturas {
-    return _facturaList.where((factura) {
+  List<FacturaModel> _getFilteredFacturas(List<FacturaModel> backendFacturas) {
+    return backendFacturas.where((factura) {
       final mesCalculado = factura.obtenerMesCalculado().toLowerCase();
       final query = _searchController.text.toLowerCase().trim();
 
@@ -173,7 +61,7 @@ class _FacturaScreenState extends State<FacturaScreen> {
     }).toList();
   }
 
-  void _openFacturaDetailsModal(AppPalette c, Factura factura) {
+  void _openFacturaDetailsModal(AppPalette c, FacturaModel factura) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -191,7 +79,7 @@ class _FacturaScreenState extends State<FacturaScreen> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
                   child: Text(
@@ -216,9 +104,7 @@ class _FacturaScreenState extends State<FacturaScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
                 _buildTextRow('id_orden: ', factura.idOrden.toString(), c),
                 _buildTextRow(
                   'id_mesero_atendiente: ',
@@ -257,9 +143,7 @@ class _FacturaScreenState extends State<FacturaScreen> {
                   factura.numeroFacturaFiscal,
                   c,
                 ),
-
                 const SizedBox(height: 24),
-
                 SizedBox(
                   width: double.infinity,
                   height: 48,
@@ -319,7 +203,9 @@ class _FacturaScreenState extends State<FacturaScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.palette;
-    final filtered = _filteredFacturas;
+    final provider = context.watch<FacturaProvider>();
+    final filtered = _getFilteredFacturas(provider.facturas);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -342,6 +228,24 @@ class _FacturaScreenState extends State<FacturaScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8),
+              if (provider.isLoading) ...[
+                const LinearProgressIndicator(
+                  color: AppColors.teal,
+                  minHeight: 3,
+                ),
+                const SizedBox(height: 8),
+              ],
+              if (provider.errorMessage != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  color: Colors.red.withValues(alpha: 0.1),
+                  child: Text(
+                    provider.errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
               FacturaSearch(
                 controller: _searchController,
                 palette: c,
