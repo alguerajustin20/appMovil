@@ -17,7 +17,6 @@ class Factura {
   final double montoPropina;
   final double montoTotal;
   final String numeroFacturaFiscal;
-  final int mesa;
 
   Factura({
     required this.name,
@@ -32,7 +31,6 @@ class Factura {
     required this.montoPropina,
     required this.montoTotal,
     required this.numeroFacturaFiscal,
-    required this.mesa,
   });
 
   String obtenerMesCalculado() {
@@ -102,7 +100,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
       montoPropina: 0.00,
       montoTotal: 523.25,
       numeroFacturaFiscal: 'FAC-202600071',
-      mesa: 3,
     ),
     Factura(
       name: 'FAC002',
@@ -117,7 +114,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
       montoPropina: 40.00,
       montoTotal: 983.00,
       numeroFacturaFiscal: 'FAC-202600072',
-      mesa: 1,
     ),
     Factura(
       name: 'FAC003',
@@ -132,7 +128,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
       montoPropina: 15.00,
       montoTotal: 256.50,
       numeroFacturaFiscal: 'FAC-202600073',
-      mesa: 5,
     ),
     Factura(
       name: 'FAC004',
@@ -147,7 +142,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
       montoPropina: 20.00,
       montoTotal: 411.00,
       numeroFacturaFiscal: 'FAC-202600074',
-      mesa: 2,
     ),
   ];
 
@@ -184,7 +178,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: c.card,
-      // 🛡️ SE ACTIVA EL BLOQUEO TÁCTIL: Solo se cierra con el botón rojo
       isDismissible: false,
       enableDrag: false,
       shape: const RoundedRectangleBorder(
@@ -198,7 +191,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Center(
@@ -265,7 +257,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
                   factura.numeroFacturaFiscal,
                   c,
                 ),
-                _buildTextRow('mesa: ', factura.mesa.toString(), c),
 
                 const SizedBox(height: 24),
 
