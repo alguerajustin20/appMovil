@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:integrador_vi_mobile/presentation/screens/outputs/factura-screendart/factura_screen.dart'; // Ruta exacta y corregida
+import 'package:integrador_vi_mobile/presentation/screens/outputs/factura-screendart/factura_screen.dart';
 import '../screens/inventory/add-product-screen/add_product_screen.dart';
 import '../screens/manager/user-management-screen/user_management_screen.dart';
 import '../screens/settings/settings_screen.dart';
@@ -16,10 +16,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
   DateTime? _lastPressedAt;
 
-  // Mantenemos la colección de pantallas respetando tu desarrollo actual
+  // Mantenemos la colección de pantallas respetando el desarrollo actual
   final List<Widget> _screens = const [
     AddProductScreen(),
-    FacturaScreen(), // Esta pantalla ahora se alimenta automáticamente de tu API
+    FacturaScreen(), // Esta pantalla ahora se alimenta automáticamente de la API
     UserManagementScreen(),
     SettingsScreen(),
   ];
