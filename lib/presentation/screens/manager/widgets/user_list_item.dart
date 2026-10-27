@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import '../../../../../theme/app_theme.dart';
-import '../user-management-screen/user_management_screen.dart';
+import '../../../../data/models/user_model.dart';
 
 class UserListItem extends StatelessWidget {
-  final User user;
+  final UserModel user;
   final AppPalette palette;
   final VoidCallback onEdit;
   final VoidCallback onToggleStatus;
@@ -17,12 +17,28 @@ class UserListItem extends StatelessWidget {
     required this.onToggleStatus,
   });
 
+  String _getRoleName(int idRol) {
+    switch (idRol) {
+      case 1:
+        return 'Admin';
+      case 2:
+        return 'Cajero';
+      case 3:
+        return 'Mesero';
+      case 4:
+        return 'Cocinero';
+      default:
+        return 'Cajero';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = palette;
+    final roleName = _getRoleName(user.idRol);
 
     return Opacity(
-      opacity: user.isActive ? 1.0 : 0.5,
+      opacity: user.activo ? 1.0 : 0.5,
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(12),
@@ -30,21 +46,21 @@ class UserListItem extends StatelessWidget {
           color: c.card,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: user.isActive
-                ? AppColors.teal.withOpacity(0.3)
+            color: user.activo
+                ? AppColors.teal.withValues(alpha: 0.3)
                 : c.cardBorder,
           ),
         ),
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: user.isActive
-                  ? AppColors.teal.withOpacity(0.15)
-                  : Colors.grey.withOpacity(0.2),
+              backgroundColor: user.activo
+                  ? AppColors.teal.withValues(alpha: 0.15)
+                  : Colors.grey.withValues(alpha: 0.2),
               child: Text(
-                user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
+                user.nombreCompleto.isNotEmpty ? user.nombreCompleto[0].toUpperCase() : 'U',
                 style: TextStyle(
-                  color: user.isActive ? AppColors.teal : c.textMuted,
+                  color: user.activo ? AppColors.teal : c.textMuted,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -55,7 +71,7 @@ class UserListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user.name,
+                    user.nombreCompleto,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -71,17 +87,17 @@ class UserListItem extends StatelessWidget {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: user.isActive
-                              ? AppColors.teal.withOpacity(0.1)
-                              : Colors.grey.withOpacity(0.2),
+                          color: user.activo
+                              ? AppColors.teal.withValues(alpha: 0.1)
+                              : Colors.grey.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          user.role,
+                          roleName,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: user.isActive ? AppColors.teal : c.textMuted,
+                            color: user.activo ? AppColors.teal : c.textMuted,
                           ),
                         ),
                       ),
@@ -105,13 +121,13 @@ class UserListItem extends StatelessWidget {
             ),
             IconButton(
               icon: Icon(
-                user.isActive
+                user.activo
                     ? Icons.toggle_on_rounded
                     : Icons.toggle_off_rounded,
                 size: 28,
-                color: user.isActive
+                color: user.activo
                     ? AppColors.teal
-                    : Colors.redAccent.withOpacity(0.7),
+                    : Colors.redAccent.withValues(alpha: 0.7),
               ),
               onPressed: onToggleStatus,
             ),
