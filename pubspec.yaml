@@ -68,6 +68,7 @@ flutter:
     - assets/icons/mod/moon_stars_oscuro.png
     - assets/icons/log/logs_blanco.png
     - assets/icons/log/logs_oscuro.png
+    - .env
 
 flutter_launcher_icons:
   android: true
