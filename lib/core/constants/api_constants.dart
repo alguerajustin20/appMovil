@@ -17,7 +17,7 @@ class ApiConstants {
     } catch (_) {
       // Manejo preventivo si dotenv no fue cargado
     }
-    return 'http://192.168.100.10:8080';
+    return 'http://192.168.100.3:8080';
   }
 
   ApiConstants._privateConstructor();
@@ -37,14 +37,16 @@ class ApiConstants {
   static const String productosInactivos = '/api/Productos/inactivos';
   static const String productosBuscar = '/api/Productos/buscar';
   static const String productosRestaurar = '/api/Productos/restaurar';
-  
+
   // Endpoints de Usuarios (Swagger)
   static const String usuarios = '/api/Usuarios';
-  
+
   // Endpoints de Autenticación Reales
   static const String login = '/api/Auth/login';
   static const String refresh = '/api/Auth/refresh';
   static const String logout = '/api/Auth/logout';
+  static const String systemLogs = '/api/Metrics/system-logs';
+  static const String metricRequests = '/api/Metrics/requests';
 
   static const Duration timeoutDuration = Duration(seconds: 30);
 }

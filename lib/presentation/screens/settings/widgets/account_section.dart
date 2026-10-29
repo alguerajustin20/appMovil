@@ -36,12 +36,12 @@ class AccountSection extends StatelessWidget {
         SettingsNavTile(
           iconLight: 'assets/icons/log/logs_blanco.png',
           iconDark: 'assets/icons/log/logs_oscuro.png',
-          label: 'Bitácora de actividad',
+          label: 'Monitoreo y Bitácora',
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ActivityLogsScreen(),
+                builder: (context) => const SystemMonitoringScreen(),
               ),
             );
           },

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
 //import '../../../widgets/custom_bottom_navigation.dart';
+import '../../../providers/auth_provider.dart';
 import '../../security/login_screen.dart';
 import '../widgets/account_section.dart';
 import '../widgets/edit_username_dialog.dart';
@@ -35,6 +37,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
       (route) => false,
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('¿Cerrar sesión?'),
+        content: const Text(
+          'Se cerrará tu sesión activa y se invalidara su acceso rapido.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              Navigator.pop(dialogContext); // Cierra el diálogo
+
+              try {
+                // 1. Ejecuta el logout del Provider (llama al AuthService y limpia tokens)
+                await Provider.of<AuthProvider>(
+                  context,
+                  listen: false,
+                ).logout();
+
+                // 2. Navegación correcta al Login limpiando el historial
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              }
+            },
+            child: const Text('Salir', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
     );
   }
 
@@ -81,6 +137,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SupportSection(),
           const SizedBox(height: 24),
           SettingsLogoutButton(onPressed: _logout),
+          SettingsLogoutButton(onPressed: () => _showLogoutDialog(context)),
           const SizedBox(height: 8),
         ],
       ),
