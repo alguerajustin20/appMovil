@@ -74,14 +74,14 @@ class SettingsProfileCard extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(
-              Icons.edit_outlined,
-              color: AppColors.brownLight,
-              size: 20,
-            ),
-            onPressed: onEdit,
-          ),
+          //IconButton(
+          //   icon: const Icon(
+          //     Icons.edit_outlined,
+          //     color: AppColors.brownLight,
+          //    size: 20,
+          //  ),
+          //  onPressed: onEdit,
+          // ),
         ],
       ),
     );

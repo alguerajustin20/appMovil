@@ -13,7 +13,7 @@ class AppColors {
   static const textMuted = Color(0xFF8A8A8A);
   static const danger = Color(0xFFD9534F);
 
-  // Colores específicos de modo oscuro, tomados de tus mockups en Figma
+  // Colores específicos de modo oscuro, tomados de  mockups en Figma
   static const darkBackground = Color(0xFF121212);
   static const darkCard = Color(0xFF1E1E1E);
   static const darkCardBorder = Color(0xFF2C2C2C);

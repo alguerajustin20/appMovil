@@ -4,46 +4,61 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/api_constants.dart';
 
 /// Cliente HTTP personalizado para gestionar peticiones a la API en Docker
-/// y adjuntar automáticamente el Token JWT de autenticación.
+/// con soporte automático de renovación de Access Token (15 min) vía Refresh Token (8 horas).
 class ApiClient {
   final http.Client _client;
-  String? _authToken;
+  String? _accessToken;
+  String? _refreshToken;
 
   ApiClient({http.Client? client}) : _client = client ?? http.Client();
 
-  /// Asigna el token JWT obtenido tras un inicio de sesión exitoso con la BD.
-  void setAuthToken(String? token) {
-    _authToken = token;
+  /// Asigna y guarda localmente los tokens obtenidos tras un login/refresh.
+  Future<void> setTokens(String accessToken, String refreshToken) async {
+    _accessToken = accessToken;
+    _refreshToken = refreshToken;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('jwt_token', accessToken);
+    await prefs.setString('refresh_token', refreshToken);
   }
 
-  /// Limpia el token (por ejemplo, al cerrar sesión).
-  void clearAuthToken() {
-    _authToken = null;
+  /// Limpia la sesión completa (por ejemplo, al cerrar sesión o expirar las 8h).
+  Future<void> clearAuthToken() async {
+    _accessToken = null;
+    _refreshToken = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('jwt_token');
+    await prefs.remove('refresh_token');
   }
 
-  /// Verifica si existe un token activo para enviar en las peticiones.
+  /// Recupera los tokens de SharedPreferences si no están en memoria.
   Future<void> ensureAuthenticated() async {
-    if (_authToken == null || _authToken!.isEmpty) {
+    if (_accessToken == null || _accessToken!.isEmpty) {
       final prefs = await SharedPreferences.getInstance();
-      _authToken = prefs.getString('jwt_token');
+      _accessToken = prefs.getString('jwt_token');
+      _refreshToken = prefs.getString('refresh_token');
     }
   }
 
-  /// Encabezados por defecto para enviar JSON y el Token Bearer de forma automática.
-  Future<Map<String, String>> _buildHeaders([Map<String, String>? customHeaders]) async {
+  /// Devuelve el token de acceso actual en memoria (o lo carga si es necesario)
+  Future<String?> getAccessToken() async {
+    await ensureAuthenticated();
+    return _accessToken;
+  }
+
+  /// Construye los encabezados JSON con el Bearer Token.
+  Future<Map<String, String>> _buildHeaders([
+    Map<String, String>? customHeaders,
+  ]) async {
     final headers = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
-    // Si el token en memoria está vacío, intenta recuperarlo de SharedPreferences
-    if (_authToken == null || _authToken!.isEmpty) {
-      final prefs = await SharedPreferences.getInstance();
-      _authToken = prefs.getString('jwt_token');
-    }
+    await ensureAuthenticated();
 
-    if (_authToken != null && _authToken!.isNotEmpty) {
-      headers['Authorization'] = 'Bearer $_authToken';
+    if (_accessToken != null && _accessToken!.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $_accessToken';
     }
 
     if (customHeaders != null) {
@@ -53,7 +68,71 @@ class ApiClient {
     return headers;
   }
 
-  /// Método GET genérico que soporta parámetros query
+  /// Intenta renovar el Access Token caducado usando el Refresh Token.
+  Future<bool> _tryRefreshToken() async {
+    await ensureAuthenticated();
+
+    if (_refreshToken == null || _refreshToken!.isEmpty) return false;
+
+    try {
+      final baseUrl = ApiConstants.instance.baseUrl;
+      final uri = Uri.parse(
+        '$baseUrl/api/Auth/refresh',
+      ); // Revisa la ruta exacta en tu Backend
+
+      final response = await _client
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'accessToken': _accessToken,
+              'refreshToken': _refreshToken,
+            }),
+          )
+          .timeout(ApiConstants.timeoutDuration);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final newAccess = data['token'] ?? data['accessToken'];
+        final newRefresh = data['refreshToken'] ?? _refreshToken;
+
+        if (newAccess != null) {
+          await setTokens(newAccess, newRefresh);
+          return true;
+        }
+      }
+    } catch (e) {
+      print('Error en renovación automática de token: $e');
+    }
+
+    // Si falló el refresh (expiraron las 8 horas), limpiamos sesión.
+    await clearAuthToken();
+    return false;
+  }
+
+  /// Ejecuta peticiones HTTP con reintento automático si el Access Token caducó (HTTP 401).
+  Future<http.Response> _sendWithRetry(
+    Future<http.Response> Function(Map<String, String> headers) requestCall,
+    Map<String, String>? customHeaders,
+  ) async {
+    var headers = await _buildHeaders(customHeaders);
+    var response = await requestCall(headers);
+
+    // Si responde 401 (Pasaron los 15 minutos del Access Token), intentamos refrescar
+    if (response.statusCode == 401) {
+      final isRefreshed = await _tryRefreshToken();
+
+      if (isRefreshed) {
+        // Reintentamos la petición con el nuevo Access Token
+        headers = await _buildHeaders(customHeaders);
+        response = await requestCall(headers);
+      }
+    }
+
+    return response;
+  }
+
+  /// Método GET genérico
   Future<dynamic> get(
     String path, {
     Map<String, String>? query,
@@ -64,10 +143,10 @@ class ApiClient {
       queryParameters: query != null && query.isNotEmpty ? query : null,
     );
 
-    final resolvedHeaders = await _buildHeaders(headers);
-    final response = await _client
-        .get(uri, headers: resolvedHeaders)
-        .timeout(ApiConstants.timeoutDuration);
+    final response = await _sendWithRetry(
+      (h) => _client.get(uri, headers: h).timeout(ApiConstants.timeoutDuration),
+      headers,
+    );
 
     return _processResponse(response);
   }
@@ -79,16 +158,14 @@ class ApiClient {
     Map<String, String>? headers,
   }) async {
     final baseUrl = ApiConstants.instance.baseUrl;
-    final url = Uri.parse('$baseUrl$path');
+    final uri = Uri.parse('$baseUrl$path');
 
-    final resolvedHeaders = await _buildHeaders(headers);
-    final response = await _client
-        .post(
-          url,
-          headers: resolvedHeaders,
-          body: body != null ? jsonEncode(body) : null,
-        )
-        .timeout(ApiConstants.timeoutDuration);
+    final response = await _sendWithRetry(
+      (h) => _client
+          .post(uri, headers: h, body: body != null ? jsonEncode(body) : null)
+          .timeout(ApiConstants.timeoutDuration),
+      headers,
+    );
 
     return _processResponse(response);
   }
@@ -100,16 +177,14 @@ class ApiClient {
     Map<String, String>? headers,
   }) async {
     final baseUrl = ApiConstants.instance.baseUrl;
-    final url = Uri.parse('$baseUrl$path');
+    final uri = Uri.parse('$baseUrl$path');
 
-    final resolvedHeaders = await _buildHeaders(headers);
-    final response = await _client
-        .put(
-          url,
-          headers: resolvedHeaders,
-          body: body != null ? jsonEncode(body) : null,
-        )
-        .timeout(ApiConstants.timeoutDuration);
+    final response = await _sendWithRetry(
+      (h) => _client
+          .put(uri, headers: h, body: body != null ? jsonEncode(body) : null)
+          .timeout(ApiConstants.timeoutDuration),
+      headers,
+    );
 
     return _processResponse(response);
   }
@@ -121,16 +196,14 @@ class ApiClient {
     Map<String, String>? headers,
   }) async {
     final baseUrl = ApiConstants.instance.baseUrl;
-    final url = Uri.parse('$baseUrl$path');
+    final uri = Uri.parse('$baseUrl$path');
 
-    final resolvedHeaders = await _buildHeaders(headers);
-    final response = await _client
-        .patch(
-          url,
-          headers: resolvedHeaders,
-          body: body != null ? jsonEncode(body) : null,
-        )
-        .timeout(ApiConstants.timeoutDuration);
+    final response = await _sendWithRetry(
+      (h) => _client
+          .patch(uri, headers: h, body: body != null ? jsonEncode(body) : null)
+          .timeout(ApiConstants.timeoutDuration),
+      headers,
+    );
 
     return _processResponse(response);
   }
@@ -138,17 +211,18 @@ class ApiClient {
   /// Método DELETE genérico
   Future<dynamic> delete(String path, {Map<String, String>? headers}) async {
     final baseUrl = ApiConstants.instance.baseUrl;
-    final url = Uri.parse('$baseUrl$path');
+    final uri = Uri.parse('$baseUrl$path');
 
-    final resolvedHeaders = await _buildHeaders(headers);
-    final response = await _client
-        .delete(url, headers: resolvedHeaders)
-        .timeout(ApiConstants.timeoutDuration);
+    final response = await _sendWithRetry(
+      (h) =>
+          _client.delete(uri, headers: h).timeout(ApiConstants.timeoutDuration),
+      headers,
+    );
 
     return _processResponse(response);
   }
 
-  /// Procesa la respuesta HTTP y valida el código de estado
+  /// Procesa la respuesta HTTP
   dynamic _processResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) return null;

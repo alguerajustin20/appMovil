@@ -96,4 +96,27 @@ class AuthService {
       return false;
     }
   }
+
+  /// Cierra la sesión en el backend (invalida el token en Redis) y limpia credenciales locales
+  Future<void> cerrarSesion(String token) async {
+    try {
+      final baseUrl = ApiConstants.instance.baseUrl;
+      final url = Uri.parse('$baseUrl${ApiConstants.logout}');
+
+      // Petición POST al endpoint de logout que ya mapee en ApiConstants
+      final response = await _client.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception('Error al notificar cierre de sesión al servidor.');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
