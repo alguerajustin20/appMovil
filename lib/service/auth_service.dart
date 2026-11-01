@@ -103,7 +103,7 @@ class AuthService {
       final baseUrl = ApiConstants.instance.baseUrl;
       final url = Uri.parse('$baseUrl${ApiConstants.logout}');
 
-      // Petición POST al endpoint de logout que ya mapeaste en ApiConstants
+      // Petición POST al endpoint de logout que ya mapee en ApiConstants
       final response = await _client.post(
         url,
         headers: {
@@ -116,7 +116,6 @@ class AuthService {
         throw Exception('Error al notificar cierre de sesión al servidor.');
       }
     } catch (e) {
-      // Manejas el error si gustas, pero aseguramos que la app limpie la sesión localmente de todas formas
       rethrow;
     }
   }

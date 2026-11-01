@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/models/user_model.dart';
 import '../../core/network/api_client.dart';
 import '../../service/auth_service.dart';
+import '../../service/password_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final ApiClient _apiClient;
   final AuthService _authService;
+  final UserService _userService = UserService();
 
   UserModel? _currentUser;
   bool _isLoading = false;
@@ -15,6 +19,21 @@ class AuthProvider extends ChangeNotifier {
   UserModel? get currentUser => _currentUser;
   bool get isAuthenticated => _currentUser != null;
   bool get isLoading => _isLoading;
+
+  void setCurrentUser(UserModel user) {
+    _currentUser = user;
+    notifyListeners();
+  }
+
+  Future<void> loadSessionFromDisk() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Si guardaste el json del usuario o sus datos:
+    // final userJson = prefs.getString('current_user');
+    // if (userJson != null) {
+    //   _currentUser = UserModel.fromJson(jsonDecode(userJson));
+    //   notifyListeners();
+    // }
+  }
 
   /// Inicia sesión consumiendo la API de Docker y guardando los tokens
   Future<bool> login(String username, String password) async {
@@ -26,6 +45,7 @@ class AuthProvider extends ChangeNotifier {
         '/api/Auth/login',
         body: {'username': username, 'Password': password},
       );
+      debugPrint('🔑 Respuesta de login: $response');
 
       // Extraemos tokens y datos del usuario devueltos por el backend en C#
       final accessToken = response['token'] ?? response['accessToken'];
@@ -91,6 +111,36 @@ class AuthProvider extends ChangeNotifier {
     } finally {
       _currentUser = null;
       await _apiClient.clearAuthToken();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Actualiza el nombre de usuario en la base de datos y en el estado local
+  Future<bool> changePassword({
+    required int userId,
+    required String username,
+    required String nombreCompleto,
+    required int idRol,
+    required String newPassword,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final userService = UserService();
+      await userService.updateUserPassword(
+        userId: userId,
+        username: username,
+        nombreCompleto: nombreCompleto,
+        idRol: idRol,
+        newPassword: newPassword,
+      );
+      return true;
+    } catch (e) {
+      debugPrint('Error al cambiar contraseña: $e');
+      rethrow;
+    } finally {
       _isLoading = false;
       notifyListeners();
     }
