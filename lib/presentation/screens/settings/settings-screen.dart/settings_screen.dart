@@ -20,8 +20,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  // TODO: reemplazar con los datos del usuario autenticado cuando exista la API
-  //aqui es la parte donde se obtiene el usuario autenticado desde el AuthProvider y se muestran sus datos en la pantalla de ajustes.
   Future<void> _editUsername() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final currentName = authProvider.currentUser?.username ?? '';
@@ -29,12 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final newName = await showEditUsernameDialog(context, currentName);
     if (newName != null && newName.isNotEmpty && mounted) {
       try {
-        // 3. Aquí debes llamar al método de tu AuthProvider o AuthService
-        // para actualizarlo en la Base de Datos (Backend en C# / MongoDB).
-        // Ejemplo:
-        // await authProvider.updateUsername(newName);
-
-        setState(() {}); // Refresca la vista si es necesario
+        setState(() {});
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -68,16 +61,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
-              Navigator.pop(dialogContext); // Cierra el diálogo
+              Navigator.pop(dialogContext);
 
               try {
-                // 1. Ejecuta el logout del Provider (llama al AuthService y limpia tokens)
                 await Provider.of<AuthProvider>(
                   context,
                   listen: false,
                 ).logout();
 
-                // 2. Navegación correcta al Login limpiando el historial
                 if (context.mounted) {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -109,18 +100,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.palette;
+
     // Obtenemos el usuario autenticado desde el AuthProvider
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.currentUser;
 
-    // Asignamos los datos reales (o valores por defecto si es nulo)
-    final String userName = authProvider.currentUser?.username ?? 'Lordvader';
-    final String userEmail =
-        authProvider.currentUser?.nombreCompleto ??
-        'vader30'; // O el campo que use modelo
+    // Asignamos los datos reales extraídos del modelo UserModel de forma limpia
+    final String nombreCompleto = user?.nombreCompleto ?? 'Invitado';
+    final String username = user?.username ?? 'Sin usuario';
     final String userRole = authProvider.getRolName();
+
     debugPrint(
-      '🔍 USUARIO ACTUAL EN PROVIDER: $user | Username: ${user?.username}',
+      '🔍 USUARIO ACTUAL EN PROVIDER: $user | Username: ${user?.username} | Nombre: ${user?.nombreCompleto}',
     );
 
     return Scaffold(
@@ -149,14 +140,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           SettingsProfileCard(
-            userName: userName,
-            userEmail: userEmail,
-            userRole: userRole,
+            userName: nombreCompleto, // Muestra el nombre completo en grande
+            userEmail: username, // Muestra el username abajo
+            userRole: userRole, // Muestra el rol
             onEdit: _editUsername,
           ),
 
           const SizedBox(height: 20),
-          AccountSection(userName: userName),
+          AccountSection(userName: username),
           const SizedBox(height: 20),
           const PreferencesSection(),
           const SizedBox(height: 20),
