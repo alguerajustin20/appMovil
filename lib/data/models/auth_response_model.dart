@@ -41,10 +41,10 @@ class UserInfoModel {
 
   factory UserInfoModel.fromJson(Map<String, dynamic> json) {
     return UserInfoModel(
-      idUsuario: json['idUsuario'] ?? 0,
+      idUsuario: json['idUsuario'] ?? json['id_usuario'] ?? 0,
       username: json['username'] ?? '',
-      nombreCompleto: json['nombreCompleto'] ?? '',
-      idRol: json['idRol'] ?? 0,
+      nombreCompleto: json['nombreCompleto'] ?? json['nombre_completo'] ?? '',
+      idRol: json['idRol'] ?? json['id_rol'] ?? 0,
     );
   }
 }
