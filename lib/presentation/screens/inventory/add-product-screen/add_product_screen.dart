@@ -23,6 +23,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController _customCategoryController = TextEditingController();
   final TextEditingController _customUnitController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
 
   bool _isInventoryable = true;
   bool _showNewCategoryInput = false;
@@ -103,6 +104,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _customCategoryController.dispose();
     _customUnitController.dispose();
     _searchController.dispose();
+    _priceController.dispose();
     super.dispose();
   }
 
@@ -128,6 +130,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _nameController.clear();
     _customCategoryController.clear();
     _customUnitController.clear();
+    _priceController.clear();
     setState(() {
       _editingId = null;
       _selectedCategory = null;
@@ -140,6 +143,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _editingId = item.id;
       _nameController.text = item.nombre;
+      _priceController.text = item.precioUnitario.toString();
       final categoryNames = _categoryList.map((c) => c.nombre).toList();
       if (categoryNames.contains(item.categoria)) {
         _selectedCategory = item.categoria;
@@ -235,6 +239,55 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           buildFieldLabel: _buildFieldLabel,
                           buildInputDecoration: _buildInputDecoration,
                         ),
+                        const SizedBox(height: 12),
+                        
+                        // --- Campo de Precio con C$ integrado ---
+                        _buildFieldLabel('Precio Unitario', c),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _priceController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          style: TextStyle(color: c.textPrimary, fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'Ej. 50.00',
+                            hintStyle: TextStyle(
+                              color: c.textMuted.withValues(alpha: 0.7),
+                              fontSize: 13,
+                            ),
+                            prefixText: 'C\$ ',
+                            prefixStyle: TextStyle(
+                              color: c.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            filled: true,
+                            fillColor: c.isDark ? c.inputFill : Colors.grey.shade50,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: c.cardBorder),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: c.cardBorder),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: AppColors.teal, width: 1.5),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Por favor ingresa el precio unitario';
+                            }
+                            if (double.tryParse(value.trim()) == null) {
+                              return 'Ingresa un número válido';
+                            }
+                            return null;
+                          },
+                        ),
+                        // ----------------------------------------
+
                         const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
@@ -285,11 +338,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
     final categoryToUse = _showNewCategoryInput
         ? _customCategoryController.text.trim()
         : (_selectedCategory ?? 'General');
+    final parsedPrice = double.tryParse(_priceController.text.trim()) ?? 0.0;
 
     final nuevoProducto = ProductModel(
       id: _editingId,
       nombre: productName,
       categoria: categoryToUse,
+      precioUnitario: parsedPrice,
       stock: _isInventoryable ? _quantity : 0,
       activo: true,
     );
@@ -504,7 +559,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-    InputDecoration _buildInputDecoration(
+  InputDecoration _buildInputDecoration(
     AppPalette c, {
     String? hintText,
     IconData? prefixIcon,
