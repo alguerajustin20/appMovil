@@ -17,7 +17,12 @@ class ApiConstants {
     } catch (_) {
       // Manejo preventivo si dotenv no fue cargado
     }
-    return 'http://10.0.2.2:8080';
+
+    // Si es un emulador de Android, usa 10.0.2.2; de lo contrario, localhost
+    if (!kIsWeb && Platform.isAndroid) {
+      return 'http://10.0.2.2:8080';
+    }
+    return 'http://localhost:8080';
   }
 
   ApiConstants._privateConstructor();
@@ -31,10 +36,22 @@ class ApiConstants {
   static const String categoriasBuscar = '/api/Categorias/buscar';
   static const String categoriasRestaurar = '/api/Categorias/restaurar';
 
+  // Endpoints de Productos (Swagger)
+  static const String productos = '/api/Productos';
+  static const String productosActivos = '/api/Productos/activos';
+  static const String productosInactivos = '/api/Productos/inactivos';
+  static const String productosBuscar = '/api/Productos/buscar';
+  static const String productosRestaurar = '/api/Productos/restaurar';
+
+  // Endpoints de Usuarios (Swagger)
+  static const String usuarios = '/api/Usuarios';
+
   // Endpoints de Autenticación Reales
   static const String login = '/api/Auth/login';
   static const String refresh = '/api/Auth/refresh';
   static const String logout = '/api/Auth/logout';
+  static const String systemLogs = '/api/Metrics/system-logs';
+  static const String metricRequests = '/api/Metrics/requests';
 
   static const Duration timeoutDuration = Duration(seconds: 30);
 }

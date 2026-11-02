@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:integrador_vi_mobile/presentation/screens/outputs/factura-screendart/factura_screen.dart';
-import '../presentation/screens/bench/dashboard-screendart/dashboard_screen.dart';
+import '../presentation/screens/logs/activity-logs-screen/activity_logs_screen.dart';
 import '../presentation/screens/inventory/add-product-screen/add_product_screen.dart';
 import '../presentation/screens/manager/user-management-screen/user_management_screen.dart';
 import '../presentation/screens/settings/settings-screen.dart/settings_screen.dart';
@@ -17,7 +17,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
   DateTime? _lastPressedAt;
   final List<Widget> _screens = const [
-    DashboardScreen(),
+    SystemMonitoringScreen(),
     AddProductScreen(),
     FacturaScreen(),
     UserManagementScreen(),
@@ -70,8 +70,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           unselectedItemColor: const Color(0xFF94A3B8),
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: 'Dashboard',
+              icon: Icon(Icons.speed_rounded),
+              label: 'Monitoreo',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.inventory_2_outlined),
