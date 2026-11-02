@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../../service/password_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> showChangePasswordDialog(BuildContext context) {
   return showDialog<void>(
@@ -21,6 +25,7 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
   final _newController = TextEditingController();
   bool _hideCurrent = true;
   bool _hideNew = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -63,6 +68,74 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
     );
   }
 
+  Future<void> _handleSave() async {
+    // 1. Validar que las contraseñas no estén vacías y coincidan
+    if (_currentController.text.trim().isEmpty ||
+        _newController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor llena todos los campos')),
+      );
+      return;
+    }
+
+    if (_currentController.text != _newController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Las contraseñas no coinciden')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      final int userId =
+          prefs.getInt('user_id') ??
+          prefs.getInt('id_usuario') ??
+          1; // Pon tu ID por defecto o el que corresponda
+      final String username =
+          prefs.getString('username') ??
+          'vader30'; // Visto en tu pantalla de Ajustes
+      final String nombreCompleto =
+          prefs.getString('nombre_completo') ?? 'Lordvader';
+      final int idRol =
+          prefs.getInt('id_rol') ?? 1; // Rol de administrador típico
+
+      // 2. Instanciamos el UserService y ejecutamos el PUT al endpoint de C#
+      final userService = UserService();
+      await userService.updateUserPassword(
+        userId: userId,
+        username: username,
+        nombreCompleto: nombreCompleto,
+        idRol: idRol,
+        newPassword: _newController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context); // Cierra el diálogo
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('¡Contraseña actualizada con éxito en la BD!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al actualizar: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = context.palette;
@@ -78,14 +151,14 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _passwordField(
-            label: 'Contraseña actual',
+            label: ' Nueva Contraseña',
             controller: _currentController,
             hidden: _hideCurrent,
             onToggle: () => setState(() => _hideCurrent = !_hideCurrent),
           ),
           const SizedBox(height: 14),
           _passwordField(
-            label: 'Nueva contraseña',
+            label: 'Confirmar Contraseña Nueva',
             controller: _newController,
             hidden: _hideNew,
             onToggle: () => setState(() => _hideNew = !_hideNew),
@@ -99,12 +172,17 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal),
-          onPressed: () {
-            if (_newController.text.trim().isEmpty) return;
-            // TODO: validar la contraseña actual y actualizarla vía API.
-            Navigator.pop(context);
-          },
-          child: const Text('Guardar', style: TextStyle(color: Colors.white)),
+          onPressed: _isLoading ? null : _handleSave,
+          child: _isLoading
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Text('Guardar', style: TextStyle(color: Colors.white)),
         ),
       ],
     );
