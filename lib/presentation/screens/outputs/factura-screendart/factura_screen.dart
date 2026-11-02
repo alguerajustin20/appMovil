@@ -1,44 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/core/network/api_client.dart';
+import 'package:integrador_vi_mobile/data/models/factura_model.dart';
+import 'package:integrador_vi_mobile/data/models/detalle_orden_model.dart';
+import 'package:integrador_vi_mobile/data/repositories/factura_repository.dart';
 import 'package:integrador_vi_mobile/presentation/screens/outputs/widgets/factura_filter_screen.dart';
 import 'package:integrador_vi_mobile/presentation/screens/outputs/widgets/factura_list_screen.dart';
 import 'package:integrador_vi_mobile/presentation/screens/outputs/widgets/factura_search_screen.dart';
 import 'package:integrador_vi_mobile/theme/app_theme.dart';
-
-class Factura {
-  final String name;
-  final String mes;
-  bool isActive;
-
-  // Variables requeridas para el pop-up informativo
-  final String idFactura;
-  final String idOrden;
-  final String idMeseroAtendiente;
-  final String idCajeroCobrador;
-  final String fechaEmision;
-  final String metodoPago;
-  final String subtotal;
-  final String montoImpuestos;
-  final String montoPropina;
-  final String montoTotal;
-  final String numeroFacturaFiscal;
-
-  Factura({
-    required this.name,
-    required this.mes,
-    this.isActive = true,
-    required this.idFactura,
-    required this.idOrden,
-    required this.idMeseroAtendiente,
-    required this.idCajeroCobrador,
-    required this.fechaEmision,
-    required this.metodoPago,
-    required this.subtotal,
-    required this.montoImpuestos,
-    required this.montoPropina,
-    required this.montoTotal,
-    required this.numeroFacturaFiscal,
-  });
-}
+import 'package:integrador_vi_mobile/theme/app_colors.dart';
 
 class FacturaScreen extends StatefulWidget {
   const FacturaScreen({super.key});
@@ -48,78 +17,23 @@ class FacturaScreen extends StatefulWidget {
 }
 
 class _FacturaScreenState extends State<FacturaScreen> {
+  // Instanciamos el repositorio usando el ApiClient
+  final FacturaRepository _facturaRepository = FacturaRepository(ApiClient());
+
+  late Future<List<FacturaModel>> _futureFacturas;
   String _selectedFilter = 'Todas';
   final TextEditingController _searchController = TextEditingController();
-
   final List<String> _filters = ['Todas', 'Activas', 'Inactivas'];
 
-  // 🎲 LISTA CON DATOS TOTALMENTE AL AZAR GENERADOS INDEPENDIENTEMENTE PARA CADA FACTURA
-  final List<Factura> _facturaList = [
-    Factura(
-      name: 'FAC001',
-      mes: 'Marzo',
-      isActive: true,
-      idFactura: '87612',
-      idOrden: '4491',
-      idMeseroAtendiente: '4',
-      idCajeroCobrador: '2',
-      fechaEmision: '12/03/2026',
-      metodoPago: 'Efectivo',
-      subtotal: '\$35.50',
-      montoImpuestos: '\$5.32',
-      montoPropina: '\$3.50',
-      montoTotal: '\$44.32',
-      numeroFacturaFiscal: 'NF-0009841',
-    ),
-    Factura(
-      name: 'FAC002',
-      mes: 'Junio',
-      isActive: false,
-      idFactura: '12904',
-      idOrden: '8812',
-      idMeseroAtendiente: '11',
-      idCajeroCobrador: '1',
-      fechaEmision: '24/06/2026',
-      metodoPago: 'Tarjeta de Crédito',
-      subtotal: '\$120.00',
-      montoImpuestos: '\$18.00',
-      montoPropina: '\$15.00',
-      montoTotal: '\$153.00',
-      numeroFacturaFiscal: 'NF-0010415',
-    ),
-    Factura(
-      name: 'FAC003',
-      mes: 'Enero',
-      isActive: true,
-      idFactura: '5102',
-      idOrden: '2195',
-      idMeseroAtendiente: '2',
-      idCajeroCobrador: '2',
-      fechaEmision: '15/01/2026',
-      metodoPago: 'Transferencia',
-      subtotal: '\$68.25',
-      montoImpuestos: '\$10.24',
-      montoPropina: '\$6.00',
-      montoTotal: '\$84.49',
-      numeroFacturaFiscal: 'NF-0008512',
-    ),
-    Factura(
-      name: 'FAC004',
-      mes: 'Noviembre',
-      isActive: true,
-      idFactura: '4',
-      idOrden: '7764',
-      idMeseroAtendiente: '8',
-      idCajeroCobrador: '1',
-      fechaEmision: '09/11/2026',
-      metodoPago: 'Tarjeta de Débito',
-      subtotal: '\$42.10',
-      montoImpuestos: '\$6.31',
-      montoPropina: '\$4.00',
-      montoTotal: '\$52.41',
-      numeroFacturaFiscal: 'NF-0011984',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _cargarFacturas();
+  }
+
+  void _cargarFacturas() {
+    _futureFacturas = _facturaRepository.obtenerFacturasActivas();
+  }
 
   @override
   void dispose() {
@@ -127,130 +41,201 @@ class _FacturaScreenState extends State<FacturaScreen> {
     super.dispose();
   }
 
-  // Filtra de manera exacta las facturas evaluando el campo del Mes (.mes)
-  List<Factura> get _filteredFacturas {
-    return _facturaList.where((factura) {
-      final query = _searchController.text.toLowerCase().trim();
-      final matchesSearch = factura.mes.toLowerCase().contains(query);
-
-      final cleanFilter = _selectedFilter.trim();
-      bool matchesStatus = cleanFilter == 'Todas';
-      if (!matchesStatus) {
-        if (cleanFilter == 'Activas') matchesStatus = factura.isActive;
-        if (cleanFilter == 'Inactivas') matchesStatus = !factura.isActive;
-      }
-
-      return matchesSearch && matchesStatus;
-    }).toList();
-  }
-
-  void _openFacturaDetailsModal(AppPalette c, Factura factura) {
-    showModalBottomSheet(
+  void _openFacturaDetailsModal(AppPalette c, FacturaModel factura) async {
+    // Mostramos un indicador de carga mientras consultamos el detalle de la orden
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: c.card,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        // 🛡️ SOLUCIÓN: El SafeArea evita que la barra del Xiaomi POCO F7 tape el botón rojo
-        return SafeArea(
-          top: false,
-          bottom:
-              true, // 👈 Crea el colchón dinámico contra los botones del sistema
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Detalle de Factura',
-                  style: TextStyle(
-                    color: Colors.transparent,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                    decorationColor: c.isDark
-                        ? const Color(0xFF00B4D8)
-                        : const Color(0xFF03738C),
-                    decorationThickness: 2.0,
-                    shadows: [
-                      Shadow(
-                        color: c.isDark
+      barrierDismissible: false,
+      builder: (_) =>
+          const Center(child: CircularProgressIndicator(color: AppColors.teal)),
+    );
+
+    try {
+      // Consumimos el endpoint real de detalle de la orden usando el id_orden de la factura
+      final List<DetalleOrdenModel> detalles = await _facturaRepository
+          .obtenerDetallePorOrden(factura.idOrden);
+
+      // Cerramos el indicador de carga
+      Navigator.pop(context);
+
+      // Abrimos el modal con la información consolidada
+      if (!mounted) return;
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: c.card,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) {
+          return SafeArea(
+            top: false,
+            bottom: true,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Detalle de Factura',
+                      style: TextStyle(
+                        color: Colors.transparent,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                        decorationColor: c.isDark
                             ? const Color(0xFF00B4D8)
                             : const Color(0xFF03738C),
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                _buildTextRow('Id_factura: ', factura.idFactura, c),
-                _buildTextRow('Id_orden: ', factura.idOrden, c),
-                _buildTextRow(
-                  'Id_mesero_atendiente: ',
-                  factura.idMeseroAtendiente,
-                  c,
-                ),
-                _buildTextRow(
-                  'Id_cajero_cobrador: ',
-                  factura.idCajeroCobrador,
-                  c,
-                ),
-                _buildTextRow('Fecha_emision: ', factura.fechaEmision, c),
-                _buildTextRow('Metodo_pago: ', factura.metodoPago, c),
-                _buildTextRow('Subtotal: ', factura.subtotal, c),
-                _buildTextRow('Monto_impuestos: ', factura.montoImpuestos, c),
-                _buildTextRow('Monto_propina: ', factura.montoPropina, c),
-                _buildTextRow('Monto_total: ', factura.montoTotal, c),
-                _buildTextRow(
-                  'Numero_factura_fiscal: ',
-                  factura.numeroFacturaFiscal,
-                  c,
-                ),
-                _buildTextRow('Activo: ', factura.isActive ? 'Si' : 'No', c),
-
-                const SizedBox(height: 24),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton.icon(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(
-                      Icons.cancel_outlined,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                    label: const Text(
-                      'Dejar de visualizar Detalle',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                        decorationThickness: 2.0,
+                        shadows: [
+                          Shadow(
+                            color: c.isDark
+                                ? const Color(0xFF00B4D8)
+                                : const Color(0xFF03738C),
+                            offset: const Offset(0, -4),
+                          ),
+                        ],
                       ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
+                    const SizedBox(height: 16),
+                    _buildTextRow(
+                      'Id_factura: ',
+                      factura.idFactura.toString(),
+                      c,
                     ),
-                  ),
+                    _buildTextRow('Id_orden: ', factura.idOrden.toString(), c),
+                    _buildTextRow(
+                      'Id_mesero_atendiente: ',
+                      factura.idMeseroAtendiente.toString(),
+                      c,
+                    ),
+                    _buildTextRow(
+                      'Id_cajero_cobrador: ',
+                      factura.idCajeroCobrador.toString(),
+                      c,
+                    ),
+                    _buildTextRow('Fecha_emision: ', factura.fechaEmision, c),
+                    _buildTextRow('Metodo_pago: ', factura.metodoPago, c),
+                    _buildTextRow(
+                      'Subtotal: ',
+                      '\$${factura.subtotal.toStringAsFixed(2)}',
+                      c,
+                    ),
+                    _buildTextRow(
+                      'Monto_impuestos: ',
+                      '\$${factura.montoImpuestos.toStringAsFixed(2)}',
+                      c,
+                    ),
+                    _buildTextRow(
+                      'Monto_propina: ',
+                      '\$${factura.montoPropina.toStringAsFixed(2)}',
+                      c,
+                    ),
+                    _buildTextRow(
+                      'Monto_total: ',
+                      '\$${factura.montoTotal.toStringAsFixed(2)}',
+                      c,
+                    ),
+                    _buildTextRow(
+                      'Numero_factura_fiscal: ',
+                      factura.numeroFacturaFiscal,
+                      c,
+                    ),
+                    _buildTextRow('Activo: ', factura.activo ? 'Si' : 'No', c),
+
+                    const Divider(height: 24),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Productos en la Orden:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Lista de platillos/productos asociados a la orden
+                    detalles.isEmpty
+                        ? const Text(
+                            'No hay detalles registrados para esta orden.',
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: detalles.length,
+                            itemBuilder: (context, i) {
+                              final item = detalles[i];
+                              return ListTile(
+                                dense: true,
+                                title: Text(
+                                  item.nombreProducto,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  'Cant: ${item.cantidad} • Nota: ${item.notas.isEmpty ? "Ninguna" : item.notas}',
+                                ),
+                                trailing: Text(
+                                  '\$${item.subtotal.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(
+                          Icons.cancel_outlined,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        label: const Text(
+                          'Dejar de visualizar Detalle',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    } catch (e) {
+      Navigator.pop(context); // Cerrar loader en caso de error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar detalle: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
-  // Helper para pintar de forma limpia cada línea de texto plano con encabezado en negrita
   Widget _buildTextRow(String header, String value, AppPalette c) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -272,7 +257,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.palette;
-    final filtered = _filteredFacturas;
 
     return Scaffold(
       appBar: AppBar(
@@ -314,16 +298,70 @@ class _FacturaScreenState extends State<FacturaScreen> {
               ),
               const SizedBox(height: 20),
               Expanded(
-                child: FacturaList(
-                  filteredFacturas: filtered,
-                  palette: c,
-                  onViewDetailsPressed: (factura, index) {
-                    _openFacturaDetailsModal(c, factura);
-                  },
-                  onToggleActive: (factura) {
-                    setState(() {
-                      factura.isActive = !factura.isActive;
-                    });
+                child: FutureBuilder<List<FacturaModel>>(
+                  future: _futureFacturas,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: AppColors.teal),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error al conectar con el servidor:\n${snapshot.error}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.red[300]),
+                        ),
+                      );
+                    }
+
+                    final listadoOriginal = snapshot.data ?? [];
+
+                    if (listadoOriginal.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'No hay facturas registradas',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: c.textMuted,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    }
+
+                    // Filtrado local en base al buscador y estado seleccionado
+                    final filtered = listadoOriginal.where((factura) {
+                      final query = _searchController.text.toLowerCase().trim();
+                      final matchesSearch =
+                          factura.numeroFacturaFiscal.toLowerCase().contains(
+                            query,
+                          ) ||
+                          factura.idFactura.toString().contains(query);
+
+                      final cleanFilter = _selectedFilter.trim();
+                      bool matchesStatus = cleanFilter == 'Todas';
+                      if (!matchesStatus) {
+                        if (cleanFilter == 'Activas')
+                          matchesStatus = factura.activo;
+                        if (cleanFilter == 'Inactivas')
+                          matchesStatus = !factura.activo;
+                      }
+
+                      return matchesSearch && matchesStatus;
+                    }).toList();
+
+                    return FacturaList(
+                      filteredFacturas:
+                          filtered, // Pasamos directamente la lista de modelos FacturaModel
+                      palette: c,
+                      onViewDetailsPressed: (factura, index) {
+                        _openFacturaDetailsModal(c, factura);
+                      },
+                      onToggleActive: (factura) {
+                        // Solo lectura, no se edita ni altera el estado desde la app móvil
+                      },
+                    );
                   },
                 ),
               ),
