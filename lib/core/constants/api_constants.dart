@@ -17,7 +17,12 @@ class ApiConstants {
     } catch (_) {
       // Manejo preventivo si dotenv no fue cargado
     }
-    return 'http://192.168.100.3:8080';
+
+    // Si es un emulador de Android, usa 10.0.2.2; de lo contrario, localhost
+    if (!kIsWeb && Platform.isAndroid) {
+      return 'http://10.0.2.2:8080';
+    }
+    return 'http://localhost:8080';
   }
 
   ApiConstants._privateConstructor();
