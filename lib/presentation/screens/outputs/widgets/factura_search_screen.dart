@@ -21,7 +21,7 @@ class FacturaSearch extends StatelessWidget {
       onChanged: (_) => onChanged(),
       style: TextStyle(color: palette.textPrimary),
       decoration: InputDecoration(
-        hintText: 'Buscar factura por nombre de Mes...',
+        hintText: 'Buscar factura por nombre Factura...',
         hintStyle: TextStyle(color: palette.textMuted, fontSize: 14),
         prefixIcon: Icon(Icons.search, color: palette.textMuted),
         filled: true,
