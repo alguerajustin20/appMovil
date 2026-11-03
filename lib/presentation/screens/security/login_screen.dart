@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../../../presentation/providers/auth_provider.dart';
 import '../../../service/auth_service.dart';
+import '../../../data/models/user_model.dart';
 import '../../../widgets/custom_bottom_navigation.dart';
 import 'widgets/login_form_card.dart';
 import 'widgets/login_header_widget.dart';
@@ -26,7 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _onLogin() async {
-    // 1. Ocultar teclado
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -34,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // 2. Ejecutar la llamada a la API en Docker
       final response = await _authService.iniciarSesion(
         _userController.text,
         _passwordController.text,
@@ -42,7 +43,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
-      // 3. Si el login es exitoso y es Admin, mostrar mensaje de bienvenida
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      if (response.usuario != null) {
+        final userModel = UserModel(
+          id: response
+              .usuario!
+              .idUsuario, // Usamos idUsuario como marca tu modelo de respuesta
+          idRol: response.usuario!.idRol,
+          nombreCompleto: response.usuario!.nombreCompleto,
+          username: response.usuario!.username,
+          activo: true, // Por defecto true para el usuario autenticado activo
+        );
+        authProvider.setUser(userModel);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -52,7 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-      // 4. Navegar a la pantalla principal (Dashboard)
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainNavigationScreen()),
@@ -60,9 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      // Extrae la causa o mensaje interno eliminando los prefijos de excepciones de Dart
       String errorMessage = e.toString();
-
       if (e is FormatException) {
         errorMessage = e.message;
       } else {

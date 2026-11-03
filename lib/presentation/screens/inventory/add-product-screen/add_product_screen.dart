@@ -7,7 +7,6 @@ import '../../../../data/models/categoria_model.dart';
 import '../../../../data/repositories/product_repository.dart';
 import '../../../../data/repositories/categoria_repository.dart';
 import '../widgets/product_list_item.dart';
-import '../widgets/product_form_card.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -21,13 +20,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _customCategoryController = TextEditingController();
-  final TextEditingController _customUnitController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _stockController = TextEditingController();
+  final TextEditingController _minStockController = TextEditingController(text: '5');
 
   bool _isInventoryable = true;
-  bool _showNewCategoryInput = false;
-  int _quantity = 1;
   int? _editingId;
   String? _selectedCategory;
   String _selectedStatusFilter = 'Todos';
@@ -102,9 +100,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void dispose() {
     _nameController.dispose();
     _customCategoryController.dispose();
-    _customUnitController.dispose();
     _searchController.dispose();
     _priceController.dispose();
+    _stockController.dispose();
+    _minStockController.dispose();
     super.dispose();
   }
 
@@ -129,13 +128,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void _clearForm() {
     _nameController.clear();
     _customCategoryController.clear();
-    _customUnitController.clear();
     _priceController.clear();
+    _stockController.clear();
+    _minStockController.text = '5';
     setState(() {
       _editingId = null;
       _selectedCategory = null;
-      _showNewCategoryInput = false;
-      _quantity = 1;
+      _isInventoryable = true;
     });
   }
 
@@ -144,25 +143,78 @@ class _AddProductScreenState extends State<AddProductScreen> {
       _editingId = item.id;
       _nameController.text = item.nombre;
       _priceController.text = item.precioUnitario.toString();
-      final categoryNames = _categoryList.map((c) => c.nombre).toList();
+      _stockController.text = item.stock.toString();
+      _minStockController.text = item.stockMinimo.toString();
+      _isInventoryable = item.esInventariable;
+      
+      final categoryNames = _categoryList.map((c) => c.nombre).toSet().toList();
       if (categoryNames.contains(item.categoria)) {
         _selectedCategory = item.categoria;
-        _showNewCategoryInput = false;
       } else {
         _selectedCategory = null;
-        _customCategoryController.text = item.categoria;
-        _showNewCategoryInput = true;
       }
-      _quantity = item.stock > 0 ? item.stock : 1;
-      _isInventoryable = item.stock > 0;
     });
     _showProductFormModal();
   }
 
+  void _showAddCategoryDialog(StateSetter setStateModal) {
+    _customCategoryController.clear();
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        final c = context.palette;
+        return AlertDialog(
+          backgroundColor: c.card,
+          title: Text('Nueva Categoría', style: TextStyle(color: c.textPrimary, fontSize: 16)),
+          content: TextField(
+            controller: _customCategoryController,
+            style: TextStyle(color: c.textPrimary, fontSize: 14),
+            decoration: _buildInputDecoration(c, hintText: 'Nombre de categoría'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text('Cancelar', style: TextStyle(color: c.textMuted)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal),
+              onPressed: () async {
+                final newCatName = _customCategoryController.text.trim();
+                if (newCatName.isNotEmpty) {
+                  try {
+                    await _categoriaRepository.crear(CategoriaModel(
+                      idCategoria: 0,
+                      nombre: newCatName,
+                      activo: true,
+                    ));
+                    
+                    // Recargamos las categorías en la pantalla principal
+                    await _loadCategories();
+
+                    // Actualizamos el estado interno del modal y seleccionamos la nueva categoría al instante
+                    setStateModal(() {
+                      _selectedCategory = newCatName;
+                    });
+
+                    if (mounted) Navigator.of(dialogContext).pop();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error al crear categoría: $e'), backgroundColor: Colors.redAccent),
+                    );
+                  }
+                }
+              },
+              child: const Text('Guardar', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showProductFormModal() {
     final c = context.palette;
-    final categoryNames = _categoryList.map((cat) => cat.nombre).toList();
-
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -173,6 +225,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setStateModal) {
+            final categoryNames = _categoryList.map((cat) => cat.nombre).toSet().toList();
+
             return SafeArea(
               top: false,
               bottom: true,
@@ -209,39 +263,71 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        ProductFormCard(
-                          isEditing: _editingId != null,
-                          nameController: _nameController,
-                          customCategoryController: _customCategoryController,
-                          showNewCategoryInput: _showNewCategoryInput,
-                          isInventoryable: _isInventoryable,
-                          quantity: _quantity,
-                          selectedCategory: _selectedCategory,
-                          categories: categoryNames,
-                          palette: c,
-                          onCancelEditing: () {
-                            _clearForm();
-                            Navigator.of(context).pop();
-                          },
-                          onToggleCategoryInput: () => setStateModal(() {
-                            _showNewCategoryInput = !_showNewCategoryInput;
-                          }),
-                          onInventoryableChanged: (val) => setStateModal(() {
-                            _isInventoryable = val;
-                          }),
-                          onQuantityChanged: (val) => setStateModal(() {
-                            _quantity = val;
-                          }),
-                          onCategoryChanged: (val) => setStateModal(() {
-                            _selectedCategory = val;
-                          }),
-                          onManageCategories: () {},
-                          buildFieldLabel: _buildFieldLabel,
-                          buildInputDecoration: _buildInputDecoration,
+                        _buildFieldLabel('Nombre del producto', c),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _nameController,
+                          style: TextStyle(color: c.textPrimary, fontSize: 14),
+                          decoration: _buildInputDecoration(c, hintText: 'Ej. Coca Cola', prefixIcon: Icons.shopping_bag_outlined),
+                          validator: (value) => (value == null || value.trim().isEmpty) ? 'Ingresa el nombre' : null,
                         ),
                         const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildFieldLabel('Categoría', c),
+                            GestureDetector(
+                              onTap: () => _showAddCategoryDialog(setStateModal),
+                              child: const Text(
+                                '+ Nueva categoría',
+                                style: TextStyle(color: AppColors.teal, fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        DropdownButtonFormField<String>(
+                          value: (_selectedCategory != null && categoryNames.contains(_selectedCategory)) 
+                              ? _selectedCategory 
+                              : null,
+                          dropdownColor: c.card,
+                          style: TextStyle(color: c.textPrimary, fontSize: 14),
+                          decoration: _buildInputDecoration(c, hintText: 'Selecciona una categoría'),
+                          items: categoryNames.map((cat) {
+                            return DropdownMenuItem(value: cat, child: Text(cat));
+                          }).toList(),
+                          onChanged: (val) => setStateModal(() => _selectedCategory = val),
+                          validator: (val) => (val == null) ? 'Selecciona una categoría' : null,
+                        ),
+                        const SizedBox(height: 12),
+                        CheckboxListTile(
+                          title: Text('Producto inventariable', style: TextStyle(color: c.textPrimary, fontSize: 14)),
+                          value: _isInventoryable,
+                          activeColor: AppColors.teal,
+                          contentPadding: EdgeInsets.zero,
+                          controlAffinity: ListTileControlAffinity.trailing,
+                          onChanged: (val) => setStateModal(() => _isInventoryable = val ?? true),
+                        ),
                         
-                        // --- Campo de Precio con C$ integrado ---
+                        if (_isInventoryable) ...[
+                          const SizedBox(height: 12),
+                          _buildFieldLabel('Stock actual', c),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _stockController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(color: c.textPrimary, fontSize: 14),
+                            decoration: _buildInputDecoration(c, hintText: 'Ej. 10', prefixIcon: Icons.inventory_2_outlined),
+                            validator: (value) {
+                              if (_isInventoryable && (value == null || value.trim().isEmpty)) {
+                                return 'Ingresa el stock actual';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+
+                        const SizedBox(height: 12),
                         _buildFieldLabel('Precio Unitario', c),
                         const SizedBox(height: 6),
                         TextFormField(
@@ -286,7 +372,31 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             return null;
                           },
                         ),
-                        // ----------------------------------------
+
+                        if (_isInventoryable) ...[
+                          const SizedBox(height: 12),
+                          _buildFieldLabel('Stock Mínimo', c),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _minStockController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(color: c.textPrimary, fontSize: 14),
+                            decoration: _buildInputDecoration(
+                              c,
+                              hintText: 'Ej. 5',
+                              prefixIcon: Icons.warning_amber_rounded,
+                            ),
+                            validator: (value) {
+                              if (_isInventoryable && (value == null || value.trim().isEmpty)) {
+                                return 'Ingresa el stock mínimo';
+                              }
+                              if (value != null && int.tryParse(value.trim()) == null) {
+                                return 'Ingresa un número entero válido';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
 
                         const SizedBox(height: 16),
                         SizedBox(
@@ -335,30 +445,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Future<void> _saveProduct() async {
     final productName = _nameController.text.trim();
-    final categoryToUse = _showNewCategoryInput
-        ? _customCategoryController.text.trim()
-        : (_selectedCategory ?? 'General');
+    final categoryToUse = _selectedCategory ?? 'General';
     final parsedPrice = double.tryParse(_priceController.text.trim()) ?? 0.0;
+    
+    final parsedStock = _isInventoryable ? (int.tryParse(_stockController.text.trim()) ?? 0) : 0;
+    final parsedMinStock = _isInventoryable ? (int.tryParse(_minStockController.text.trim()) ?? 5) : 5;
 
     final nuevoProducto = ProductModel(
       id: _editingId,
       nombre: productName,
       categoria: categoryToUse,
       precioUnitario: parsedPrice,
-      stock: _isInventoryable ? _quantity : 0,
-      activo: true,
+      stock: parsedStock,
+      stockMinimo: parsedMinStock,
+      activo: true, // Asegura que siempre se registre como activo en la BD
+      esInventariable: _isInventoryable,
     );
 
     try {
-      if (_showNewCategoryInput && categoryToUse.isNotEmpty) {
-        await _categoriaRepository.crear(CategoriaModel(
-          idCategoria: 0,
-          nombre: categoryToUse,
-          activo: true,
-        ));
-        await _loadCategories();
-      }
-
       if (_editingId != null) {
         await _productRepository.actualizar(_editingId!, nuevoProducto);
       } else {
@@ -368,38 +472,41 @@ class _AddProductScreenState extends State<AddProductScreen> {
       await _loadProducts(_selectedStatusFilter);
       _clearForm();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_editingId != null ? '¡Producto actualizado!' : '¡Producto registrado!'),
-          backgroundColor: AppColors.teal,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_editingId != null ? '¡Producto actualizado!' : '¡Producto registrado!'),
+            backgroundColor: AppColors.teal,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.redAccent),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.redAccent),
+        );
+      }
     }
   }
 
   Future<void> _toggleProductStatus(ProductModel item, AppPalette c) async {
     if (item.id == null) return;
     try {
-      if (item.activo) {
-        await _productRepository.cambiarEstado(item.id!);
-      } else {
-        await _productRepository.restaurar(item.id!);
-      }
-      
+      await _productRepository.cambiarEstado(item.id!, item);
       await _loadProducts(_selectedStatusFilter);
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Estado actualizado correctamente'), backgroundColor: AppColors.teal),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Estado actualizado correctamente'), backgroundColor: AppColors.teal),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cambiar estado: $e'), backgroundColor: Colors.redAccent),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al cambiar estado: $e'), backgroundColor: Colors.redAccent),
+        );
+      }
     }
   }
 

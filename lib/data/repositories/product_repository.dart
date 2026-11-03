@@ -8,19 +8,16 @@ class ProductRepository {
 
   ProductRepository(this._apiClient);
 
-  // GET /api/Productos/activos
   Future<List<ProductModel>> getActivos() async {
     final response = await _apiClient.get('${ApiConstants.productos}/activos');
     return _parseList(response);
   }
 
-  // GET /api/Productos/inactivos
   Future<List<ProductModel>> getInactivos() async {
     final response = await _apiClient.get('${ApiConstants.productos}/inactivos');
     return _parseList(response);
   }
 
-  // POST /api/Productos
   Future<String> crear(ProductModel producto) async {
     final response = await _apiClient.post(
       ApiConstants.productos,
@@ -29,7 +26,6 @@ class ProductRepository {
     return _extractMessage(response, fallback: 'Producto creado con éxito');
   }
 
-  // PUT /api/Productos/{id}
   Future<String> actualizar(int id, ProductModel producto) async {
     final response = await _apiClient.put(
       '${ApiConstants.productos}/$id',
@@ -37,15 +33,21 @@ class ProductRepository {
     );
     return _extractMessage(response, fallback: 'Producto actualizado con éxito');
   }
-  // PATCH /api/Productos/restaurar/{id}
+
   Future<String> restaurar(int id) async {
     final response = await _apiClient.patch('${ApiConstants.productos}/restaurar/$id');
     return _extractMessage(response, fallback: 'Producto restaurado con éxito');
   }
 
-  // DELETE o PATCH para cambiar estado (ej: desactivar)
-  Future<String> cambiarEstado(int id) async {
-    final response = await _apiClient.delete('${ApiConstants.productos}/$id');
+  Future<String> cambiarEstado(int id, ProductModel productoActual) async {
+    dynamic response;
+    
+    if (productoActual.activo) {
+      response = await _apiClient.delete('${ApiConstants.productos}/$id');
+    } else {
+      response = await _apiClient.patch('${ApiConstants.productos}/restaurar/$id');
+    }
+
     return _extractMessage(response, fallback: 'Estado cambiado con éxito');
   }
 
