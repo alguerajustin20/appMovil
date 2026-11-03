@@ -9,7 +9,6 @@ class CategoriaModel {
     required this.activo,
   });
 
-  // Getters auxiliares para mantener compatibilidad con los widgets existentes
   String get code => idCategoria.toString();
   String get name => nombre;
   bool get isActive => activo;

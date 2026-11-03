@@ -157,56 +157,145 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _showProductFormModal();
   }
 
+  Future<List<CategoriaModel>> _fetchAllCategoriesSafely() async {
+    try {
+      return await _categoriaRepository.getTodas();
+    } catch (_) {
+      try {
+        return await _categoriaRepository.getActivos();
+      } catch (_) {
+        return [];
+      }
+    }
+  }
+
   void _showAddCategoryDialog(StateSetter setStateModal) {
     _customCategoryController.clear();
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         final c = context.palette;
-        return AlertDialog(
-          backgroundColor: c.card,
-          title: Text('Nueva Categoría', style: TextStyle(color: c.textPrimary, fontSize: 16)),
-          content: TextField(
-            controller: _customCategoryController,
-            style: TextStyle(color: c.textPrimary, fontSize: 14),
-            decoration: _buildInputDecoration(c, hintText: 'Nombre de categoría'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text('Cancelar', style: TextStyle(color: c.textMuted)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.teal),
-              onPressed: () async {
-                final newCatName = _customCategoryController.text.trim();
-                if (newCatName.isNotEmpty) {
-                  try {
-                    await _categoriaRepository.crear(CategoriaModel(
-                      idCategoria: 0,
-                      nombre: newCatName,
-                      activo: true,
-                    ));
-                    
-                    // Recargamos las categorías en la pantalla principal
-                    await _loadCategories();
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: c.card,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Gestionar Categorías', style: TextStyle(color: c.textPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
+                  IconButton(
+                    icon: Icon(Icons.close, color: c.textMuted),
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _customCategoryController,
+                            style: TextStyle(color: c.textPrimary, fontSize: 14),
+                            decoration: _buildInputDecoration(c, hintText: 'Nueva categoría'),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: () async {
+                            final newCatName = _customCategoryController.text.trim();
+                            if (newCatName.isNotEmpty) {
+                              try {
+                                await _categoriaRepository.crear(CategoriaModel(
+                                  idCategoria: 0,
+                                  nombre: newCatName,
+                                  activo: true,
+                                ));
+                                _customCategoryController.clear();
+                                await _loadCategories();
+                                setStateDialog(() {}); // Refresca el diálogo
+                                setStateModal(() {
+                                  _selectedCategory = newCatName;
+                                });
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error al crear: $e'), backgroundColor: Colors.redAccent),
+                                );
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.add_circle, color: AppColors.teal, size: 32),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: FutureBuilder<List<CategoriaModel>>(
+                        future: _fetchAllCategoriesSafely(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          
+                          final allCategories = snapshot.data ?? [];
 
-                    // Actualizamos el estado interno del modal y seleccionamos la nueva categoría al instante
-                    setStateModal(() {
-                      _selectedCategory = newCatName;
-                    });
+                          if (allCategories.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Text('No hay categorías registradas', style: TextStyle(color: c.textMuted, fontSize: 13)),
+                            );
+                          }
 
-                    if (mounted) Navigator.of(dialogContext).pop();
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error al crear categoría: $e'), backgroundColor: Colors.redAccent),
-                    );
-                  }
-                }
-              },
-              child: const Text('Guardar', style: TextStyle(color: Colors.white)),
-            ),
-          ],
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: allCategories.length,
+                            itemBuilder: (context, index) {
+                              final cat = allCategories[index];
+                              return ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                title: Text(
+                                  cat.nombre,
+                                  style: TextStyle(
+                                    color: cat.activo ? c.textPrimary : c.textMuted,
+                                    decoration: cat.activo ? null : TextDecoration.lineThrough,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                trailing: Switch(
+                                  value: cat.activo,
+                                  activeColor: AppColors.teal,
+                                  onChanged: (val) async {
+                                    try {
+                                      await _categoriaRepository.cambiarEstado(cat.idCategoria, cat.activo);
+                                      await _loadCategories();
+                                      setStateDialog(() {}); // Refresca el FutureBuilder del diálogo
+                                      setStateModal(() {}); // Refresca el formulario principal
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Error al cambiar estado: $e'), backgroundColor: Colors.redAccent),
+                                      );
+                                    }
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -279,7 +368,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             GestureDetector(
                               onTap: () => _showAddCategoryDialog(setStateModal),
                               child: const Text(
-                                '+ Nueva categoría',
+                                '+ Gestionar / Nueva',
                                 style: TextStyle(color: AppColors.teal, fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -458,7 +547,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       precioUnitario: parsedPrice,
       stock: parsedStock,
       stockMinimo: parsedMinStock,
-      activo: true, // Asegura que siempre se registre como activo en la BD
+      activo: true,
       esInventariable: _isInventoryable,
     );
 
