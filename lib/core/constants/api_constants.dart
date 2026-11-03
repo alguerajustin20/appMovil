@@ -7,7 +7,7 @@ class ApiConstants {
   /// Si existe en el .env la usa; si no, toma por defecto la IP del emulador (10.0.2.2:8080).
   String get baseUrl {
     try {
-      final configured = dotenv.env['BASE_API_URL'];
+      final configured = dotenv.env['API_BASE_URL'];
       if (configured != null && configured.isNotEmpty) {
         if (!kIsWeb && Platform.isAndroid && configured.contains('localhost')) {
           return configured.replaceAll('localhost', '10.0.2.2');
@@ -19,10 +19,10 @@ class ApiConstants {
     }
 
     // Si es un emulador de Android, usa 10.0.2.2; de lo contrario, localhost
-    if (!kIsWeb && Platform.isAndroid) {
-      return 'http://10.0.2.2:8080';
-    }
-    return 'http://192.168.1.45:8080';
+    // if (!kIsWeb && Platform.isAndroid) {
+    //   return 'http://10.0.2.2:8080';
+    // }
+    return 'https://abuelapatio-atf8cag0bvgxcqbt.canadacentral-01.azurewebsites.net';
   }
 
   ApiConstants._privateConstructor();
