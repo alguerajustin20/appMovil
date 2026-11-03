@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:integrador_vi_mobile/data/models/factura_model.dart';
 import 'package:integrador_vi_mobile/theme/app_colors.dart';
 import 'package:integrador_vi_mobile/theme/app_theme.dart';
 
 class FacturaList extends StatelessWidget {
-  final List<dynamic> filteredFacturas;
+  final List<FacturaModel> filteredFacturas;
   final AppPalette palette;
-  final Function(dynamic, int) onViewDetailsPressed;
-  final Function(dynamic) onToggleActive;
+  final Function(FacturaModel, int) onViewDetailsPressed;
+  final Function(FacturaModel) onToggleActive;
 
   const FacturaList({
     super.key,
@@ -55,7 +56,7 @@ class FacturaList extends StatelessWidget {
             color: palette.card,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: factura.isActive
+              color: factura.activo
                   ? AppColors.teal.withOpacity(0.3)
                   : palette.cardBorder,
             ),
@@ -67,7 +68,7 @@ class FacturaList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      factura.name,
+                      factura.numeroFacturaFiscal,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -77,29 +78,26 @@ class FacturaList extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: () => onToggleActive(factura),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: factura.isActive
-                                  ? Colors.green.withOpacity(0.12)
-                                  : Colors.grey.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              factura.isActive ? 'Activa' : 'Inactiva',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: factura.isActive
-                                    ? Colors.green
-                                    : Colors.grey,
-                              ),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: factura.activo
+                                ? Colors.green.withOpacity(0.12)
+                                : Colors.grey.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            factura.activo ? 'Activa' : 'Inactiva',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: factura.activo
+                                  ? Colors.green
+                                  : Colors.grey,
                             ),
                           ),
                         ),
@@ -107,22 +105,18 @@ class FacturaList extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Mes • ${factura.mes}',
+                      'Fecha • ${factura.fechaEmision.length >= 10 ? factura.fechaEmision.substring(0, 10) : factura.fechaEmision}',
                       style: TextStyle(fontSize: 12, color: palette.textMuted),
                     ),
                   ],
                 ),
               ),
 
-              // Se añade el widget Material para activar el efecto de onda táctil (Ripple)
               Material(
-                color: Colors
-                    .transparent, // Mantiene el fondo limpio de tu tarjeta
+                color: Colors.transparent,
                 child: InkWell(
                   onTap: () => onViewDetailsPressed(factura, index),
-                  borderRadius: BorderRadius.circular(
-                    8,
-                  ), // Redondeado para que la onda no se desborde
+                  borderRadius: BorderRadius.circular(8),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10.0,
