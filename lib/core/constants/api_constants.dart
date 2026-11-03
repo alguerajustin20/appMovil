@@ -22,7 +22,7 @@ class ApiConstants {
     if (!kIsWeb && Platform.isAndroid) {
       return 'http://10.0.2.2:8080';
     }
-    return 'http://localhost:8080';
+    return 'http://192.168.1.45:8080';
   }
 
   ApiConstants._privateConstructor();
