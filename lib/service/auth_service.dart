@@ -83,7 +83,6 @@ class AuthService {
                   .trim()
                   .toLowerCase();
 
-          // Si coincide el ID o el Username con la lista de inactivos, retorna true
           if ((idUsuario > 0 && inactivoId == idUsuario) ||
               (inactivoUsername.isNotEmpty &&
                   inactivoUsername == username.trim().toLowerCase())) {
@@ -97,13 +96,11 @@ class AuthService {
     }
   }
 
-  /// Cierra la sesión en el backend (invalida el token en Redis) y limpia credenciales locales
   Future<void> cerrarSesion(String token) async {
     try {
       final baseUrl = ApiConstants.instance.baseUrl;
       final url = Uri.parse('$baseUrl${ApiConstants.logout}');
 
-      // Petición POST al endpoint de logout que ya mapee en ApiConstants
       final response = await _client.post(
         url,
         headers: {

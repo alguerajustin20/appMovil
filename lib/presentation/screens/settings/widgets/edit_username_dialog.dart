@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_theme.dart';
 
-/// Abre el diálogo y devuelve el nuevo nombre, o null si se canceló o quedó vacío.
 Future<String?> showEditUsernameDialog(
   BuildContext context,
   String currentName,

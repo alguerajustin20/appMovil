@@ -7,7 +7,6 @@ class MetricsService {
 
   MetricsService(this._apiClient);
 
-  /// Obtiene los logs generales del sistema (/api/Metrics/system-logs)
   Future<List<dynamic>> getSystemLogs() async {
     try {
       final response = await _apiClient.get(ApiConstants.systemLogs);
@@ -18,7 +17,6 @@ class MetricsService {
     }
   }
 
-  /// Obtiene la telemetría y métricas de rendimiento (/api/Metrics/requests)
   Future<List<dynamic>> getRequestMetrics() async {
     try {
       final response = await _apiClient.get(ApiConstants.metricRequests);
@@ -29,7 +27,6 @@ class MetricsService {
     }
   }
 
-  /// Método auxiliar para extraer la lista de cualquier envoltorio del API
   List<dynamic> _parseListResponse(dynamic response) {
     if (response is List) {
       return response;

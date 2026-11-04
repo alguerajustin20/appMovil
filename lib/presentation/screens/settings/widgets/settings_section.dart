@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../theme/app_theme.dart';
 
-/// Etiqueta de sección + tarjeta con sus filas. Inserta los divisores solo.
 class SettingsSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
@@ -39,8 +38,7 @@ class SettingsSection extends StatelessWidget {
             ),
           ),
         ),
-        // Material (y no Container con color) para que el efecto de toque
-        // de los ListTile se vea sobre la tarjeta.
+
         Material(
           color: c.card,
           clipBehavior: Clip.antiAlias,

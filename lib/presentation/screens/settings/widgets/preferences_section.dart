@@ -3,8 +3,6 @@ import '../../../../main.dart';
 import 'settings_section.dart';
 import 'settings_switch_tile.dart';
 
-/// Sección PREFERENCIAS: por ahora solo el Modo Oscuro.
-/// Escucha el themeNotifier global, así la pantalla no necesita setState.
 class PreferencesSection extends StatelessWidget {
   const PreferencesSection({super.key});
 

@@ -158,7 +158,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                 const SizedBox(height: 25),
 
-                // 📊 COMPONENTE GRÁFICO INTERACTIVO NATIVO
                 const DashboardBench(),
 
                 const SizedBox(height: 15),

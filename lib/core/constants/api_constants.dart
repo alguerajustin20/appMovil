@@ -3,8 +3,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiConstants {
-  /// Obtiene la URL base de la API.
-  /// Si existe en el .env la usa; si no, toma por defecto la IP del emulador (10.0.2.2:8080).
   String get baseUrl {
     try {
       final configured = dotenv.env['API_BASE_URL'];
@@ -14,9 +12,7 @@ class ApiConstants {
         }
         return configured;
       }
-    } catch (_) {
-      // Manejo preventivo si dotenv no fue cargado
-    }
+    } catch (_) {}
 
     // Si es un emulador de Android, usa 10.0.2.2; de lo contrario, localhost
     // if (!kIsWeb && Platform.isAndroid) {

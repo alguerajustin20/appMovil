@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Define los dos temas de la app (claro/oscuro).
-/// Se conecta en main.dart junto con themeNotifier.
 class AppTheme {
   static final light = ThemeData(
     useMaterial3: true,
@@ -43,7 +41,6 @@ class AppTheme {
   );
 }
 
-// Define colores y estilos de texto que no cambian entre temas.
 @immutable
 class AppPalette extends ThemeExtension<AppPalette> {
   final bool isDark;
@@ -76,15 +73,11 @@ class AppPalette extends ThemeExtension<AppPalette> {
 
   static const dark = AppPalette(
     isDark: true,
-    card: Color(
-      0xFF1E1E1E,
-    ), // Gris carbón oscuro (el mismo de las tarjetas de Ajustes)
-    cardBorder: Color(0xFF2C2C2C), // Borde sutil gris oscuro
-    textPrimary: Colors.white, // Texto principal blanco
-    textMuted: Color(0xFF9E9E9E), // Texto secundario / subtítulos
-    inputFill: Color(
-      0xFF121212,
-    ), // Fondo muy oscuro para los inputs adentro de la tarjeta
+    card: Color(0xFF1E1E1E),
+    cardBorder: Color(0xFF2C2C2C),
+    textPrimary: Colors.white,
+    textMuted: Color(0xFF9E9E9E),
+    inputFill: Color(0xFF121212),
     sectionLabel: Color(0xFFFDB653),
   );
 
@@ -124,7 +117,6 @@ class AppPalette extends ThemeExtension<AppPalette> {
   }
 }
 
-/// Atajo: en cualquier pantalla `context.palette.card`
 extension AppPaletteContext on BuildContext {
   AppPalette get palette =>
       Theme.of(this).extension<AppPalette>() ?? AppPalette.light;

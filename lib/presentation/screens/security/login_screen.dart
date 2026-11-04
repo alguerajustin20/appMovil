@@ -47,13 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.usuario != null) {
         final userModel = UserModel(
-          id: response
-              .usuario!
-              .idUsuario, // Usamos idUsuario como marca tu modelo de respuesta
+          id: response.usuario!.idUsuario,
           idRol: response.usuario!.idRol,
           nombreCompleto: response.usuario!.nombreCompleto,
           username: response.usuario!.username,
-          activo: true, // Por defecto true para el usuario autenticado activo
+          activo: true,
         );
         authProvider.setUser(userModel);
       }

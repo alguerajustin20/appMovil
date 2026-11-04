@@ -124,7 +124,6 @@ class _SystemMonitoringScreenState extends State<SystemMonitoringScreen>
           );
         }
 
-        // Calculamos un promedio de latencia total rápida
         final avgDuration = provider.requestMetrics.isEmpty
             ? 0
             : (provider.requestMetrics

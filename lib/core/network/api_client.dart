@@ -3,8 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/api_constants.dart';
 
-/// Cliente HTTP personalizado para gestionar peticiones a la API en Docker
-/// con soporte automático de renovación de Access Token (15 min) vía Refresh Token (8 horas).
 class ApiClient {
   final http.Client _client;
   String? _accessToken;
@@ -105,7 +103,6 @@ class ApiClient {
       print('Error en renovación automática de token: $e');
     }
 
-    // Si falló el refresh (expiraron las 8 horas), limpiamos sesión.
     await clearAuthToken();
     return false;
   }

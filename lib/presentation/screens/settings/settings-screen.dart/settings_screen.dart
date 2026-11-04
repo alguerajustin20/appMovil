@@ -101,11 +101,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final c = context.palette;
 
-    // Obtenemos el usuario autenticado desde el AuthProvider
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.currentUser;
 
-    // Asignamos los datos reales extraídos del modelo UserModel de forma limpia
     final String nombreCompleto = user?.nombreCompleto ?? 'Invitado';
     final String username = user?.username ?? 'Sin usuario';
     final String userRole = authProvider.getRolName();
@@ -140,9 +138,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           SettingsProfileCard(
-            userName: nombreCompleto, // Muestra el nombre completo en grande
-            userEmail: username, // Muestra el username abajo
-            userRole: userRole, // Muestra el rol
+            userName: nombreCompleto,
+            userEmail: username,
+            userRole: userRole,
             onEdit: _editUsername,
           ),
 

@@ -42,7 +42,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
   }
 
   void _openFacturaDetailsModal(AppPalette c, FacturaModel factura) async {
-    // Mostramos un indicador de carga mientras consultamos el detalle de la orden
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -51,14 +50,11 @@ class _FacturaScreenState extends State<FacturaScreen> {
     );
 
     try {
-      // Consumimos el endpoint real de detalle de la orden usando el id_orden de la factura
       final List<DetalleOrdenModel> detalles = await _facturaRepository
           .obtenerDetallePorOrden(factura.idOrden);
 
-      // Cerramos el indicador de carga
       Navigator.pop(context);
 
-      // Abrimos el modal con la información consolidada
       if (!mounted) return;
       showModalBottomSheet(
         context: context,
@@ -226,7 +222,7 @@ class _FacturaScreenState extends State<FacturaScreen> {
         },
       );
     } catch (e) {
-      Navigator.pop(context); // Cerrar loader en caso de error
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error al cargar detalle: $e'),
@@ -330,7 +326,6 @@ class _FacturaScreenState extends State<FacturaScreen> {
                       );
                     }
 
-                    // Filtrado local en base al buscador y estado seleccionado
                     final filtered = listadoOriginal.where((factura) {
                       final query = _searchController.text.toLowerCase().trim();
                       final matchesSearch =
@@ -352,15 +347,12 @@ class _FacturaScreenState extends State<FacturaScreen> {
                     }).toList();
 
                     return FacturaList(
-                      filteredFacturas:
-                          filtered, // Pasamos directamente la lista de modelos FacturaModel
+                      filteredFacturas: filtered,
                       palette: c,
                       onViewDetailsPressed: (factura, index) {
                         _openFacturaDetailsModal(c, factura);
                       },
-                      onToggleActive: (factura) {
-                        // Solo lectura, no se edita ni altera el estado desde la app móvil
-                      },
+                      onToggleActive: (factura) {},
                     );
                   },
                 ),

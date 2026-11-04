@@ -12,7 +12,7 @@ class MetricsProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
-  List<MetricModel> get metrics => _logs; // Para compatibilidad
+  List<MetricModel> get metrics => _logs;
   List<MetricModel> get logs => _logs;
   List<RequestMetricModel> get requestMetrics => _requestMetrics;
   bool get isLoading => _isLoading;
@@ -24,7 +24,6 @@ class MetricsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Ejecutamos ambas peticiones a Docker en paralelo para mayor velocidad
       final results = await Future.wait([
         _metricsService.getSystemLogs(),
         _metricsService.getRequestMetrics(),

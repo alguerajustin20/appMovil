@@ -91,18 +91,12 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
       final prefs = await SharedPreferences.getInstance();
 
       final int userId =
-          prefs.getInt('user_id') ??
-          prefs.getInt('id_usuario') ??
-          1; // Pon tu ID por defecto o el que corresponda
-      final String username =
-          prefs.getString('username') ??
-          'vader30'; // Visto en tu pantalla de Ajustes
+          prefs.getInt('user_id') ?? prefs.getInt('id_usuario') ?? 1;
+      final String username = prefs.getString('username') ?? 'vader30';
       final String nombreCompleto =
           prefs.getString('nombre_completo') ?? 'Lordvader';
-      final int idRol =
-          prefs.getInt('id_rol') ?? 1; // Rol de administrador típico
+      final int idRol = prefs.getInt('id_rol') ?? 1;
 
-      // 2. Instanciamos el UserService y ejecutamos el PUT al endpoint de C#
       final userService = UserService();
       await userService.updateUserPassword(
         userId: userId,
@@ -114,7 +108,7 @@ class _ChangePasswordDialogState extends State<_ChangePasswordDialog> {
 
       if (!mounted) return;
 
-      Navigator.pop(context); // Cierra el diálogo
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('¡Contraseña actualizada con éxito en la BD!'),

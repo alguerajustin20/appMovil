@@ -9,7 +9,6 @@ class LogsHeaderWidget extends StatelessWidget implements PreferredSizeWidget {
 
   const LogsHeaderWidget({super.key, required this.controller});
 
-  // Alto del AppBar (kToolbarHeight) + alto de un Tab con icono y texto (72)
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 72);
 

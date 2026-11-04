@@ -27,7 +27,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> loadSessionFromDisk() async {
     final prefs = await SharedPreferences.getInstance();
-    // Si guardaste el json del usuario o sus datos:
+
     // final userJson = prefs.getString('current_user');
     // if (userJson != null) {
     //   _currentUser = UserModel.fromJson(jsonDecode(userJson));
@@ -70,13 +70,11 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Asigna directamente el usuario (por ejemplo, al recuperar sesión almacenada)
   void setUser(UserModel user) {
     _currentUser = user;
     notifyListeners();
   }
 
-  /// Traduce el id_rol numérico del modelo de tu compañero a un texto legible
   String getRolName() {
     if (_currentUser == null) return 'Administrador';
     switch (_currentUser!.idRol) {
@@ -91,19 +89,14 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Cierra sesión limpiando tokens y estado local
   Future<void> logout() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Obtenemos el token actual del ApiClient para pasárselo al servicio
-      final token =
-          await _apiClient.getAccessToken() ??
-          ''; // O como guardes tu token actual en el cliente
+      final token = await _apiClient.getAccessToken() ?? '';
 
       if (token.isNotEmpty) {
-        // Llamamos al método que creamos en el AuthService
         await _authService.cerrarSesion(token);
       }
     } catch (e) {

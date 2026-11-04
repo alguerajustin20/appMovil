@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Permiso obligatorio para permitir solicitudes de red e internet hacia Azure -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:label="Patio Admin"
         android:name="${applicationName}"

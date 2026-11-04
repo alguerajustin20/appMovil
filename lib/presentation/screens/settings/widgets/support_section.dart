@@ -3,7 +3,6 @@ import 'help_dialog.dart';
 import 'settings_nav_tile.dart';
 import 'settings_section.dart';
 
-/// Sección SOPORTE: centro de ayuda y versión de la app.
 class SupportSection extends StatelessWidget {
   const SupportSection({super.key});
 

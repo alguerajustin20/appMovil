@@ -5,7 +5,6 @@ import 'settings_nav_tile.dart';
 import 'settings_section.dart';
 import '../../logs/activity-logs-screen/activity_logs_screen.dart';
 
-/// Sección CUENTA: perfil, seguridad y próximamente bitácora de actividad.
 class AccountSection extends StatelessWidget {
   final String userName;
 
@@ -25,14 +24,14 @@ class AccountSection extends StatelessWidget {
           onTap: () {},
         ),
         // Los nombres de estos dos PNG están "al revés" a propósito:
-        // así quedaron exportados (candado_oscuro es el de trazo oscuro).
+        // as.
         // SettingsNavTile(
         //    iconLight: 'assets/icons/security/candado_oscuro.png',
         //    iconDark: 'assets/icons/security/candado_claro.png',
         //     label: 'Seguridad y Contraseña',
         //     onTap: () => showChangePasswordDialog(context),
         //  ),
-        // Siguiente paso: aquí va la fila "Bitácora de actividad".
+        // Siguiente
         //SettingsNavTile(
         // iconLight: 'assets/icons/log/logs_blanco.png',
         //  iconDark: 'assets/icons/log/logs_oscuro.png',
