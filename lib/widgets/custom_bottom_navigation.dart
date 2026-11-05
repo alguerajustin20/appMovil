@@ -6,6 +6,8 @@ import '../presentation/screens/inventory/add-product-screen/add_product_screen.
 import '../presentation/screens/manager/user-management-screen/user_management_screen.dart';
 import '../presentation/screens/settings/settings-screen.dart/settings_screen.dart';
 
+// >>> PASO 1: PEGAR AQUÍ LOS 2 IMPORTS DEL README (Líneas 18 y 19) >>>
+
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
 
@@ -16,6 +18,8 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
   DateTime? _lastPressedAt;
+
+  // >>> BLOQUE >>>
   final List<Widget> _screens = const [
     SystemMonitoringScreen(),
     AddProductScreen(),
@@ -23,6 +27,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     UserManagementScreen(),
     SettingsScreen(),
   ];
+  // <<<  ELIMINAR <<<
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +61,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           );
         }
       },
+      // >>> BLOQUE 2 >>>
       child: Scaffold(
         body: IndexedStack(index: _currentIndex, children: _screens),
         bottomNavigationBar: BottomNavigationBar(
@@ -93,6 +99,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ],
         ),
       ),
+      // <<< BLOQUE 2 <<<
     );
   }
 }

@@ -30,12 +30,13 @@ class AuthService {
     // 1. Petición HTTP POST al login de la API
     final authResponse = await _repository.login(cleanUsername, cleanPassword);
 
-    // 2. RESTRICCIÓN 1: Validar que sea Administrador (idRol == 1)
+    // 2. RESTRICCIÓN  Validar que sea Administrador (idRol == 1)
     if (authResponse.usuario?.idRol != 1) {
       throw const FormatException(
         'Acceso denegado: Esta aplicación móvil es exclusiva para Administradores.',
       );
     }
+    // <<< FIN:  <<<
 
     // 3. RESTRICCIÓN 2: Verificar contra la lista de inactivos usando el token devuelto
     final esInactivo = await _verificarSiEstaInactivo(
