@@ -1,3 +1,5 @@
+/// Modelo de datos para representar un usuario. y mapea los datos de la API a un objeto de Dart.
+
 class UserModel {
   final int? id;
   final int idRol;

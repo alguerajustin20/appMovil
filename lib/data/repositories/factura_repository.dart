@@ -1,3 +1,4 @@
+///trae todos los datos de la api
 import 'package:integrador_vi_mobile/core/network/api_client.dart';
 import 'package:integrador_vi_mobile/data/models/factura_model.dart';
 import 'package:integrador_vi_mobile/data/models/detalle_orden_model.dart';
